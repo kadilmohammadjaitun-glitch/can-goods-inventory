@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Can Goods Inventory</title>
 
+<!-- Barcode Scanner Library -->
+<script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js"></script>
+
 <style>
+
 * {
     box-sizing: border-box;
 }
@@ -77,6 +85,28 @@ body {
     margin-top: 0;
 }
 
+#camera {
+    width: 100%;
+    border-radius: 12px;
+    background: #000;
+    display: none;
+}
+
+.scan-box {
+    position: relative;
+    margin-top: 10px;
+}
+
+.scan-line {
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    top: 50%;
+    height: 3px;
+    background: red;
+    display: none;
+}
+
 input {
     width: 100%;
     padding: 14px;
@@ -101,6 +131,11 @@ button {
     background: #e6a900;
 }
 
+.stop-button {
+    background: #c62828;
+    display: none;
+}
+
 #result {
     margin-top: 15px;
     padding: 12px;
@@ -108,61 +143,136 @@ button {
     background: #eef7ef;
     display: none;
 }
+
+.success {
+    color: #176b3a;
+    font-weight: bold;
+}
+
+.error {
+    color: #c62828;
+    font-weight: bold;
+}
+
 </style>
+
 </head>
 
 <body>
 
 <div class="header">
+
     <h1>🥫 Can Goods Inventory</h1>
+
     <p>Inventory Management System</p>
+
 </div>
 
+
 <div class="container">
+
+
+    <!-- DASHBOARD -->
 
     <div class="cards">
 
         <div class="card">
+
             <h2 id="products">0</h2>
+
             <p>Products</p>
+
         </div>
 
+
         <div class="card">
+
             <h2 id="stock">0</h2>
+
             <p>Total Stock</p>
+
         </div>
 
+
         <div class="card">
+
             <h2 id="lowstock">0</h2>
+
             <p>Low Stock</p>
+
         </div>
 
+
         <div class="card">
+
             <h2 id="outstock">0</h2>
+
             <p>Out of Stock</p>
+
         </div>
 
     </div>
+
+
+    <!-- BARCODE SCANNER -->
 
     <div class="scanner">
 
         <h3>📷 Barcode Scanner</h3>
 
-        <button class="scan-button" onclick="scanBarcode()">
-            📷 SCAN BARCODE
+
+        <div class="scan-box">
+
+            <video
+                id="camera"
+                playsinline>
+            </video>
+
+            <div
+                id="scanLine"
+                class="scan-line">
+            </div>
+
+        </div>
+
+
+        <button
+            class="scan-button"
+            onclick="startScanner()">
+
+            📷 START SCANNER
+
         </button>
 
-        <p>Or enter barcode manually:</p>
+
+        <button
+            id="stopButton"
+            class="stop-button"
+            onclick="stopScanner()">
+
+            ⛔ STOP CAMERA
+
+        </button>
+
+
+        <p>
+            Or enter barcode manually:
+        </p>
+
 
         <input
             type="text"
             id="barcode"
-            placeholder="Enter barcode number"
-        >
+            placeholder="Enter barcode number">
 
-        <button onclick="searchBarcode()">
+
+        <button
+            onclick="searchBarcode()">
+
             🔍 SEARCH BARCODE
+
         </button>
+
 
         <div id="result"></div>
 
@@ -170,42 +280,238 @@ button {
 
 </div>
 
+
 <script>
 
-function searchBarcode() {
+let codeReader = null;
 
-    let barcode =
-        document.getElementById("barcode").value;
 
-    let result =
+/* START BARCODE SCANNER */
+
+async function startScanner() {
+
+    const video =
+        document.getElementById("camera");
+
+    const scanLine =
+        document.getElementById("scanLine");
+
+    const stopButton =
+        document.getElementById("stopButton");
+
+    const result =
         document.getElementById("result");
 
-    if (barcode === "") {
-
-        result.style.display = "block";
-        result.innerHTML =
-            "⚠️ Please enter a barcode.";
-
-        return;
-    }
 
     result.style.display = "block";
 
     result.innerHTML =
-        "<strong>Barcode:</strong> " +
-        barcode +
-        "<br><br>" +
-        "🔎 Searching product...";
+        "📷 Starting camera...";
+
+
+    try {
+
+        codeReader =
+            new ZXing.BrowserMultiFormatReader();
+
+
+        video.style.display = "block";
+
+        scanLine.style.display = "block";
+
+        stopButton.style.display = "block";
+
+
+        const devices =
+            await codeReader.listVideoInputDevices();
+
+
+        if (devices.length === 0) {
+
+            throw new Error(
+                "No camera found."
+            );
+
+        }
+
+
+        /* Prefer the back camera */
+
+        let selectedDeviceId =
+            devices[devices.length - 1].deviceId;
+
+
+        for (const device of devices) {
+
+            const label =
+                device.label.toLowerCase();
+
+            if (
+                label.includes("back") ||
+                label.includes("rear") ||
+                label.includes("environment")
+            ) {
+
+                selectedDeviceId =
+                    device.deviceId;
+
+                break;
+
+            }
+
+        }
+
+
+        codeReader.decodeFromVideoDevice(
+
+            selectedDeviceId,
+
+            video,
+
+            (result, error) => {
+
+                if (result) {
+
+                    const barcode =
+                        result.getText();
+
+
+                    document.getElementById(
+                        "barcode"
+                    ).value = barcode;
+
+
+                    document.getElementById(
+                        "result"
+                    ).style.display = "block";
+
+
+                    document.getElementById(
+                        "result"
+                    ).innerHTML =
+
+                    "<span class='success'>" +
+                    "✅ Barcode detected!" +
+                    "</span><br><br>" +
+
+                    "<strong>Barcode:</strong> " +
+                    barcode;
+
+
+                    stopScanner();
+
+
+                    searchBarcode();
+
+                }
+
+            }
+
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        result.style.display = "block";
+
+        result.innerHTML =
+
+        "<span class='error'>" +
+
+        "❌ Camera could not start." +
+
+        "</span><br><br>" +
+
+        "Please allow camera permission " +
+        "and try again.";
+
+    }
+
 }
 
-function scanBarcode() {
 
-    alert(
-        "Real camera barcode scanner will be added next."
-    );
+/* STOP CAMERA */
+
+function stopScanner() {
+
+    if (codeReader) {
+
+        codeReader.reset();
+
+        codeReader = null;
+
+    }
+
+
+    const video =
+        document.getElementById("camera");
+
+    const scanLine =
+        document.getElementById("scanLine");
+
+    const stopButton =
+        document.getElementById("stopButton");
+
+
+    video.style.display = "none";
+
+    scanLine.style.display = "none";
+
+    stopButton.style.display = "none";
+
+}
+
+
+/* MANUAL BARCODE SEARCH */
+
+function searchBarcode() {
+
+    const barcode =
+        document.getElementById(
+            "barcode"
+        ).value.trim();
+
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+
+    if (barcode === "") {
+
+        result.style.display = "block";
+
+        result.innerHTML =
+
+        "<span class='error'>" +
+        "⚠️ Please enter a barcode." +
+        "</span>";
+
+        return;
+
+    }
+
+
+    result.style.display = "block";
+
+
+    result.innerHTML =
+
+    "<strong>Barcode:</strong> " +
+    barcode +
+
+    "<br><br>" +
+
+    "🔎 Searching inventory...";
+
 }
 
 </script>
 
 </body>
+
 </html>
