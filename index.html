@@ -10,20 +10,30 @@
 
 <style>
 *{box-sizing:border-box}
+
 body{
     margin:0;
     font-family:Arial,sans-serif;
     background:#f1f5f1;
     color:#222
 }
+
 .header{
     background:#176b3a;
     color:white;
     padding:20px 15px;
     text-align:center
 }
-.header h1{margin:0;font-size:25px}
-.header p{margin:6px 0 0;font-size:14px}
+
+.header h1{
+    margin:0;
+    font-size:25px
+}
+
+.header p{
+    margin:6px 0 0;
+    font-size:14px
+}
 
 .container{
     max-width:800px;
@@ -36,18 +46,24 @@ body{
     grid-template-columns:repeat(2,1fr);
     gap:12px
 }
+
 .card{
     background:white;
     padding:18px;
     border-radius:14px;
     box-shadow:0 2px 8px rgba(0,0,0,.08)
 }
+
 .card h2{
     margin:0;
     color:#176b3a;
     font-size:28px
 }
-.card p{margin:5px 0 0;color:#666}
+
+.card p{
+    margin:5px 0 0;
+    color:#666
+}
 
 .section{
     background:white;
@@ -56,7 +72,10 @@ body{
     border-radius:14px;
     box-shadow:0 2px 8px rgba(0,0,0,.08)
 }
-.section h3{margin-top:0}
+
+.section h3{
+    margin-top:0
+}
 
 input,select{
     width:100%;
@@ -67,11 +86,13 @@ input,select{
     font-size:16px;
     background:white
 }
+
 label{
     display:block;
     margin-top:12px;
     font-weight:bold
 }
+
 button{
     width:100%;
     padding:13px;
@@ -83,28 +104,94 @@ button{
     font-size:16px;
     font-weight:bold
 }
-.yellow{background:#e6a900}
-.red{background:#c62828}
-.blue{background:#1976d2}
-.gray{background:#666}
+
+button:active{
+    transform:scale(.98)
+}
+
+.yellow{
+    background:#e6a900
+}
+
+.red{
+    background:#c62828
+}
+
+.blue{
+    background:#1976d2
+}
+
+.gray{
+    background:#666
+}
+
+/* CAMERA */
+
+.camera-wrapper{
+    position:relative;
+    width:100%;
+    background:#000;
+    border-radius:12px;
+    overflow:hidden;
+    margin-top:10px;
+    display:none
+}
 
 #camera{
     width:100%;
-    max-height:360px;
-    border-radius:12px;
-    background:#000;
-    display:none;
-    margin-top:10px
+    height:auto;
+    min-height:250px;
+    max-height:420px;
+    object-fit:cover;
+    display:block;
+    background:#000
 }
-.scan-box{position:relative}
+
+.scan-overlay{
+    position:absolute;
+    inset:0;
+    pointer-events:none
+}
+
+.scan-frame{
+    position:absolute;
+    left:12%;
+    right:12%;
+    top:25%;
+    bottom:25%;
+    border:3px solid #00ff66;
+    border-radius:12px;
+    box-shadow:
+        0 0 0 9999px rgba(0,0,0,.25)
+}
+
 .scan-line{
     position:absolute;
-    left:10%;
-    right:10%;
+    left:12%;
+    right:12%;
     top:50%;
     height:3px;
     background:red;
-    display:none
+    box-shadow:0 0 8px red;
+    animation:scanMove 2s linear infinite
+}
+
+@keyframes scanMove{
+    0%{top:25%}
+    50%{top:75%}
+    100%{top:25%}
+}
+
+.camera-message{
+    text-align:center;
+    color:white;
+    background:rgba(0,0,0,.65);
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    padding:8px;
+    font-size:13px
 }
 
 #result{
@@ -114,9 +201,21 @@ button{
     background:#eef7ef;
     display:none
 }
-.success{color:#176b3a;font-weight:bold}
-.error{color:#c62828;font-weight:bold}
-.warning{color:#9a6900;font-weight:bold}
+
+.success{
+    color:#176b3a;
+    font-weight:bold
+}
+
+.error{
+    color:#c62828;
+    font-weight:bold
+}
+
+.warning{
+    color:#9a6900;
+    font-weight:bold
+}
 
 .product{
     background:#fafafa;
@@ -125,6 +224,7 @@ button{
     padding:12px;
     margin-top:12px
 }
+
 .product-image{
     width:100%;
     max-height:180px;
@@ -133,16 +233,19 @@ button{
     background:#eee;
     margin-bottom:10px
 }
+
 .product-name{
     font-size:18px;
     font-weight:bold;
     color:#176b3a
 }
+
 .product-info{
     margin-top:5px;
     font-size:14px;
     line-height:1.6
 }
+
 .status{
     display:inline-block;
     padding:5px 9px;
@@ -151,9 +254,21 @@ button{
     font-weight:bold;
     margin-top:5px
 }
-.status-in{background:#d8f3dc;color:#176b3a}
-.status-low{background:#fff0c2;color:#9a6900}
-.status-out{background:#ffd9d9;color:#c62828}
+
+.status-in{
+    background:#d8f3dc;
+    color:#176b3a
+}
+
+.status-low{
+    background:#fff0c2;
+    color:#9a6900
+}
+
+.status-out{
+    background:#ffd9d9;
+    color:#c62828
+}
 
 .product-buttons{
     display:grid;
@@ -161,6 +276,7 @@ button{
     gap:7px;
     margin-top:10px
 }
+
 .product-buttons button{
     margin-top:0;
     font-size:13px;
@@ -177,6 +293,7 @@ button{
     padding:15px;
     z-index:1000
 }
+
 .modal-box{
     background:white;
     width:100%;
@@ -186,16 +303,37 @@ button{
     border-radius:15px;
     padding:20px
 }
+
 .modal-box h2{
     margin-top:0;
     color:#176b3a
 }
 
-.empty{text-align:center;color:#777;padding:20px}
-.loading{text-align:center;padding:15px;color:#666}
+.empty{
+    text-align:center;
+    color:#777;
+    padding:20px
+}
+
+.loading{
+    text-align:center;
+    padding:15px;
+    color:#666
+}
+
+.camera-status{
+    margin-top:10px;
+    padding:10px;
+    border-radius:8px;
+    background:#f5f5f5;
+    font-size:14px;
+    text-align:center
+}
 
 @media(min-width:600px){
-    .cards{grid-template-columns:repeat(4,1fr)}
+    .cards{
+        grid-template-columns:repeat(4,1fr)
+    }
 }
 </style>
 </head>
@@ -211,6 +349,7 @@ button{
 
 <!-- DASHBOARD -->
 <div class="cards">
+
     <div class="card">
         <h2 id="productsCount">0</h2>
         <p>Products</p>
@@ -230,29 +369,65 @@ button{
         <h2 id="outStockCount">0</h2>
         <p>Out of Stock</p>
     </div>
+
 </div>
+
 
 <!-- SCANNER -->
 <div class="section">
+
     <h3>📷 Barcode Scanner</h3>
 
-    <div class="scan-box">
-        <video id="camera" playsinline></video>
-        <div id="scanLine" class="scan-line"></div>
+    <div id="cameraWrapper" class="camera-wrapper">
+
+        <video
+            id="camera"
+            autoplay
+            muted
+            playsinline>
+        </video>
+
+        <div class="scan-overlay">
+
+            <div class="scan-frame"></div>
+
+            <div class="scan-line"></div>
+
+            <div class="camera-message">
+                Place barcode inside the green box
+            </div>
+
+        </div>
+
     </div>
 
-    <button class="yellow" onclick="startScanner()">
+    <div
+        id="cameraStatus"
+        class="camera-status">
+        Camera is stopped.
+    </div>
+
+    <button
+        class="yellow"
+        onclick="startScanner()">
         📷 START SCANNER
     </button>
 
-    <button id="stopButton" class="red"
-        onclick="stopScanner()" style="display:none">
+    <button
+        id="stopButton"
+        class="red"
+        onclick="stopScanner()"
+        style="display:none">
         ⛔ STOP CAMERA
     </button>
 
     <label>Barcode</label>
-    <input id="barcode"
+
+    <input
+        id="barcode"
         type="text"
+        inputmode="numeric"
+        autocomplete="off"
         placeholder="Scan or enter barcode">
 
     <button onclick="searchBarcode()">
@@ -260,114 +435,184 @@ button{
     </button>
 
     <div id="result"></div>
+
 </div>
+
 
 <!-- PRODUCT MANAGEMENT -->
 <div class="section">
+
     <h3>📦 Product Management</h3>
 
     <button onclick="openAddModal()">
         ➕ ADD NEW PRODUCT
     </button>
+
 </div>
+
 
 <!-- PRODUCT LIST -->
 <div class="section">
+
     <h3>📋 Product List</h3>
 
-    <input id="productSearch"
+    <input
+        id="productSearch"
         type="text"
         placeholder="🔎 Search product, brand or barcode"
         oninput="filterProducts()">
 
     <div id="productList">
-        <div class="loading">Loading products...</div>
+        <div class="loading">
+            Loading products...
+        </div>
     </div>
+
 </div>
 
 </div>
+
 
 <!-- PRODUCT MODAL -->
 <div id="productModal" class="modal">
+
 <div class="modal-box">
 
-<h2 id="modalTitle">➕ Add Product</h2>
+<h2 id="modalTitle">
+    ➕ Add Product
+</h2>
 
-<input type="hidden" id="editProductId">
+<input
+    type="hidden"
+    id="editProductId">
 
 <label>Barcode *</label>
-<input id="formBarcode" type="text"
+
+<input
+    id="formBarcode"
+    type="text"
+    inputmode="numeric"
     placeholder="Barcode number">
 
+
 <label>Product Name *</label>
-<input id="formProductName" type="text"
+
+<input
+    id="formProductName"
+    type="text"
     placeholder="Example: Mega Sardines">
 
+
 <label>Brand</label>
-<input id="formBrand" type="text"
+
+<input
+    id="formBrand"
+    type="text"
     placeholder="Example: Mega">
 
+
 <label>Category</label>
-<input id="formCategory" type="text"
+
+<input
+    id="formCategory"
+    type="text"
     placeholder="Example: Sardines">
 
+
 <label>Unit</label>
-<input id="formUnit" type="text"
+
+<input
+    id="formUnit"
+    type="text"
     placeholder="Example: can">
 
+
 <label>Stock</label>
-<input id="formStock" type="number"
-    min="0" value="0">
+
+<input
+    id="formStock"
+    type="number"
+    min="0"
+    value="0">
+
 
 <label>Minimum Stock</label>
-<input id="formMinimumStock" type="number"
-    min="0" value="5">
+
+<input
+    id="formMinimumStock"
+    type="number"
+    min="0"
+    value="5">
+
 
 <label>Price</label>
-<input id="formPrice" type="number"
-    min="0" step="0.01" value="0">
+
+<input
+    id="formPrice"
+    type="number"
+    min="0"
+    step="0.01"
+    value="0">
+
 
 <label>Product Image URL</label>
-<input id="formImage" type="text"
+
+<input
+    id="formImage"
+    type="text"
     placeholder="https://example.com/image.jpg">
+
 
 <button onclick="saveProduct()">
     💾 SAVE PRODUCT
 </button>
 
-<button class="gray" onclick="closeModal()">
+<button
+    class="gray"
+    onclick="closeModal()">
     ✖ CLOSE
 </button>
 
 </div>
 </div>
 
+
 <!-- STOCK MODAL -->
 <div id="stockModal" class="modal">
+
 <div class="modal-box">
 
-<h2 id="stockModalTitle">📦 Stock</h2>
+<h2 id="stockModalTitle">
+    📦 Stock
+</h2>
 
-<input type="hidden" id="stockProductId">
+<input
+    type="hidden"
+    id="stockProductId">
 
 <label>Quantity</label>
-<input id="stockQuantity"
+
+<input
+    id="stockQuantity"
     type="number"
     min="1"
     value="1">
 
-<button id="stockConfirmButton"
+<button
+    id="stockConfirmButton"
     onclick="confirmStock()">
     CONFIRM
 </button>
 
-<button class="gray"
+<button
+    class="gray"
     onclick="closeStockModal()">
     ✖ CANCEL
 </button>
 
 </div>
 </div>
+
 
 <script>
 
@@ -395,6 +640,8 @@ window.supabase.createClient(
 let codeReader = null;
 let productsData = [];
 let stockAction = "";
+let scannerRunning = false;
+let scanLocked = false;
 
 
 /* =====================================================
@@ -471,6 +718,7 @@ function updateDashboard(){
         else if(stock<=minimum){
             low++;
         }
+
     });
 
     document.getElementById(
@@ -508,17 +756,21 @@ function getStatus(product){
         Number(product.minimum_stock || 0);
 
     if(stock===0){
+
         return {
             text:"🔴 OUT OF STOCK",
             class:"status-out"
         };
+
     }
 
     if(stock<=minimum){
+
         return {
             text:"🟡 LOW STOCK",
             class:"status-low"
         };
+
     }
 
     return {
@@ -648,6 +900,7 @@ function displayProducts(products){
         '</div>';
 
         list.appendChild(div);
+
     });
 }
 
@@ -695,6 +948,7 @@ function filterProducts(){
             String(
                 product.category || ""
             ).toLowerCase().includes(q);
+
         });
 
     displayProducts(filtered);
@@ -702,116 +956,269 @@ function filterProducts(){
 
 
 /* =====================================================
-   BARCODE SCANNER
+   IMPROVED BARCODE SCANNER
 ===================================================== */
 
 async function startScanner(){
 
+    if(scannerRunning){
+        return;
+    }
+
     const video =
-        document.getElementById(
-            "camera"
-        );
+        document.getElementById("camera");
 
-    const line =
-        document.getElementById(
-            "scanLine"
-        );
+    const wrapper =
+        document.getElementById("cameraWrapper");
 
-    const stop =
-        document.getElementById(
-            "stopButton"
-        );
+    const stopButton =
+        document.getElementById("stopButton");
+
+    const status =
+        document.getElementById("cameraStatus");
 
     const result =
-        document.getElementById(
-            "result"
-        );
+        document.getElementById("result");
 
     result.style.display="block";
+
     result.innerHTML =
+        "📷 Requesting camera permission...";
+
+    status.innerHTML =
         "📷 Starting camera...";
 
+    scanLocked=false;
+
     try{
+
+        if(!window.isSecureContext){
+
+            throw new Error(
+                "Camera requires a secure HTTPS connection."
+            );
+        }
+
+        if(
+            !navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia
+        ){
+
+            throw new Error(
+                "Your browser does not support camera access."
+            );
+        }
+
+        /* First request camera permission */
+        const permissionStream =
+            await navigator.mediaDevices.getUserMedia({
+                video:{
+                    facingMode:{
+                        ideal:"environment"
+                    }
+                },
+                audio:false
+            });
+
+        /* Stop temporary permission stream */
+        permissionStream
+            .getTracks()
+            .forEach(track=>track.stop());
 
         codeReader =
             new ZXing.BrowserMultiFormatReader();
 
+        wrapper.style.display="block";
         video.style.display="block";
-        line.style.display="block";
-        stop.style.display="block";
+        stopButton.style.display="block";
 
-        const devices =
-            await codeReader
-            .listVideoInputDevices();
+        scannerRunning=true;
 
-        if(!devices.length){
+        status.innerHTML =
+            "📷 Camera active — point the barcode inside the green box.";
 
-            throw new Error(
-                "No camera found."
-            );
-        }
+        result.innerHTML =
+            "🔎 Looking for barcode...";
 
-        let deviceId =
-            devices[
-                devices.length-1
-            ].deviceId;
+        /*
+         * Use rear/environment camera first.
+         * This works better on many Android phones.
+         */
 
-        for(
-            const device of devices
-        ){
+        const constraints = {
 
-            const label =
-                (
-                    device.label || ""
-                ).toLowerCase();
+            audio:false,
 
-            if(
-                label.includes("back") ||
-                label.includes("rear") ||
-                label.includes("environment")
-            ){
+            video:{
+                facingMode:{
+                    ideal:"environment"
+                },
 
-                deviceId =
-                    device.deviceId;
+                width:{
+                    ideal:1280
+                },
 
-                break;
+                height:{
+                    ideal:720
+                }
             }
-        }
 
-        codeReader.decodeFromVideoDevice(
-            deviceId,
+        };
+
+        await codeReader.decodeFromConstraints(
+            constraints,
             video,
-            function(result){
+            function(result, error){
 
-                if(result){
+                if(result && !scanLocked){
+
+                    scanLocked=true;
 
                     const code =
                         result.getText();
 
+                    console.log(
+                        "Barcode detected:",
+                        code
+                    );
+
                     document.getElementById(
                         "barcode"
-                    ).value = code;
+                    ).value=code;
 
-                    stopScanner();
+                    status.innerHTML =
+                        "✅ Barcode detected: " +
+                        escapeHTML(code);
 
-                    searchBarcode();
+                    resultMessage(
+                        "success",
+                        "✅ Barcode detected!"
+                    );
+
+                    setTimeout(
+                        function(){
+                            stopScanner();
+                            searchBarcode();
+                        },
+                        300
+                    );
+
                 }
+
             }
         );
 
     }
     catch(error){
 
-        console.error(error);
+        console.error(
+            "Camera error:",
+            error
+        );
+
+        scannerRunning=false;
+
+        if(codeReader){
+
+            try{
+                codeReader.reset();
+            }
+            catch(e){}
+
+            codeReader=null;
+        }
+
+        wrapper.style.display="none";
+        stopButton.style.display="none";
+
+        status.innerHTML =
+            "❌ Camera stopped.";
+
+        let message =
+            "❌ Camera could not start.";
+
+        if(error && error.name){
+
+            if(error.name==="NotAllowedError"){
+
+                message =
+                "❌ Camera permission was denied.<br><br>" +
+                "Please allow Camera permission in Chrome.";
+
+            }
+            else if(
+                error.name==="NotFoundError"
+            ){
+
+                message =
+                "❌ No camera was found on this device.";
+
+            }
+            else if(
+                error.name==="NotReadableError"
+            ){
+
+                message =
+                "❌ Camera is being used by another app.";
+
+            }
+            else if(
+                error.name==="OverconstrainedError"
+            ){
+
+                message =
+                "❌ Camera settings are not supported. " +
+                "Please try again.";
+
+            }
+            else{
+
+                message =
+                "❌ Camera error:<br><br>" +
+                escapeHTML(
+                    error.message || String(error)
+                );
+
+            }
+
+        }
+        else{
+
+            message =
+            "❌ Camera error:<br><br>" +
+            escapeHTML(
+                error.message || String(error)
+            );
+
+        }
 
         result.style.display="block";
 
         result.innerHTML =
-        '<span class="error">' +
-        '❌ Camera could not start.' +
-        '</span><br><br>' +
-        'Please allow camera permission.';
+            '<span class="error">' +
+            message +
+            '</span>';
     }
+}
+
+
+/* =====================================================
+   RESULT MESSAGE
+===================================================== */
+
+function resultMessage(type,message){
+
+    const result =
+        document.getElementById("result");
+
+    result.style.display="block";
+
+    result.innerHTML =
+        '<span class="' +
+        type +
+        '">' +
+        message +
+        '</span>';
 }
 
 
@@ -821,27 +1228,63 @@ async function startScanner(){
 
 function stopScanner(){
 
+    scannerRunning=false;
+    scanLocked=false;
+
     if(codeReader){
 
         try{
             codeReader.reset();
         }
-        catch(e){}
+        catch(e){
+
+            console.log(
+                "Scanner reset:",
+                e
+            );
+
+        }
 
         codeReader=null;
     }
 
-    document.getElementById(
-        "camera"
-    ).style.display="none";
+    const video =
+        document.getElementById("camera");
+
+    /*
+     * Stop any active video tracks.
+     * This is important on Android so the
+     * camera is completely released.
+     */
+
+    if(video && video.srcObject){
+
+        try{
+
+            video.srcObject
+                .getTracks()
+                .forEach(
+                    track=>track.stop()
+                );
+
+        }
+        catch(e){}
+
+        video.srcObject=null;
+    }
 
     document.getElementById(
-        "scanLine"
+        "cameraWrapper"
     ).style.display="none";
 
     document.getElementById(
         "stopButton"
     ).style.display="none";
+
+    document.getElementById(
+        "cameraStatus"
+    ).innerHTML =
+        "Camera is stopped.";
 }
 
 
@@ -1062,7 +1505,7 @@ function openAddModal(){
 
 
 /* =====================================================
-   CLOSE
+   CLOSE MODAL
 ===================================================== */
 
 function closeModal(){
@@ -1167,6 +1610,7 @@ async function saveProduct(){
             await supabaseClient
             .from("products")
             .insert([product]);
+
     }
 
     if(response.error){
@@ -1275,6 +1719,7 @@ async function deleteProduct(id){
             "?"
         )
     ){
+
         return;
     }
 
@@ -1338,164 +1783,4 @@ function openStockModal(id,action){
     if(action==="in"){
 
         title.textContent =
-            "📥 Stock In - " +
-            product.product_name;
-
-        button.textContent =
-            "📥 CONFIRM STOCK IN";
-
-        button.className="blue";
-
-    }
-    else{
-
-        title.textContent =
-            "📤 Stock Out - " +
-            product.product_name;
-
-        button.textContent =
-            "📤 CONFIRM STOCK OUT";
-
-        button.className="red";
-    }
-
-    document.getElementById(
-        "stockModal"
-    ).style.display="flex";
-}
-
-
-function closeStockModal(){
-
-    document.getElementById(
-        "stockModal"
-    ).style.display="none";
-}
-
-
-/* =====================================================
-   STOCK IN / OUT
-===================================================== */
-
-async function confirmStock(){
-
-    const id =
-        document.getElementById(
-            "stockProductId"
-        ).value;
-
-    const quantity =
-        Number(
-            document.getElementById(
-                "stockQuantity"
-            ).value || 0
-        );
-
-    if(quantity<=0){
-
-        alert(
-            "Enter a valid quantity."
-        );
-
-        return;
-    }
-
-    const product =
-        productsData.find(
-            p => p.id == id
-        );
-
-    if(!product)return;
-
-    const current =
-        Number(product.stock || 0);
-
-    let newStock;
-
-    if(stockAction==="in"){
-
-        newStock =
-            current + quantity;
-
-    }
-    else{
-
-        if(quantity>current){
-
-            alert(
-                "❌ Stock Out cannot be greater than current stock.\n\n" +
-                "Current stock: " +
-                current
-            );
-
-            return;
-        }
-
-        newStock =
-            current - quantity;
-    }
-
-    const {error} =
-        await supabaseClient
-        .from("products")
-        .update({
-            stock:newStock
-        })
-        .eq("id",id);
-
-    if(error){
-
-        alert(
-            "❌ Stock update failed:\n\n" +
-            error.message
-        );
-
-        return;
-    }
-
-    alert(
-        "✅ Stock updated!\n\n" +
-        "New stock: " +
-        newStock
-    );
-
-    closeStockModal();
-
-    await loadProducts();
-
-    const barcode =
-        document.getElementById(
-            "barcode"
-        ).value.trim();
-
-    if(barcode){
-        searchBarcode();
-    }
-}
-
-
-/* =====================================================
-   ESCAPE
-===================================================== */
-
-function escapeHTML(value){
-
-    if(
-        value===null ||
-        value===undefined
-    ){
-        return "";
-    }
-
-    return String(value)
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-}
-
-</script>
-
-</body>
-</html>
+            "📥 Stock In - "
