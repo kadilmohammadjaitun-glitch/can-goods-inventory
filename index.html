@@ -1,701 +1,409 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Can Goods Inventory</title>
 
-<!-- ZXing Barcode Scanner -->
 <script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js"></script>
-
-<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f1f5f1;
+    color:#222
+}
+.header{
+    background:#176b3a;
+    color:white;
+    padding:20px 15px;
+    text-align:center
+}
+.header h1{margin:0;font-size:25px}
+.header p{margin:6px 0 0;font-size:14px}
 
-* {
-    box-sizing: border-box;
+.container{
+    max-width:800px;
+    margin:auto;
+    padding:15px
 }
 
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f1f5f1;
-    color: #222;
+.cards{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px
+}
+.card{
+    background:white;
+    padding:18px;
+    border-radius:14px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08)
+}
+.card h2{
+    margin:0;
+    color:#176b3a;
+    font-size:28px
+}
+.card p{margin:5px 0 0;color:#666}
+
+.section{
+    background:white;
+    margin-top:15px;
+    padding:18px;
+    border-radius:14px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08)
+}
+.section h3{margin-top:0}
+
+input,select{
+    width:100%;
+    padding:13px;
+    margin-top:7px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:16px;
+    background:white
+}
+label{
+    display:block;
+    margin-top:12px;
+    font-weight:bold
+}
+button{
+    width:100%;
+    padding:13px;
+    margin-top:10px;
+    border:0;
+    border-radius:8px;
+    background:#176b3a;
+    color:white;
+    font-size:16px;
+    font-weight:bold
+}
+.yellow{background:#e6a900}
+.red{background:#c62828}
+.blue{background:#1976d2}
+.gray{background:#666}
+
+#camera{
+    width:100%;
+    max-height:360px;
+    border-radius:12px;
+    background:#000;
+    display:none;
+    margin-top:10px
+}
+.scan-box{position:relative}
+.scan-line{
+    position:absolute;
+    left:10%;
+    right:10%;
+    top:50%;
+    height:3px;
+    background:red;
+    display:none
 }
 
-/* HEADER */
+#result{
+    margin-top:15px;
+    padding:15px;
+    border-radius:10px;
+    background:#eef7ef;
+    display:none
+}
+.success{color:#176b3a;font-weight:bold}
+.error{color:#c62828;font-weight:bold}
+.warning{color:#9a6900;font-weight:bold}
 
-.header {
-    background: #176b3a;
-    color: white;
-    padding: 20px 15px;
-    text-align: center;
+.product{
+    background:#fafafa;
+    border:1px solid #ddd;
+    border-radius:12px;
+    padding:12px;
+    margin-top:12px
+}
+.product-image{
+    width:100%;
+    max-height:180px;
+    object-fit:contain;
+    border-radius:8px;
+    background:#eee;
+    margin-bottom:10px
+}
+.product-name{
+    font-size:18px;
+    font-weight:bold;
+    color:#176b3a
+}
+.product-info{
+    margin-top:5px;
+    font-size:14px;
+    line-height:1.6
+}
+.status{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:6px;
+    font-size:13px;
+    font-weight:bold;
+    margin-top:5px
+}
+.status-in{background:#d8f3dc;color:#176b3a}
+.status-low{background:#fff0c2;color:#9a6900}
+.status-out{background:#ffd9d9;color:#c62828}
+
+.product-buttons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:7px;
+    margin-top:10px
+}
+.product-buttons button{
+    margin-top:0;
+    font-size:13px;
+    padding:10px
 }
 
-.header h1 {
-    margin: 0;
-    font-size: 25px;
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:15px;
+    z-index:1000
+}
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:520px;
+    max-height:90vh;
+    overflow-y:auto;
+    border-radius:15px;
+    padding:20px
+}
+.modal-box h2{
+    margin-top:0;
+    color:#176b3a
 }
 
-.header p {
-    margin: 6px 0 0;
-    font-size: 14px;
+.empty{text-align:center;color:#777;padding:20px}
+.loading{text-align:center;padding:15px;color:#666}
+
+@media(min-width:600px){
+    .cards{grid-template-columns:repeat(4,1fr)}
 }
-
-/* CONTAINER */
-
-.container {
-    max-width: 700px;
-    margin: auto;
-    padding: 15px;
-}
-
-/* DASHBOARD */
-
-.cards {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
-
-.card {
-    background: white;
-    padding: 18px;
-    border-radius: 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-.card h2 {
-    margin: 0;
-    color: #176b3a;
-    font-size: 28px;
-}
-
-.card p {
-    margin: 5px 0 0;
-    color: #666;
-}
-
-/* SECTION */
-
-.section {
-    background: white;
-    margin-top: 15px;
-    padding: 18px;
-    border-radius: 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-.section h3 {
-    margin-top: 0;
-}
-
-/* INPUT */
-
-input,
-select {
-    width: 100%;
-    padding: 13px;
-    margin-top: 7px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px;
-    background: white;
-}
-
-label {
-    display: block;
-    margin-top: 12px;
-    font-weight: bold;
-}
-
-/* BUTTON */
-
-button {
-    width: 100%;
-    padding: 13px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 8px;
-    background: #176b3a;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-button:active {
-    opacity: 0.8;
-}
-
-.yellow-button {
-    background: #e6a900;
-}
-
-.red-button {
-    background: #c62828;
-}
-
-.blue-button {
-    background: #1976d2;
-}
-
-.gray-button {
-    background: #666;
-}
-
-/* CAMERA */
-
-#camera {
-    width: 100%;
-    max-height: 350px;
-    border-radius: 12px;
-    background: black;
-    display: none;
-    margin-top: 10px;
-}
-
-.scan-box {
-    position: relative;
-}
-
-.scan-line {
-    position: absolute;
-    left: 10%;
-    right: 10%;
-    top: 50%;
-    height: 3px;
-    background: red;
-    display: none;
-}
-
-/* RESULT */
-
-#result {
-    margin-top: 15px;
-    padding: 15px;
-    border-radius: 10px;
-    background: #eef7ef;
-    display: none;
-}
-
-.success {
-    color: #176b3a;
-    font-weight: bold;
-}
-
-.error {
-    color: #c62828;
-    font-weight: bold;
-}
-
-.warning {
-    color: #e08a00;
-    font-weight: bold;
-}
-
-/* PRODUCT LIST */
-
-.product {
-    background: #fafafa;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    padding: 12px;
-    margin-top: 12px;
-}
-
-.product-image {
-    width: 100%;
-    max-height: 180px;
-    object-fit: contain;
-    border-radius: 8px;
-    background: #eee;
-    margin-bottom: 10px;
-}
-
-.product-name {
-    font-size: 18px;
-    font-weight: bold;
-    color: #176b3a;
-}
-
-.product-info {
-    margin-top: 5px;
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-.status {
-    display: inline-block;
-    padding: 5px 9px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: bold;
-    margin-top: 5px;
-}
-
-.status-in {
-    background: #d8f3dc;
-    color: #176b3a;
-}
-
-.status-low {
-    background: #fff0c2;
-    color: #9a6900;
-}
-
-.status-out {
-    background: #ffd9d9;
-    color: #c62828;
-}
-
-.product-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 7px;
-    margin-top: 10px;
-}
-
-.product-buttons button {
-    margin-top: 0;
-    font-size: 13px;
-    padding: 10px;
-}
-
-/* MODAL */
-
-.modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 15px;
-    z-index: 1000;
-}
-
-.modal-box {
-    background: white;
-    width: 100%;
-    max-width: 500px;
-    max-height: 90vh;
-    overflow-y: auto;
-    border-radius: 15px;
-    padding: 20px;
-}
-
-.modal-box h2 {
-    margin-top: 0;
-    color: #176b3a;
-}
-
-.close-button {
-    background: #777;
-}
-
-/* EMPTY */
-
-.empty {
-    text-align: center;
-    color: #777;
-    padding: 20px;
-}
-
-/* LOADING */
-
-.loading {
-    text-align: center;
-    padding: 15px;
-    color: #666;
-}
-
-/* RESPONSIVE */
-
-@media (min-width: 600px) {
-
-    .cards {
-        grid-template-columns: repeat(4, 1fr);
-    }
-
-}
-
 </style>
-
 </head>
-
 
 <body>
 
-
-<!-- HEADER -->
-
 <div class="header">
-
     <h1>🥫 Can Goods Inventory</h1>
-
     <p>Inventory Management System</p>
-
 </div>
-
 
 <div class="container">
 
-
 <!-- DASHBOARD -->
-
 <div class="cards">
-
     <div class="card">
-
         <h2 id="productsCount">0</h2>
-
         <p>Products</p>
-
     </div>
 
-
     <div class="card">
-
         <h2 id="stockCount">0</h2>
-
         <p>Total Stock</p>
-
     </div>
 
-
     <div class="card">
-
         <h2 id="lowStockCount">0</h2>
-
         <p>Low Stock</p>
-
     </div>
-
 
     <div class="card">
-
         <h2 id="outStockCount">0</h2>
-
         <p>Out of Stock</p>
-
     </div>
-
 </div>
 
-
-<!-- SEARCH / SCANNER -->
-
+<!-- SCANNER -->
 <div class="section">
-
     <h3>📷 Barcode Scanner</h3>
 
-
     <div class="scan-box">
-
-        <video
-            id="camera"
-            playsinline>
-        </video>
-
-        <div
-            id="scanLine"
-            class="scan-line">
-        </div>
-
+        <video id="camera" playsinline></video>
+        <div id="scanLine" class="scan-line"></div>
     </div>
 
-
-    <button
-        class="yellow-button"
-        onclick="startScanner()">
-
+    <button class="yellow" onclick="startScanner()">
         📷 START SCANNER
-
     </button>
 
-
-    <button
-        id="stopButton"
-        class="red-button"
-        onclick="stopScanner()"
-        style="display:none;">
-
+    <button id="stopButton" class="red"
+        onclick="stopScanner()" style="display:none">
         ⛔ STOP CAMERA
-
     </button>
-
 
     <label>Barcode</label>
-
-    <input
+    <input id="barcode"
         type="text"
-        id="barcode"
         placeholder="Scan or enter barcode">
 
-
-    <button
-        onclick="searchBarcode()">
-
+    <button onclick="searchBarcode()">
         🔍 SEARCH BARCODE
-
     </button>
-
 
     <div id="result"></div>
-
 </div>
 
-
-<!-- ADD PRODUCT -->
-
+<!-- PRODUCT MANAGEMENT -->
 <div class="section">
+    <h3>📦 Product Management</h3>
 
-    <h3>➕ Product Management</h3>
-
-    <button
-        onclick="openAddModal()">
-
+    <button onclick="openAddModal()">
         ➕ ADD NEW PRODUCT
-
     </button>
-
 </div>
 
-
-<!-- PRODUCT SEARCH -->
-
+<!-- PRODUCT LIST -->
 <div class="section">
+    <h3>📋 Product List</h3>
 
-    <h3>📦 Products</h3>
-
-    <input
+    <input id="productSearch"
         type="text"
-        id="productSearch"
-        placeholder="🔎 Search product or barcode"
+        placeholder="🔎 Search product, brand or barcode"
         oninput="filterProducts()">
 
     <div id="productList">
-
-        <div class="loading">
-            Loading products...
-        </div>
-
+        <div class="loading">Loading products...</div>
     </div>
+</div>
 
 </div>
 
+<!-- PRODUCT MODAL -->
+<div id="productModal" class="modal">
+<div class="modal-box">
+
+<h2 id="modalTitle">➕ Add Product</h2>
+
+<input type="hidden" id="editProductId">
+
+<label>Barcode *</label>
+<input id="formBarcode" type="text"
+    placeholder="Barcode number">
+
+<label>Product Name *</label>
+<input id="formProductName" type="text"
+    placeholder="Example: Mega Sardines">
+
+<label>Brand</label>
+<input id="formBrand" type="text"
+    placeholder="Example: Mega">
+
+<label>Category</label>
+<input id="formCategory" type="text"
+    placeholder="Example: Sardines">
+
+<label>Unit</label>
+<input id="formUnit" type="text"
+    placeholder="Example: can">
+
+<label>Stock</label>
+<input id="formStock" type="number"
+    min="0" value="0">
+
+<label>Minimum Stock</label>
+<input id="formMinimumStock" type="number"
+    min="0" value="5">
+
+<label>Price</label>
+<input id="formPrice" type="number"
+    min="0" step="0.01" value="0">
+
+<label>Product Image URL</label>
+<input id="formImage" type="text"
+    placeholder="https://example.com/image.jpg">
+
+<button onclick="saveProduct()">
+    💾 SAVE PRODUCT
+</button>
+
+<button class="gray" onclick="closeModal()">
+    ✖ CLOSE
+</button>
 
 </div>
-
-
-<!-- ADD / EDIT MODAL -->
-
-<div
-    id="productModal"
-    class="modal">
-
-    <div class="modal-box">
-
-        <h2 id="modalTitle">
-            ➕ Add Product
-        </h2>
-
-
-        <input
-            type="hidden"
-            id="editProductId">
-
-
-        <label>Barcode *</label>
-
-        <input
-            type="text"
-            id="formBarcode"
-            placeholder="Barcode number">
-
-
-        <label>Product Name *</label>
-
-        <input
-            type="text"
-            id="formProductName"
-            placeholder="Example: Mega Sardines">
-
-
-        <label>Brand</label>
-
-        <input
-            type="text"
-            id="formBrand"
-            placeholder="Example: Mega">
-
-
-        <label>Category</label>
-
-        <input
-            type="text"
-            id="formCategory"
-            placeholder="Example: Sardines">
-
-
-        <label>Unit</label>
-
-        <input
-            type="text"
-            id="formUnit"
-            placeholder="Example: can">
-
-
-        <label>Stock</label>
-
-        <input
-            type="number"
-            id="formStock"
-            min="0"
-            value="0">
-
-
-        <label>Minimum Stock</label>
-
-        <input
-            type="number"
-            id="formMinimumStock"
-            min="0"
-            value="5">
-
-
-        <label>Price</label>
-
-        <input
-            type="number"
-            id="formPrice"
-            min="0"
-            step="0.01"
-            value="0">
-
-
-        <label>Product Image URL</label>
-
-        <input
-            type="text"
-            id="formImage"
-            placeholder="https://example.com/image.jpg">
-
-
-        <button
-            onclick="saveProduct()">
-
-            💾 SAVE PRODUCT
-
-        </button>
-
-
-        <button
-            class="close-button"
-            onclick="closeModal()">
-
-            ✖ CLOSE
-
-        </button>
-
-    </div>
-
 </div>
-
 
 <!-- STOCK MODAL -->
+<div id="stockModal" class="modal">
+<div class="modal-box">
 
-<div
-    id="stockModal"
-    class="modal">
+<h2 id="stockModalTitle">📦 Stock</h2>
 
-    <div class="modal-box">
+<input type="hidden" id="stockProductId">
 
-        <h2 id="stockModalTitle">
-            📦 Stock
-        </h2>
+<label>Quantity</label>
+<input id="stockQuantity"
+    type="number"
+    min="1"
+    value="1">
 
-        <input
-            type="hidden"
-            id="stockProductId">
+<button id="stockConfirmButton"
+    onclick="confirmStock()">
+    CONFIRM
+</button>
 
-        <label>Quantity</label>
-
-        <input
-            type="number"
-            id="stockQuantity"
-            min="1"
-            value="1">
-
-        <button
-            id="stockConfirmButton"
-            onclick="confirmStock()">
-
-            CONFIRM
-
-        </button>
-
-        <button
-            class="close-button"
-            onclick="closeStockModal()">
-
-            ✖ CANCEL
-
-        </button>
-
-    </div>
+<button class="gray"
+    onclick="closeStockModal()">
+    ✖ CANCEL
+</button>
 
 </div>
-
+</div>
 
 <script>
 
 /* =====================================================
-   SUPABASE CONNECTION
+   SUPABASE
 ===================================================== */
 
 const SUPABASE_URL =
-    'https://xemdlccejsdoglczepsm.supabase.co';
+'https://xemdlccejsdoglczepsm.supabase.co';
 
 const SUPABASE_KEY =
-    'sb_publishable_uXDEsaRgAPdwnLrcTjAj4A_j88ihGi4';
+'sb_publishable_uXDEsaRgAPdwnLrcTjAj4A_j88ihGi4';
 
 const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
 
 /* =====================================================
-   GLOBAL VARIABLES
+   VARIABLES
 ===================================================== */
 
 let codeReader = null;
-
 let productsData = [];
-
 let stockAction = "";
 
 
 /* =====================================================
-   PAGE LOAD
+   LOAD
 ===================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
-    function() {
-
-        loadProducts();
-
-    }
+    loadProducts
 );
 
 
@@ -703,7 +411,7 @@ document.addEventListener(
    LOAD PRODUCTS
 ===================================================== */
 
-async function loadProducts() {
+async function loadProducts(){
 
     const list =
         document.getElementById("productList");
@@ -711,51 +419,29 @@ async function loadProducts() {
     list.innerHTML =
         '<div class="loading">Loading products...</div>';
 
-    try {
+    const {data,error} =
+        await supabaseClient
+        .from("products")
+        .select("*")
+        .order("created_at",{ascending:false});
 
-        const { data, error } =
-            await supabaseClient
-                .from("products")
-                .select("*")
-                .order("created_at", {
-                    ascending: false
-                });
-
-
-        if (error) {
-
-            console.error(error);
-
-            list.innerHTML =
-                '<div class="error">❌ Cannot load products.<br>' +
-                error.message +
-                '</div>';
-
-            return;
-
-        }
-
-
-        productsData = data || [];
-
-
-        updateDashboard();
-
-        displayProducts(productsData);
-
-    }
-
-    catch (error) {
+    if(error){
 
         console.error(error);
 
         list.innerHTML =
-            '<div class="error">' +
-            '❌ Database connection error.' +
-            '</div>';
+        '<div class="error">' +
+        '❌ Database error<br><br>' +
+        escapeHTML(error.message) +
+        '</div>';
 
+        return;
     }
 
+    productsData = data || [];
+
+    updateDashboard();
+    displayProducts(productsData);
 }
 
 
@@ -763,16 +449,13 @@ async function loadProducts() {
    DASHBOARD
 ===================================================== */
 
-function updateDashboard() {
+function updateDashboard(){
 
-    let totalStock = 0;
+    let total=0;
+    let low=0;
+    let out=0;
 
-    let lowStock = 0;
-
-    let outStock = 0;
-
-
-    productsData.forEach(function(product) {
+    productsData.forEach(product=>{
 
         const stock =
             Number(product.stock || 0);
@@ -780,609 +463,43 @@ function updateDashboard() {
         const minimum =
             Number(product.minimum_stock || 0);
 
+        total += stock;
 
-        totalStock += stock;
-
-
-        if (stock === 0) {
-
-            outStock++;
-
+        if(stock===0){
+            out++;
         }
-
-        else if (stock <= minimum) {
-
-            lowStock++;
-
+        else if(stock<=minimum){
+            low++;
         }
-
     });
-
 
     document.getElementById(
         "productsCount"
     ).textContent =
         productsData.length;
 
-
     document.getElementById(
         "stockCount"
     ).textContent =
-        totalStock;
-
+        total;
 
     document.getElementById(
         "lowStockCount"
     ).textContent =
-        lowStock;
-
+        low;
 
     document.getElementById(
         "outStockCount"
     ).textContent =
-        outStock;
-
+        out;
 }
 
 
 /* =====================================================
-   DISPLAY PRODUCTS
+   PRODUCT STATUS
 ===================================================== */
 
-function displayProducts(products) {
-
-    const list =
-        document.getElementById("productList");
-
-
-    if (!products || products.length === 0) {
-
-        list.innerHTML =
-            '<div class="empty">' +
-            '📦 No products found.' +
-            '</div>';
-
-        return;
-
-    }
-
-
-    list.innerHTML = "";
-
-
-    products.forEach(function(product) {
-
-        const stock =
-            Number(product.stock || 0);
-
-        const minimum =
-            Number(product.minimum_stock || 0);
-
-
-        let statusText = "";
-
-        let statusClass = "";
-
-
-        if (stock === 0) {
-
-            statusText =
-                "🔴 OUT OF STOCK";
-
-            statusClass =
-                "status-out";
-
-        }
-
-        else if (stock <= minimum) {
-
-            statusText =
-                "🟡 LOW STOCK";
-
-            statusClass =
-                "status-low";
-
-        }
-
-        else {
-
-            statusText =
-                "🟢 IN STOCK";
-
-            statusClass =
-                "status-in";
-
-        }
-
-
-        const div =
-            document.createElement("div");
-
-
-        div.className = "product";
-
-
-        let imageHTML = "";
-
-
-        if (product.image) {
-
-            imageHTML =
-                '<img class="product-image" ' +
-                'src="' +
-                escapeHTML(product.image) +
-                '" ' +
-                'onerror="this.style.display=\'none\'">' ;
-
-        }
-
-
-        div.innerHTML =
-
-            imageHTML +
-
-            '<div class="product-name">' +
-            escapeHTML(
-                product.product_name || "Unnamed Product"
-            ) +
-            '</div>' +
-
-            '<div class="product-info">' +
-
-            '<strong>Barcode:</strong> ' +
-            escapeHTML(product.barcode || "-") +
-
-            '<br>' +
-
-            '<strong>Brand:</strong> ' +
-            escapeHTML(product.brand || "-") +
-
-            '<br>' +
-
-            '<strong>Category:</strong> ' +
-            escapeHTML(product.category || "-") +
-
-            '<br>' +
-
-            '<strong>Unit:</strong> ' +
-            escapeHTML(product.unit || "-") +
-
-            '<br>' +
-
-            '<strong>Stock:</strong> ' +
-            stock +
-
-            '<br>' +
-
-            '<strong>Minimum:</strong> ' +
-            minimum +
-
-            '<br>' +
-
-            '<strong>Price:</strong> ₱' +
-            Number(product.price || 0)
-                .toFixed(2) +
-
-            '<br>' +
-
-            '<span class="status ' +
-            statusClass +
-            '">' +
-            statusText +
-            '</span>' +
-
-            '</div>' +
-
-            '<div class="product-buttons">' +
-
-            '<button ' +
-            'class="blue-button" ' +
-            'onclick="openStockModal(' +
-            product.id +
-            ', \'in\')">' +
-            '📥 STOCK IN' +
-            '</button>' +
-
-            '<button ' +
-            'class="red-button" ' +
-            'onclick="openStockModal(' +
-            product.id +
-            ', \'out\')">' +
-            '📤 STOCK OUT' +
-            '</button>' +
-
-            '<button ' +
-            'onclick="editProduct(' +
-            product.id +
-            ')">' +
-            '✏️ EDIT' +
-            '</button>' +
-
-            '<button ' +
-            'class="gray-button" ' +
-            'onclick="deleteProduct(' +
-            product.id +
-            ')">' +
-            '🗑️ DELETE' +
-            '</button>' +
-
-            '</div>';
-
-
-        list.appendChild(div);
-
-    });
-
-}
-
-
-/* =====================================================
-   FILTER PRODUCTS
-===================================================== */
-
-function filterProducts() {
-
-    const search =
-        document.getElementById(
-            "productSearch"
-        ).value
-        .toLowerCase()
-        .trim();
-
-
-    if (search === "") {
-
-        displayProducts(productsData);
-
-        return;
-
-    }
-
-
-    const filtered =
-        productsData.filter(function(product) {
-
-            return (
-
-                String(
-                    product.barcode || ""
-                )
-                .toLowerCase()
-                .includes(search)
-
-                ||
-
-                String(
-                    product.product_name || ""
-                )
-                .toLowerCase()
-                .includes(search)
-
-                ||
-
-                String(
-                    product.brand || ""
-                )
-                .toLowerCase()
-                .includes(search)
-
-            );
-
-        });
-
-
-    displayProducts(filtered);
-
-}
-
-
-/* =====================================================
-   BARCODE SCANNER
-===================================================== */
-
-async function startScanner() {
-
-    const video =
-        document.getElementById("camera");
-
-    const scanLine =
-        document.getElementById("scanLine");
-
-    const stopButton =
-        document.getElementById("stopButton");
-
-    const result =
-        document.getElementById("result");
-
-
-    result.style.display = "block";
-
-    result.innerHTML =
-        "📷 Starting camera...";
-
-
-    try {
-
-        codeReader =
-            new ZXing.BrowserMultiFormatReader();
-
-
-        video.style.display = "block";
-
-        scanLine.style.display = "block";
-
-        stopButton.style.display = "block";
-
-
-        const devices =
-            await codeReader.listVideoInputDevices();
-
-
-        if (devices.length === 0) {
-
-            throw new Error(
-                "No camera found."
-            );
-
-        }
-
-
-        let selectedDeviceId =
-            devices[
-                devices.length - 1
-            ].deviceId;
-
-
-        for (
-            const device of devices
-        ) {
-
-            const label =
-                (
-                    device.label || ""
-                ).toLowerCase();
-
-
-            if (
-                label.includes("back") ||
-                label.includes("rear") ||
-                label.includes("environment")
-            ) {
-
-                selectedDeviceId =
-                    device.deviceId;
-
-                break;
-
-            }
-
-        }
-
-
-        codeReader.decodeFromVideoDevice(
-
-            selectedDeviceId,
-
-            video,
-
-            function(result, error) {
-
-                if (result) {
-
-                    const barcode =
-                        result.getText();
-
-
-                    document.getElementById(
-                        "barcode"
-                    ).value =
-                        barcode;
-
-
-                    stopScanner();
-
-
-                    searchBarcode();
-
-                }
-
-            }
-
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-
-        result.style.display = "block";
-
-        result.innerHTML =
-
-            '<span class="error">' +
-
-            '❌ Camera could not start.' +
-
-            '</span><br><br>' +
-
-            'Please allow camera permission ' +
-            'and try again.';
-
-    }
-
-}
-
-
-/* =====================================================
-   STOP SCANNER
-===================================================== */
-
-function stopScanner() {
-
-    if (codeReader) {
-
-        try {
-
-            codeReader.reset();
-
-        }
-
-        catch (error) {
-
-            console.log(error);
-
-        }
-
-
-        codeReader = null;
-
-    }
-
-
-    const video =
-        document.getElementById("camera");
-
-    const scanLine =
-        document.getElementById("scanLine");
-
-    const stopButton =
-        document.getElementById("stopButton");
-
-
-    video.style.display = "none";
-
-    scanLine.style.display = "none";
-
-    stopButton.style.display = "none";
-
-}
-
-
-/* =====================================================
-   SEARCH BARCODE
-===================================================== */
-
-async function searchBarcode() {
-
-    const barcode =
-        document.getElementById(
-            "barcode"
-        ).value.trim();
-
-
-    const result =
-        document.getElementById(
-            "result"
-        );
-
-
-    if (barcode === "") {
-
-        result.style.display = "block";
-
-        result.innerHTML =
-
-            '<span class="error">' +
-
-            '⚠️ Please enter a barcode.' +
-
-            '</span>';
-
-        return;
-
-    }
-
-
-    result.style.display = "block";
-
-    result.innerHTML =
-        "🔎 Searching inventory...";
-
-
-    try {
-
-        const { data, error } =
-            await supabaseClient
-                .from("products")
-                .select("*")
-                .eq("barcode", barcode)
-                .maybeSingle();
-
-
-        if (error) {
-
-            console.error(error);
-
-            result.innerHTML =
-
-                '<span class="error">' +
-
-                '❌ Search error<br><br>' +
-
-                escapeHTML(
-                    error.message
-                ) +
-
-                '</span>';
-
-            return;
-
-        }
-
-
-        if (!data) {
-
-            result.innerHTML =
-
-                '<span class="warning">' +
-
-                '⚠️ Product not found.' +
-
-                '</span><br><br>' +
-
-                '<strong>Barcode:</strong> ' +
-                escapeHTML(barcode) +
-
-                '<br><br>' +
-
-                'You can add this product ' +
-                'using the ADD NEW PRODUCT button.';
-
-            return;
-
-        }
-
-
-        showSearchResult(data);
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        result.innerHTML =
-
-            '<span class="error">' +
-            '❌ Database error.' +
-            '</span>';
-
-    }
-
-}
-
-
-/* =====================================================
-   SEARCH RESULT
-===================================================== */
-
-function showSearchResult(product) {
-
-    const result =
-        document.getElementById("result");
-
+function getStatus(product){
 
     const stock =
         Number(product.stock || 0);
@@ -1390,215 +507,569 @@ function showSearchResult(product) {
     const minimum =
         Number(product.minimum_stock || 0);
 
-
-    let statusText = "";
-
-    let statusClass = "";
-
-
-    if (stock === 0) {
-
-        statusText =
-            "🔴 OUT OF STOCK";
-
-        statusClass =
-            "status-out";
-
+    if(stock===0){
+        return {
+            text:"🔴 OUT OF STOCK",
+            class:"status-out"
+        };
     }
 
-    else if (stock <= minimum) {
-
-        statusText =
-            "🟡 LOW STOCK";
-
-        statusClass =
-            "status-low";
-
+    if(stock<=minimum){
+        return {
+            text:"🟡 LOW STOCK",
+            class:"status-low"
+        };
     }
 
-    else {
-
-        statusText =
-            "🟢 IN STOCK";
-
-        statusClass =
-            "status-in";
-
-    }
-
-
-    let imageHTML = "";
-
-
-    if (product.image) {
-
-        imageHTML =
-
-            '<br>' +
-
-            '<img class="product-image" ' +
-
-            'src="' +
-            escapeHTML(product.image) +
-            '" ' +
-
-            'onerror="this.style.display=\'none\'">';
-
-    }
-
-
-    result.innerHTML =
-
-        '<strong>Barcode:</strong> ' +
-        escapeHTML(product.barcode) +
-
-        '<br><br>' +
-
-        imageHTML +
-
-        '<div style="font-size:20px;font-weight:bold;color:#176b3a;">' +
-
-        escapeHTML(
-            product.product_name
-        ) +
-
-        '</div>' +
-
-        '<br>' +
-
-        '<strong>Brand:</strong> ' +
-        escapeHTML(product.brand || "-") +
-
-        '<br>' +
-
-        '<strong>Category:</strong> ' +
-        escapeHTML(product.category || "-") +
-
-        '<br>' +
-
-        '<strong>Stock:</strong> ' +
-        stock +
-
-        '<br>' +
-
-        '<strong>Price:</strong> ₱' +
-        Number(product.price || 0)
-            .toFixed(2) +
-
-        '<br><br>' +
-
-        '<span class="status ' +
-        statusClass +
-        '">' +
-        statusText +
-        '</span>' +
-
-        '<br><br>' +
-
-        '<button onclick="openStockModal(' +
-        product.id +
-        ', \'in\')">' +
-        '📥 STOCK IN' +
-        '</button>' +
-
-        '<button class="red-button" ' +
-        'onclick="openStockModal(' +
-        product.id +
-        ', \'out\')">' +
-        '📤 STOCK OUT' +
-        '</button>' +
-
-        '<button class="blue-button" ' +
-        'onclick="editProduct(' +
-        product.id +
-        ')">' +
-        '✏️ EDIT PRODUCT' +
-        '</button>';
-
+    return {
+        text:"🟢 IN STOCK",
+        class:"status-in"
+    };
 }
 
 
 /* =====================================================
-   OPEN ADD PRODUCT
+   DISPLAY PRODUCTS
 ===================================================== */
 
-function openAddModal() {
+function displayProducts(products){
+
+    const list =
+        document.getElementById(
+            "productList"
+        );
+
+    if(!products.length){
+
+        list.innerHTML =
+        '<div class="empty">' +
+        '📦 No products found.' +
+        '</div>';
+
+        return;
+    }
+
+    list.innerHTML="";
+
+    products.forEach(product=>{
+
+        const status =
+            getStatus(product);
+
+        let image="";
+
+        if(product.image){
+
+            image =
+            '<img class="product-image" ' +
+            'src="' +
+            escapeHTML(product.image) +
+            '" ' +
+            'onerror="this.style.display=\'none\'">';
+        }
+
+        const div =
+            document.createElement("div");
+
+        div.className="product";
+
+        div.innerHTML =
+
+        image +
+
+        '<div class="product-name">' +
+        escapeHTML(
+            product.product_name || "-"
+        ) +
+        '</div>' +
+
+        '<div class="product-info">' +
+
+        '<strong>Barcode:</strong> ' +
+        escapeHTML(product.barcode || "-") +
+
+        '<br><strong>Brand:</strong> ' +
+        escapeHTML(product.brand || "-") +
+
+        '<br><strong>Category:</strong> ' +
+        escapeHTML(product.category || "-") +
+
+        '<br><strong>Unit:</strong> ' +
+        escapeHTML(product.unit || "-") +
+
+        '<br><strong>Stock:</strong> ' +
+        Number(product.stock || 0) +
+
+        '<br><strong>Minimum:</strong> ' +
+        Number(product.minimum_stock || 0) +
+
+        '<br><strong>Price:</strong> ₱' +
+        Number(product.price || 0).toFixed(2) +
+
+        '<br>' +
+
+        '<span class="status ' +
+        status.class +
+        '">' +
+        status.text +
+        '</span>' +
+
+        '</div>' +
+
+        '<div class="product-buttons">' +
+
+        '<button class="blue" ' +
+        'onclick="openStockModal(' +
+        product.id +
+        ',\'in\')">' +
+        '📥 STOCK IN' +
+        '</button>' +
+
+        '<button class="red" ' +
+        'onclick="openStockModal(' +
+        product.id +
+        ',\'out\')">' +
+        '📤 STOCK OUT' +
+        '</button>' +
+
+        '<button onclick="editProduct(' +
+        product.id +
+        ')">' +
+        '✏️ EDIT' +
+        '</button>' +
+
+        '<button class="gray" ' +
+        'onclick="deleteProduct(' +
+        product.id +
+        ')">' +
+        '🗑️ DELETE' +
+        '</button>' +
+
+        '</div>';
+
+        list.appendChild(div);
+    });
+}
+
+
+/* =====================================================
+   FILTER
+===================================================== */
+
+function filterProducts(){
+
+    const q =
+        document.getElementById(
+            "productSearch"
+        ).value
+        .toLowerCase()
+        .trim();
+
+    if(!q){
+
+        displayProducts(productsData);
+        return;
+    }
+
+    const filtered =
+        productsData.filter(product=>{
+
+            return String(
+                product.barcode || ""
+            ).toLowerCase().includes(q)
+
+            ||
+
+            String(
+                product.product_name || ""
+            ).toLowerCase().includes(q)
+
+            ||
+
+            String(
+                product.brand || ""
+            ).toLowerCase().includes(q)
+
+            ||
+
+            String(
+                product.category || ""
+            ).toLowerCase().includes(q);
+        });
+
+    displayProducts(filtered);
+}
+
+
+/* =====================================================
+   BARCODE SCANNER
+===================================================== */
+
+async function startScanner(){
+
+    const video =
+        document.getElementById(
+            "camera"
+        );
+
+    const line =
+        document.getElementById(
+            "scanLine"
+        );
+
+    const stop =
+        document.getElementById(
+            "stopButton"
+        );
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+    result.style.display="block";
+    result.innerHTML =
+        "📷 Starting camera...";
+
+    try{
+
+        codeReader =
+            new ZXing.BrowserMultiFormatReader();
+
+        video.style.display="block";
+        line.style.display="block";
+        stop.style.display="block";
+
+        const devices =
+            await codeReader
+            .listVideoInputDevices();
+
+        if(!devices.length){
+
+            throw new Error(
+                "No camera found."
+            );
+        }
+
+        let deviceId =
+            devices[
+                devices.length-1
+            ].deviceId;
+
+        for(
+            const device of devices
+        ){
+
+            const label =
+                (
+                    device.label || ""
+                ).toLowerCase();
+
+            if(
+                label.includes("back") ||
+                label.includes("rear") ||
+                label.includes("environment")
+            ){
+
+                deviceId =
+                    device.deviceId;
+
+                break;
+            }
+        }
+
+        codeReader.decodeFromVideoDevice(
+            deviceId,
+            video,
+            function(result){
+
+                if(result){
+
+                    const code =
+                        result.getText();
+
+                    document.getElementById(
+                        "barcode"
+                    ).value = code;
+
+                    stopScanner();
+
+                    searchBarcode();
+                }
+            }
+        );
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        result.style.display="block";
+
+        result.innerHTML =
+        '<span class="error">' +
+        '❌ Camera could not start.' +
+        '</span><br><br>' +
+        'Please allow camera permission.';
+    }
+}
+
+
+/* =====================================================
+   STOP SCANNER
+===================================================== */
+
+function stopScanner(){
+
+    if(codeReader){
+
+        try{
+            codeReader.reset();
+        }
+        catch(e){}
+
+        codeReader=null;
+    }
+
+    document.getElementById(
+        "camera"
+    ).style.display="none";
+
+    document.getElementById(
+        "scanLine"
+    ).style.display="none";
+
+    document.getElementById(
+        "stopButton"
+    ).style.display="none";
+}
+
+
+/* =====================================================
+   BARCODE SEARCH
+===================================================== */
+
+async function searchBarcode(){
+
+    const barcode =
+        document.getElementById(
+            "barcode"
+        ).value.trim();
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+    if(!barcode){
+
+        result.style.display="block";
+
+        result.innerHTML =
+        '<span class="error">' +
+        '⚠️ Please enter a barcode.' +
+        '</span>';
+
+        return;
+    }
+
+    result.style.display="block";
+
+    result.innerHTML =
+        "🔎 Searching inventory...";
+
+    const {data,error} =
+        await supabaseClient
+        .from("products")
+        .select("*")
+        .eq("barcode",barcode)
+        .maybeSingle();
+
+    if(error){
+
+        result.innerHTML =
+        '<span class="error">' +
+        '❌ Search error<br><br>' +
+        escapeHTML(error.message) +
+        '</span>';
+
+        return;
+    }
+
+    if(!data){
+
+        result.innerHTML =
+        '<span class="warning">' +
+        '⚠️ Product not found.' +
+        '</span><br><br>' +
+
+        '<strong>Barcode:</strong> ' +
+        escapeHTML(barcode) +
+
+        '<br><br>' +
+
+        'You can add this product ' +
+        'using ADD NEW PRODUCT.';
+
+        return;
+    }
+
+    showSearchResult(data);
+}
+
+
+/* =====================================================
+   SEARCH RESULT
+===================================================== */
+
+function showSearchResult(product){
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+    const status =
+        getStatus(product);
+
+    let image="";
+
+    if(product.image){
+
+        image =
+        '<br><img class="product-image" ' +
+        'src="' +
+        escapeHTML(product.image) +
+        '" ' +
+        'onerror="this.style.display=\'none\'">';
+    }
+
+    result.innerHTML =
+
+    '<div class="product-name">' +
+    escapeHTML(
+        product.product_name
+    ) +
+    '</div>' +
+
+    image +
+
+    '<br>' +
+
+    '<strong>Barcode:</strong> ' +
+    escapeHTML(product.barcode || "-") +
+
+    '<br><strong>Brand:</strong> ' +
+    escapeHTML(product.brand || "-") +
+
+    '<br><strong>Category:</strong> ' +
+    escapeHTML(product.category || "-") +
+
+    '<br><strong>Stock:</strong> ' +
+    Number(product.stock || 0) +
+
+    '<br><strong>Minimum:</strong> ' +
+    Number(product.minimum_stock || 0) +
+
+    '<br><strong>Price:</strong> ₱' +
+    Number(product.price || 0).toFixed(2) +
+
+    '<br><br>' +
+
+    '<span class="status ' +
+    status.class +
+    '">' +
+    status.text +
+    '</span>' +
+
+    '<button class="blue" ' +
+    'onclick="openStockModal(' +
+    product.id +
+    ',\'in\')">' +
+    '📥 STOCK IN' +
+    '</button>' +
+
+    '<button class="red" ' +
+    'onclick="openStockModal(' +
+    product.id +
+    ',\'out\')">' +
+    '📤 STOCK OUT' +
+    '</button>' +
+
+    '<button onclick="editProduct(' +
+    product.id +
+    ')">' +
+    '✏️ EDIT PRODUCT' +
+    '</button>';
+}
+
+
+/* =====================================================
+   ADD PRODUCT
+===================================================== */
+
+function openAddModal(){
 
     document.getElementById(
         "modalTitle"
     ).textContent =
         "➕ Add Product";
 
-
     document.getElementById(
         "editProductId"
-    ).value = "";
-
+    ).value="";
 
     document.getElementById(
         "formBarcode"
-    ).value = "";
-
+    ).value="";
 
     document.getElementById(
         "formProductName"
-    ).value = "";
-
+    ).value="";
 
     document.getElementById(
         "formBrand"
-    ).value = "";
-
+    ).value="";
 
     document.getElementById(
         "formCategory"
-    ).value = "";
-
+    ).value="";
 
     document.getElementById(
         "formUnit"
-    ).value = "";
-
+    ).value="";
 
     document.getElementById(
         "formStock"
-    ).value = "0";
-
+    ).value="0";
 
     document.getElementById(
         "formMinimumStock"
-    ).value = "5";
-
+    ).value="5";
 
     document.getElementById(
         "formPrice"
-    ).value = "0";
-
+    ).value="0";
 
     document.getElementById(
         "formImage"
-    ).value = "";
-
+    ).value="";
 
     document.getElementById(
         "productModal"
-    ).style.display =
-        "flex";
-
+    ).style.display="flex";
 }
 
 
 /* =====================================================
-   CLOSE PRODUCT MODAL
+   CLOSE
 ===================================================== */
 
-function closeModal() {
+function closeModal(){
 
     document.getElementById(
         "productModal"
-    ).style.display =
-        "none";
-
+    ).style.display="none";
 }
 
 
@@ -1606,377 +1077,228 @@ function closeModal() {
    SAVE PRODUCT
 ===================================================== */
 
-async function saveProduct() {
+async function saveProduct(){
 
     const id =
         document.getElementById(
             "editProductId"
         ).value;
 
+    const product={
 
-    const barcode =
+        barcode:
         document.getElementById(
             "formBarcode"
-        ).value.trim();
+        ).value.trim(),
 
-
-    const product_name =
+        product_name:
         document.getElementById(
             "formProductName"
-        ).value.trim();
+        ).value.trim(),
 
-
-    const brand =
+        brand:
         document.getElementById(
             "formBrand"
-        ).value.trim();
+        ).value.trim(),
 
-
-    const category =
+        category:
         document.getElementById(
             "formCategory"
-        ).value.trim();
+        ).value.trim(),
 
-
-    const unit =
+        unit:
         document.getElementById(
             "formUnit"
-        ).value.trim();
+        ).value.trim(),
 
-
-    const stock =
+        stock:
         Number(
             document.getElementById(
                 "formStock"
             ).value || 0
-        );
+        ),
 
-
-    const minimum_stock =
+        minimum_stock:
         Number(
             document.getElementById(
                 "formMinimumStock"
             ).value || 0
-        );
+        ),
 
-
-    const price =
+        price:
         Number(
             document.getElementById(
                 "formPrice"
             ).value || 0
-        );
+        ),
 
-
-    const image =
+        image:
         document.getElementById(
             "formImage"
-        ).value.trim();
+        ).value.trim()
+    };
 
-
-    if (
-        barcode === "" ||
-        product_name === ""
-    ) {
+    if(
+        !product.barcode ||
+        !product.product_name
+    ){
 
         alert(
             "Please enter Barcode and Product Name."
         );
 
         return;
-
     }
 
+    let response;
 
-    if (stock < 0) {
+    if(id){
+
+        response =
+            await supabaseClient
+            .from("products")
+            .update(product)
+            .eq("id",id);
+
+    }
+    else{
+
+        response =
+            await supabaseClient
+            .from("products")
+            .insert([product]);
+    }
+
+    if(response.error){
 
         alert(
-            "Stock cannot be negative."
+            "❌ Error:\n\n" +
+            response.error.message
         );
 
         return;
-
     }
 
+    alert(
+        id
+        ? "✅ Product updated!"
+        : "✅ Product added!"
+    );
 
-    const product = {
+    closeModal();
 
-        barcode:
-            barcode,
-
-        product_name:
-            product_name,
-
-        brand:
-            brand,
-
-        category:
-            category,
-
-        unit:
-            unit,
-
-        stock:
-            stock,
-
-        minimum_stock:
-            minimum_stock,
-
-        price:
-            price,
-
-        image:
-            image
-
-    };
-
-
-    try {
-
-        let response;
-
-
-        if (id) {
-
-            response =
-                await supabaseClient
-                    .from("products")
-                    .update(product)
-                    .eq("id", id);
-
-        }
-
-        else {
-
-            response =
-                await supabaseClient
-                    .from("products")
-                    .insert([product]);
-
-        }
-
-
-        if (response.error) {
-
-            console.error(
-                response.error
-            );
-
-
-            alert(
-                "❌ Error saving product:\n\n" +
-                response.error.message
-            );
-
-            return;
-
-        }
-
-
-        alert(
-            id
-            ? "✅ Product updated successfully!"
-            : "✅ Product added successfully!"
-        );
-
-
-        closeModal();
-
-        await loadProducts();
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        alert(
-            "❌ Database error."
-        );
-
-    }
-
+    loadProducts();
 }
 
 
 /* =====================================================
-   EDIT PRODUCT
+   EDIT
 ===================================================== */
 
-function editProduct(id) {
+function editProduct(id){
 
     const product =
         productsData.find(
-            function(item) {
-
-                return item.id == id;
-
-            }
+            p => p.id == id
         );
 
-
-    if (!product) {
-
-        alert(
-            "Product not found."
-        );
-
-        return;
-
-    }
-
+    if(!product)return;
 
     document.getElementById(
         "modalTitle"
     ).textContent =
         "✏️ Edit Product";
 
-
     document.getElementById(
         "editProductId"
-    ).value =
-        product.id;
-
+    ).value=product.id;
 
     document.getElementById(
         "formBarcode"
-    ).value =
-        product.barcode || "";
-
+    ).value=product.barcode || "";
 
     document.getElementById(
         "formProductName"
-    ).value =
-        product.product_name || "";
-
+    ).value=product.product_name || "";
 
     document.getElementById(
         "formBrand"
-    ).value =
-        product.brand || "";
-
+    ).value=product.brand || "";
 
     document.getElementById(
         "formCategory"
-    ).value =
-        product.category || "";
-
+    ).value=product.category || "";
 
     document.getElementById(
         "formUnit"
-    ).value =
-        product.unit || "";
-
+    ).value=product.unit || "";
 
     document.getElementById(
         "formStock"
-    ).value =
-        product.stock || 0;
-
+    ).value=product.stock || 0;
 
     document.getElementById(
         "formMinimumStock"
-    ).value =
-        product.minimum_stock || 0;
-
+    ).value=product.minimum_stock || 0;
 
     document.getElementById(
         "formPrice"
-    ).value =
-        product.price || 0;
-
+    ).value=product.price || 0;
 
     document.getElementById(
         "formImage"
-    ).value =
-        product.image || "";
-
+    ).value=product.image || "";
 
     document.getElementById(
         "productModal"
-    ).style.display =
-        "flex";
-
+    ).style.display="flex";
 }
 
 
 /* =====================================================
-   DELETE PRODUCT
+   DELETE
 ===================================================== */
 
-async function deleteProduct(id) {
+async function deleteProduct(id){
 
     const product =
         productsData.find(
-            function(item) {
-
-                return item.id == id;
-
-            }
+            p => p.id == id
         );
 
+    if(!product)return;
 
-    if (!product) {
-
+    if(
+        !confirm(
+            "Delete " +
+            product.product_name +
+            "?"
+        )
+    ){
         return;
-
     }
 
+    const {error} =
+        await supabaseClient
+        .from("products")
+        .delete()
+        .eq("id",id);
 
-    const confirmDelete =
-        confirm(
-            "Delete this product?\n\n" +
-            product.product_name
-        );
-
-
-    if (!confirmDelete) {
-
-        return;
-
-    }
-
-
-    try {
-
-        const { error } =
-            await supabaseClient
-                .from("products")
-                .delete()
-                .eq("id", id);
-
-
-        if (error) {
-
-            alert(
-                "❌ Delete failed:\n\n" +
-                error.message
-            );
-
-            return;
-
-        }
-
+    if(error){
 
         alert(
-            "✅ Product deleted."
+            "❌ Delete failed:\n\n" +
+            error.message
         );
 
-
-        await loadProducts();
-
+        return;
     }
 
-    catch (error) {
+    alert(
+        "✅ Product deleted."
+    );
 
-        console.error(error);
-
-        alert(
-            "❌ Database error."
-        );
-
-    }
-
+    loadProducts();
 }
 
 
@@ -1984,122 +1306,83 @@ async function deleteProduct(id) {
    STOCK MODAL
 ===================================================== */
 
-function openStockModal(
-    id,
-    action
-) {
+function openStockModal(id,action){
 
     const product =
         productsData.find(
-            function(item) {
-
-                return item.id == id;
-
-            }
+            p => p.id == id
         );
 
+    if(!product)return;
 
-    if (!product) {
-
-        alert(
-            "Product not found."
-        );
-
-        return;
-
-    }
-
-
-    stockAction =
-        action;
-
+    stockAction=action;
 
     document.getElementById(
         "stockProductId"
-    ).value =
-        id;
-
+    ).value=id;
 
     document.getElementById(
         "stockQuantity"
-    ).value =
-        1;
+    ).value=1;
 
-
-    if (action === "in") {
-
+    const title =
         document.getElementById(
             "stockModalTitle"
-        ).textContent =
+        );
+
+    const button =
+        document.getElementById(
+            "stockConfirmButton"
+        );
+
+    if(action==="in"){
+
+        title.textContent =
             "📥 Stock In - " +
             product.product_name;
 
-        document.getElementById(
-            "stockConfirmButton"
-        ).className =
-            "blue-button";
-
-        document.getElementById(
-            "stockConfirmButton"
-        ).textContent =
+        button.textContent =
             "📥 CONFIRM STOCK IN";
 
+        button.className="blue";
+
     }
+    else{
 
-    else {
-
-        document.getElementById(
-            "stockModalTitle"
-        ).textContent =
+        title.textContent =
             "📤 Stock Out - " +
             product.product_name;
 
-        document.getElementById(
-            "stockConfirmButton"
-        ).className =
-            "red-button";
-
-        document.getElementById(
-            "stockConfirmButton"
-        ).textContent =
+        button.textContent =
             "📤 CONFIRM STOCK OUT";
 
+        button.className="red";
     }
 
+    document.getElementById(
+        "stockModal"
+    ).style.display="flex";
+}
+
+
+function closeStockModal(){
 
     document.getElementById(
         "stockModal"
-    ).style.display =
-        "flex";
-
+    ).style.display="none";
 }
 
 
 /* =====================================================
-   CLOSE STOCK MODAL
+   STOCK IN / OUT
 ===================================================== */
 
-function closeStockModal() {
-
-    document.getElementById(
-        "stockModal"
-    ).style.display =
-        "none";
-
-}
-
-
-/* =====================================================
-   CONFIRM STOCK
-===================================================== */
-
-async function confirmStock() {
+async function confirmStock(){
 
     const id =
         document.getElementById(
             "stockProductId"
         ).value;
-
 
     const quantity =
         Number(
@@ -2108,194 +1391,111 @@ async function confirmStock() {
             ).value || 0
         );
 
-
-    if (
-        quantity <= 0
-    ) {
+    if(quantity<=0){
 
         alert(
-            "Please enter a valid quantity."
+            "Enter a valid quantity."
         );
 
         return;
-
     }
-
 
     const product =
         productsData.find(
-            function(item) {
-
-                return item.id == id;
-
-            }
+            p => p.id == id
         );
 
+    if(!product)return;
 
-    if (!product) {
-
-        alert(
-            "Product not found."
-        );
-
-        return;
-
-    }
-
-
-    const currentStock =
-        Number(
-            product.stock || 0
-        );
-
+    const current =
+        Number(product.stock || 0);
 
     let newStock;
 
-
-    if (stockAction === "in") {
+    if(stockAction==="in"){
 
         newStock =
-            currentStock +
-            quantity;
+            current + quantity;
 
     }
+    else{
 
-    else {
-
-        if (
-            quantity >
-            currentStock
-        ) {
+        if(quantity>current){
 
             alert(
                 "❌ Stock Out cannot be greater than current stock.\n\n" +
                 "Current stock: " +
-                currentStock
+                current
             );
 
             return;
-
         }
-
 
         newStock =
-            currentStock -
-            quantity;
-
+            current - quantity;
     }
 
+    const {error} =
+        await supabaseClient
+        .from("products")
+        .update({
+            stock:newStock
+        })
+        .eq("id",id);
 
-    try {
-
-        const { error } =
-            await supabaseClient
-                .from("products")
-                .update({
-                    stock: newStock
-                })
-                .eq("id", id);
-
-
-        if (error) {
-
-            alert(
-                "❌ Stock update failed:\n\n" +
-                error.message
-            );
-
-            return;
-
-        }
-
+    if(error){
 
         alert(
-
-            stockAction === "in"
-
-            ? "✅ Stock In successful!\n\nNew stock: " +
-              newStock
-
-            : "✅ Stock Out successful!\n\nNew stock: " +
-              newStock
-
+            "❌ Stock update failed:\n\n" +
+            error.message
         );
 
-
-        closeStockModal();
-
-        await loadProducts();
-
-
-        /* Refresh search result if barcode exists */
-
-        const barcode =
-            document.getElementById(
-                "barcode"
-            ).value.trim();
-
-
-        if (barcode !== "") {
-
-            searchBarcode();
-
-        }
-
+        return;
     }
 
-    catch (error) {
+    alert(
+        "✅ Stock updated!\n\n" +
+        "New stock: " +
+        newStock
+    );
 
-        console.error(error);
+    closeStockModal();
 
-        alert(
-            "❌ Database error."
-        );
+    await loadProducts();
 
+    const barcode =
+        document.getElementById(
+            "barcode"
+        ).value.trim();
+
+    if(barcode){
+        searchBarcode();
     }
-
 }
 
 
 /* =====================================================
-   ESCAPE HTML
+   ESCAPE
 ===================================================== */
 
-function escapeHTML(value) {
+function escapeHTML(value){
 
-    if (value === null ||
-        value === undefined) {
-
+    if(
+        value===null ||
+        value===undefined
+    ){
         return "";
-
     }
 
-
     return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
 }
 
 </script>
 
-
 </body>
-
 </html>
