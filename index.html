@@ -18,10 +18,90 @@ body{
     color:#222
 }
 
+/* ================= LOGIN ================= */
+
+.login-screen{
+    position:fixed;
+    inset:0;
+    background:#176b3a;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:9999
+}
+
+.login-box{
+    width:100%;
+    max-width:400px;
+    background:#fff;
+    padding:28px 22px;
+    border-radius:18px;
+    box-shadow:0 5px 25px rgba(0,0,0,.25);
+    text-align:center
+}
+
+.login-icon{
+    font-size:55px
+}
+
+.login-box h2{
+    margin:5px 0 0;
+    color:#176b3a;
+    font-size:24px
+}
+
+.login-subtitle{
+    color:#777;
+    margin:8px 0 20px
+}
+
+.login-box label{
+    text-align:left
+}
+
+.password-wrapper{
+    position:relative
+}
+
+.password-wrapper input{
+    padding-right:55px
+}
+
+.show-password{
+    position:absolute;
+    right:5px;
+    top:7px;
+    width:45px;
+    height:42px;
+    padding:0;
+    margin:0;
+    background:transparent;
+    color:#555;
+    font-size:18px
+}
+
+.login-button{
+    margin-top:18px;
+    background:#176b3a
+}
+
+.login-button:disabled{
+    opacity:.6
+}
+
+#loginMessage{
+    margin-top:15px;
+    font-size:14px;
+    font-weight:bold
+}
+
+/* ================= HEADER ================= */
+
 .header{
     background:#176b3a;
     color:white;
-    padding:20px 15px;
+    padding:18px 15px;
     text-align:center
 }
 
@@ -34,6 +114,20 @@ body{
     margin:6px 0 0;
     font-size:14px
 }
+
+.user-info{
+    margin-top:10px;
+    font-size:12px;
+    opacity:.9
+}
+
+.logout-button{
+    max-width:180px;
+    margin:10px auto 0;
+    background:#555
+}
+
+/* ================= CONTAINER ================= */
 
 .container{
     max-width:800px;
@@ -77,6 +171,8 @@ body{
     margin-top:0
 }
 
+/* ================= INPUT ================= */
+
 input,select{
     width:100%;
     padding:13px;
@@ -102,30 +198,25 @@ button{
     background:#176b3a;
     color:white;
     font-size:16px;
-    font-weight:bold
+    font-weight:bold;
+    cursor:pointer
 }
 
 button:active{
     transform:scale(.98)
 }
 
-.yellow{
-    background:#e6a900
+button:disabled{
+    opacity:.6;
+    cursor:not-allowed
 }
 
-.red{
-    background:#c62828
-}
+.yellow{background:#e6a900}
+.red{background:#c62828}
+.blue{background:#1976d2}
+.gray{background:#666}
 
-.blue{
-    background:#1976d2
-}
-
-.gray{
-    background:#666
-}
-
-/* CAMERA */
+/* ================= CAMERA ================= */
 
 .camera-wrapper{
     position:relative;
@@ -161,15 +252,14 @@ button:active{
     bottom:25%;
     border:3px solid #00ff66;
     border-radius:12px;
-    box-shadow:
-        0 0 0 9999px rgba(0,0,0,.25)
+    box-shadow:0 0 0 9999px rgba(0,0,0,.25)
 }
 
 .scan-line{
     position:absolute;
     left:12%;
     right:12%;
-    top:50%;
+    top:25%;
     height:3px;
     background:red;
     box-shadow:0 0 8px red;
@@ -194,6 +284,17 @@ button:active{
     font-size:13px
 }
 
+.camera-status{
+    margin-top:10px;
+    padding:10px;
+    border-radius:8px;
+    background:#f5f5f5;
+    font-size:14px;
+    text-align:center
+}
+
+/* ================= RESULT ================= */
+
 #result{
     margin-top:15px;
     padding:15px;
@@ -216,6 +317,8 @@ button:active{
     color:#9a6900;
     font-weight:bold
 }
+
+/* ================= PRODUCTS ================= */
 
 .product{
     background:#fafafa;
@@ -283,6 +386,20 @@ button:active{
     padding:10px
 }
 
+.empty{
+    text-align:center;
+    color:#777;
+    padding:20px
+}
+
+.loading{
+    text-align:center;
+    padding:15px;
+    color:#666
+}
+
+/* ================= MODAL ================= */
+
 .modal{
     position:fixed;
     inset:0;
@@ -309,27 +426,6 @@ button:active{
     color:#176b3a
 }
 
-.empty{
-    text-align:center;
-    color:#777;
-    padding:20px
-}
-
-.loading{
-    text-align:center;
-    padding:15px;
-    color:#666
-}
-
-.camera-status{
-    margin-top:10px;
-    padding:10px;
-    border-radius:8px;
-    background:#f5f5f5;
-    font-size:14px;
-    text-align:center
-}
-
 @media(min-width:600px){
     .cards{
         grid-template-columns:repeat(4,1fr)
@@ -340,14 +436,95 @@ button:active{
 
 <body>
 
-<div class="header">
-    <h1>🥫 Can Goods Inventory</h1>
-    <p>Inventory Management System</p>
+<!-- =====================================================
+     LOGIN SCREEN
+===================================================== -->
+
+<div id="loginScreen" class="login-screen">
+
+    <div class="login-box">
+
+        <div class="login-icon">🥫</div>
+
+        <h2>Can Goods Inventory</h2>
+
+        <p class="login-subtitle">
+            Please login to continue
+        </p>
+
+        <label>Email</label>
+
+        <input
+            id="loginEmail"
+            type="email"
+            placeholder="Enter your email"
+            autocomplete="email">
+
+        <label>Password</label>
+
+        <div class="password-wrapper">
+
+            <input
+                id="loginPassword"
+                type="password"
+                placeholder="Enter your password"
+                autocomplete="current-password">
+
+            <button
+                type="button"
+                class="show-password"
+                onclick="togglePassword()">
+                👁️
+            </button>
+
+        </div>
+
+        <button
+            id="loginButton"
+            class="login-button"
+            onclick="loginUser()">
+            🔐 LOGIN
+        </button>
+
+        <div id="loginMessage"></div>
+
+    </div>
+
 </div>
+
+
+<!-- =====================================================
+     MAIN APPLICATION
+===================================================== -->
+
+<div id="app" style="display:none">
+
+<div class="header">
+
+    <h1>🥫 Can Goods Inventory</h1>
+
+    <p>Inventory Management System</p>
+
+    <div
+        id="userInfo"
+        class="user-info">
+    </div>
+
+    <button
+        class="logout-button"
+        onclick="logoutUser()">
+        🚪 LOGOUT
+    </button>
+
+</div>
+
 
 <div class="container">
 
-<!-- DASHBOARD -->
+<!-- =====================================================
+     DASHBOARD
+===================================================== -->
+
 <div class="cards">
 
     <div class="card">
@@ -373,12 +550,17 @@ button:active{
 </div>
 
 
-<!-- SCANNER -->
+<!-- =====================================================
+     BARCODE SCANNER
+===================================================== -->
+
 <div class="section">
 
     <h3>📷 Barcode Scanner</h3>
 
-    <div id="cameraWrapper" class="camera-wrapper">
+    <div
+        id="cameraWrapper"
+        class="camera-wrapper">
 
         <video
             id="camera"
@@ -439,7 +621,10 @@ button:active{
 </div>
 
 
-<!-- PRODUCT MANAGEMENT -->
+<!-- =====================================================
+     PRODUCT MANAGEMENT
+===================================================== -->
+
 <div class="section">
 
     <h3>📦 Product Management</h3>
@@ -451,7 +636,10 @@ button:active{
 </div>
 
 
-<!-- PRODUCT LIST -->
+<!-- =====================================================
+     PRODUCT LIST
+===================================================== -->
+
 <div class="section">
 
     <h3>📋 Product List</h3>
@@ -471,9 +659,13 @@ button:active{
 </div>
 
 </div>
+</div>
 
 
-<!-- PRODUCT MODAL -->
+<!-- =====================================================
+     ADD / EDIT PRODUCT MODAL
+===================================================== -->
+
 <div id="productModal" class="modal">
 
 <div class="modal-box">
@@ -494,14 +686,12 @@ button:active{
     inputmode="numeric"
     placeholder="Barcode number">
 
-
 <label>Product Name *</label>
 
 <input
     id="formProductName"
     type="text"
     placeholder="Example: Mega Sardines">
-
 
 <label>Brand</label>
 
@@ -510,7 +700,6 @@ button:active{
     type="text"
     placeholder="Example: Mega">
 
-
 <label>Category</label>
 
 <input
@@ -518,14 +707,12 @@ button:active{
     type="text"
     placeholder="Example: Sardines">
 
-
 <label>Unit</label>
 
 <input
     id="formUnit"
     type="text"
     placeholder="Example: can">
-
 
 <label>Stock</label>
 
@@ -535,7 +722,6 @@ button:active{
     min="0"
     value="0">
 
-
 <label>Minimum Stock</label>
 
 <input
@@ -543,7 +729,6 @@ button:active{
     type="number"
     min="0"
     value="5">
-
 
 <label>Price</label>
 
@@ -554,14 +739,12 @@ button:active{
     step="0.01"
     value="0">
 
-
 <label>Product Image URL</label>
 
 <input
     id="formImage"
     type="text"
     placeholder="https://example.com/image.jpg">
-
 
 <button onclick="saveProduct()">
     💾 SAVE PRODUCT
@@ -577,7 +760,10 @@ button:active{
 </div>
 
 
-<!-- STOCK MODAL -->
+<!-- =====================================================
+     STOCK MODAL
+===================================================== -->
+
 <div id="stockModal" class="modal">
 
 <div class="modal-box">
@@ -645,13 +831,251 @@ let scanLocked = false;
 
 
 /* =====================================================
-   LOAD
+   START APP
 ===================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
-    loadProducts
+    checkLogin
 );
+
+
+/* =====================================================
+   CHECK LOGIN
+===================================================== */
+
+async function checkLogin(){
+
+    const {
+        data:{
+            session
+        }
+    } =
+        await supabaseClient
+        .auth
+        .getSession();
+
+    if(session){
+
+        showApp(session);
+
+    }
+    else{
+
+        showLogin();
+
+    }
+}
+
+
+/* =====================================================
+   AUTH STATE
+===================================================== */
+
+supabaseClient
+.auth
+.onAuthStateChange(
+    function(event,session){
+
+        if(session){
+
+            showApp(session);
+
+        }
+        else{
+
+            showLogin();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   SHOW LOGIN
+===================================================== */
+
+function showLogin(){
+
+    stopScanner();
+
+    document.getElementById(
+        "loginScreen"
+    ).style.display="flex";
+
+    document.getElementById(
+        "app"
+    ).style.display="none";
+
+}
+
+
+/* =====================================================
+   SHOW APP
+===================================================== */
+
+function showApp(session){
+
+    document.getElementById(
+        "loginScreen"
+    ).style.display="none";
+
+    document.getElementById(
+        "app"
+    ).style.display="block";
+
+    const email =
+        session.user.email || "";
+
+    document.getElementById(
+        "userInfo"
+    ).textContent =
+        "Logged in as: " + email;
+
+    loadProducts();
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+async function loginUser(){
+
+    const email =
+        document.getElementById(
+            "loginEmail"
+        ).value.trim();
+
+    const password =
+        document.getElementById(
+            "loginPassword"
+        ).value;
+
+    const button =
+        document.getElementById(
+            "loginButton"
+        );
+
+    const message =
+        document.getElementById(
+            "loginMessage"
+        );
+
+    if(!email || !password){
+
+        message.style.color="#c62828";
+
+        message.innerHTML =
+            "⚠️ Please enter email and password.";
+
+        return;
+    }
+
+    button.disabled=true;
+
+    button.textContent =
+        "🔄 LOGGING IN...";
+
+    message.innerHTML="";
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .auth
+        .signInWithPassword({
+            email:email,
+            password:password
+        });
+
+    if(error){
+
+        message.style.color="#c62828";
+
+        message.innerHTML =
+            "❌ Login failed.<br>" +
+            escapeHTML(error.message);
+
+        button.disabled=false;
+
+        button.textContent =
+            "🔐 LOGIN";
+
+        return;
+    }
+
+    if(data.session){
+
+        message.style.color="#176b3a";
+
+        message.innerHTML =
+            "✅ Login successful!";
+
+        showApp(data.session);
+
+    }
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+async function logoutUser(){
+
+    stopScanner();
+
+    const {
+        error
+    } =
+        await supabaseClient
+        .auth
+        .signOut();
+
+    if(error){
+
+        alert(
+            "Logout failed:\n\n" +
+            error.message
+        );
+
+        return;
+    }
+
+    showLogin();
+
+}
+
+
+/* =====================================================
+   SHOW / HIDE PASSWORD
+===================================================== */
+
+function togglePassword(){
+
+    const password =
+        document.getElementById(
+            "loginPassword"
+        );
+
+    if(
+        password.type === "password"
+    ){
+
+        password.type="text";
+
+    }
+    else{
+
+        password.type="password";
+
+    }
+
+}
 
 
 /* =====================================================
@@ -661,16 +1085,26 @@ document.addEventListener(
 async function loadProducts(){
 
     const list =
-        document.getElementById("productList");
+        document.getElementById(
+            "productList"
+        );
 
     list.innerHTML =
-        '<div class="loading">Loading products...</div>';
+        '<div class="loading">' +
+        'Loading products...' +
+        '</div>';
 
-    const {data,error} =
+    const {
+        data,
+        error
+    } =
         await supabaseClient
         .from("products")
         .select("*")
-        .order("created_at",{ascending:false});
+        .order(
+            "created_at",
+            {ascending:false}
+        );
 
     if(error){
 
@@ -685,10 +1119,15 @@ async function loadProducts(){
         return;
     }
 
-    productsData = data || [];
+    productsData =
+        data || [];
 
     updateDashboard();
-    displayProducts(productsData);
+
+    displayProducts(
+        productsData
+    );
+
 }
 
 
@@ -702,24 +1141,34 @@ function updateDashboard(){
     let low=0;
     let out=0;
 
-    productsData.forEach(product=>{
+    productsData.forEach(
+        function(product){
 
-        const stock =
-            Number(product.stock || 0);
+            const stock =
+                Number(
+                    product.stock || 0
+                );
 
-        const minimum =
-            Number(product.minimum_stock || 0);
+            const minimum =
+                Number(
+                    product.minimum_stock || 0
+                );
 
-        total += stock;
+            total += stock;
 
-        if(stock===0){
-            out++;
+            if(stock===0){
+
+                out++;
+
+            }
+            else if(stock<=minimum){
+
+                low++;
+
+            }
+
         }
-        else if(stock<=minimum){
-            low++;
-        }
-
-    });
+    );
 
     document.getElementById(
         "productsCount"
@@ -740,20 +1189,25 @@ function updateDashboard(){
         "outStockCount"
     ).textContent =
         out;
+
 }
 
 
 /* =====================================================
-   PRODUCT STATUS
+   STATUS
 ===================================================== */
 
 function getStatus(product){
 
     const stock =
-        Number(product.stock || 0);
+        Number(
+            product.stock || 0
+        );
 
     const minimum =
-        Number(product.minimum_stock || 0);
+        Number(
+            product.minimum_stock || 0
+        );
 
     if(stock===0){
 
@@ -777,6 +1231,7 @@ function getStatus(product){
         text:"🟢 IN STOCK",
         class:"status-in"
     };
+
 }
 
 
@@ -803,110 +1258,136 @@ function displayProducts(products){
 
     list.innerHTML="";
 
-    products.forEach(product=>{
+    products.forEach(
+        function(product){
 
-        const status =
-            getStatus(product);
+            const status =
+                getStatus(product);
 
-        let image="";
+            let image="";
 
-        if(product.image){
+            if(product.image){
 
-            image =
-            '<img class="product-image" ' +
-            'src="' +
-            escapeHTML(product.image) +
-            '" ' +
-            'onerror="this.style.display=\'none\'">';
+                image =
+                '<img ' +
+                'class="product-image" ' +
+                'src="' +
+                escapeHTML(
+                    product.image
+                ) +
+                '" ' +
+                'onerror="' +
+                "this.style.display='none'" +
+                '">';
+
+            }
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+            div.className="product";
+
+            div.innerHTML =
+
+            image +
+
+            '<div class="product-name">' +
+            escapeHTML(
+                product.product_name || "-"
+            ) +
+            '</div>' +
+
+            '<div class="product-info">' +
+
+            '<strong>Barcode:</strong> ' +
+            escapeHTML(
+                product.barcode || "-"
+            ) +
+
+            '<br><strong>Brand:</strong> ' +
+            escapeHTML(
+                product.brand || "-"
+            ) +
+
+            '<br><strong>Category:</strong> ' +
+            escapeHTML(
+                product.category || "-"
+            ) +
+
+            '<br><strong>Unit:</strong> ' +
+            escapeHTML(
+                product.unit || "-"
+            ) +
+
+            '<br><strong>Stock:</strong> ' +
+            Number(
+                product.stock || 0
+            ) +
+
+            '<br><strong>Minimum:</strong> ' +
+            Number(
+                product.minimum_stock || 0
+            ) +
+
+            '<br><strong>Price:</strong> ₱' +
+            Number(
+                product.price || 0
+            ).toFixed(2) +
+
+            '<br>' +
+
+            '<span class="status ' +
+            status.class +
+            '">' +
+            status.text +
+            '</span>' +
+
+            '</div>' +
+
+            '<div class="product-buttons">' +
+
+            '<button class="blue" ' +
+            'onclick="openStockModal(' +
+            product.id +
+            ',\'in\')">' +
+            '📥 STOCK IN' +
+            '</button>' +
+
+            '<button class="red" ' +
+            'onclick="openStockModal(' +
+            product.id +
+            ',\'out\')">' +
+            '📤 STOCK OUT' +
+            '</button>' +
+
+            '<button ' +
+            'onclick="editProduct(' +
+            product.id +
+            ')">' +
+            '✏️ EDIT' +
+            '</button>' +
+
+            '<button ' +
+            'class="gray" ' +
+            'disabled ' +
+            'title="Delete will be enabled after security setup">' +
+            '🗑️ DELETE' +
+            '</button>' +
+
+            '</div>';
+
+            list.appendChild(div);
+
         }
+    );
 
-        const div =
-            document.createElement("div");
-
-        div.className="product";
-
-        div.innerHTML =
-
-        image +
-
-        '<div class="product-name">' +
-        escapeHTML(
-            product.product_name || "-"
-        ) +
-        '</div>' +
-
-        '<div class="product-info">' +
-
-        '<strong>Barcode:</strong> ' +
-        escapeHTML(product.barcode || "-") +
-
-        '<br><strong>Brand:</strong> ' +
-        escapeHTML(product.brand || "-") +
-
-        '<br><strong>Category:</strong> ' +
-        escapeHTML(product.category || "-") +
-
-        '<br><strong>Unit:</strong> ' +
-        escapeHTML(product.unit || "-") +
-
-        '<br><strong>Stock:</strong> ' +
-        Number(product.stock || 0) +
-
-        '<br><strong>Minimum:</strong> ' +
-        Number(product.minimum_stock || 0) +
-
-        '<br><strong>Price:</strong> ₱' +
-        Number(product.price || 0).toFixed(2) +
-
-        '<br>' +
-
-        '<span class="status ' +
-        status.class +
-        '">' +
-        status.text +
-        '</span>' +
-
-        '</div>' +
-
-        '<div class="product-buttons">' +
-
-        '<button class="blue" ' +
-        'onclick="openStockModal(' +
-        product.id +
-        ',\'in\')">' +
-        '📥 STOCK IN' +
-        '</button>' +
-
-        '<button class="red" ' +
-        'onclick="openStockModal(' +
-        product.id +
-        ',\'out\')">' +
-        '📤 STOCK OUT' +
-        '</button>' +
-
-        '<button onclick="editProduct(' +
-        product.id +
-        ')">' +
-        '✏️ EDIT' +
-        '</button>' +
-
-        '<button class="gray" ' +
-        'onclick="deleteProduct(' +
-        product.id +
-        ')">' +
-        '🗑️ DELETE' +
-        '</button>' +
-
-        '</div>';
-
-        list.appendChild(div);
-
-    });
 }
 
 
 /* =====================================================
-   FILTER
+   FILTER PRODUCTS
 ===================================================== */
 
 function filterProducts(){
@@ -920,65 +1401,91 @@ function filterProducts(){
 
     if(!q){
 
-        displayProducts(productsData);
+        displayProducts(
+            productsData
+        );
+
         return;
     }
 
     const filtered =
-        productsData.filter(product=>{
+        productsData.filter(
+            function(product){
 
-            return String(
-                product.barcode || ""
-            ).toLowerCase().includes(q)
+                return String(
+                    product.barcode || ""
+                )
+                .toLowerCase()
+                .includes(q)
 
-            ||
+                ||
 
-            String(
-                product.product_name || ""
-            ).toLowerCase().includes(q)
+                String(
+                    product.product_name || ""
+                )
+                .toLowerCase()
+                .includes(q)
 
-            ||
+                ||
 
-            String(
-                product.brand || ""
-            ).toLowerCase().includes(q)
+                String(
+                    product.brand || ""
+                )
+                .toLowerCase()
+                .includes(q)
 
-            ||
+                ||
 
-            String(
-                product.category || ""
-            ).toLowerCase().includes(q);
+                String(
+                    product.category || ""
+                )
+                .toLowerCase()
+                .includes(q);
 
-        });
+            }
+        );
 
     displayProducts(filtered);
+
 }
 
 
 /* =====================================================
-   IMPROVED BARCODE SCANNER
+   START BARCODE SCANNER
 ===================================================== */
 
 async function startScanner(){
 
     if(scannerRunning){
+
         return;
+
     }
 
     const video =
-        document.getElementById("camera");
+        document.getElementById(
+            "camera"
+        );
 
     const wrapper =
-        document.getElementById("cameraWrapper");
+        document.getElementById(
+            "cameraWrapper"
+        );
 
     const stopButton =
-        document.getElementById("stopButton");
+        document.getElementById(
+            "stopButton"
+        );
 
     const status =
-        document.getElementById("cameraStatus");
+        document.getElementById(
+            "cameraStatus"
+        );
 
     const result =
-        document.getElementById("result");
+        document.getElementById(
+            "result"
+        );
 
     result.style.display="block";
 
@@ -995,8 +1502,9 @@ async function startScanner(){
         if(!window.isSecureContext){
 
             throw new Error(
-                "Camera requires a secure HTTPS connection."
+                "Camera requires HTTPS."
             );
+
         }
 
         if(
@@ -1005,31 +1513,46 @@ async function startScanner(){
         ){
 
             throw new Error(
-                "Your browser does not support camera access."
+                "Camera is not supported by this browser."
             );
+
         }
 
-        /* First request camera permission */
-        const permissionStream =
-            await navigator.mediaDevices.getUserMedia({
+        /*
+         * Request camera permission first.
+         */
+
+        const stream =
+            await navigator.mediaDevices
+            .getUserMedia({
+
                 video:{
                     facingMode:{
                         ideal:"environment"
                     }
                 },
+
                 audio:false
+
             });
 
-        /* Stop temporary permission stream */
-        permissionStream
-            .getTracks()
-            .forEach(track=>track.stop());
+        /*
+         * Release temporary stream.
+         */
+
+        stream
+        .getTracks()
+        .forEach(
+            function(track){
+                track.stop();
+            }
+        );
 
         codeReader =
             new ZXing.BrowserMultiFormatReader();
 
         wrapper.style.display="block";
-        video.style.display="block";
+
         stopButton.style.display="block";
 
         scannerRunning=true;
@@ -1040,16 +1563,12 @@ async function startScanner(){
         result.innerHTML =
             "🔎 Looking for barcode...";
 
-        /*
-         * Use rear/environment camera first.
-         * This works better on many Android phones.
-         */
-
         const constraints = {
 
             audio:false,
 
             video:{
+
                 facingMode:{
                     ideal:"environment"
                 },
@@ -1061,46 +1580,54 @@ async function startScanner(){
                 height:{
                     ideal:720
                 }
+
             }
 
         };
 
-        await codeReader.decodeFromConstraints(
+        await codeReader
+        .decodeFromConstraints(
             constraints,
             video,
-            function(result, error){
+            function(
+                scanResult,
+                scanError
+            ){
 
-                if(result && !scanLocked){
+                if(
+                    scanResult &&
+                    !scanLocked
+                ){
 
                     scanLocked=true;
 
                     const code =
-                        result.getText();
-
-                    console.log(
-                        "Barcode detected:",
-                        code
-                    );
+                        scanResult.getText();
 
                     document.getElementById(
                         "barcode"
-                    ).value=code;
+                    ).value =
+                        code;
 
                     status.innerHTML =
                         "✅ Barcode detected: " +
                         escapeHTML(code);
 
-                    resultMessage(
-                        "success",
-                        "✅ Barcode detected!"
-                    );
+                    result.innerHTML =
+                        '<span class="success">' +
+                        '✅ Barcode detected!<br>' +
+                        escapeHTML(code) +
+                        '</span>';
 
                     setTimeout(
                         function(){
+
                             stopScanner();
+
                             searchBarcode();
+
                         },
-                        300
+                        400
                     );
 
                 }
@@ -1129,6 +1656,7 @@ async function startScanner(){
         }
 
         wrapper.style.display="none";
+
         stopButton.style.display="none";
 
         status.innerHTML =
@@ -1137,49 +1665,35 @@ async function startScanner(){
         let message =
             "❌ Camera could not start.";
 
-        if(error && error.name){
+        if(
+            error &&
+            error.name ===
+            "NotAllowedError"
+        ){
 
-            if(error.name==="NotAllowedError"){
+            message =
+            "❌ Camera permission was denied.<br><br>" +
+            "Please allow camera permission in Chrome.";
 
-                message =
-                "❌ Camera permission was denied.<br><br>" +
-                "Please allow Camera permission in Chrome.";
+        }
+        else if(
+            error &&
+            error.name ===
+            "NotFoundError"
+        ){
 
-            }
-            else if(
-                error.name==="NotFoundError"
-            ){
+            message =
+            "❌ No camera was found.";
 
-                message =
-                "❌ No camera was found on this device.";
+        }
+        else if(
+            error &&
+            error.name ===
+            "NotReadableError"
+        ){
 
-            }
-            else if(
-                error.name==="NotReadableError"
-            ){
-
-                message =
-                "❌ Camera is being used by another app.";
-
-            }
-            else if(
-                error.name==="OverconstrainedError"
-            ){
-
-                message =
-                "❌ Camera settings are not supported. " +
-                "Please try again.";
-
-            }
-            else{
-
-                message =
-                "❌ Camera error:<br><br>" +
-                escapeHTML(
-                    error.message || String(error)
-                );
-
-            }
+            message =
+            "❌ Camera is being used by another app.";
 
         }
         else{
@@ -1187,7 +1701,8 @@ async function startScanner(){
             message =
             "❌ Camera error:<br><br>" +
             escapeHTML(
-                error.message || String(error)
+                error.message ||
+                String(error)
             );
 
         }
@@ -1198,27 +1713,9 @@ async function startScanner(){
             '<span class="error">' +
             message +
             '</span>';
+
     }
-}
 
-
-/* =====================================================
-   RESULT MESSAGE
-===================================================== */
-
-function resultMessage(type,message){
-
-    const result =
-        document.getElementById("result");
-
-    result.style.display="block";
-
-    result.innerHTML =
-        '<span class="' +
-        type +
-        '">' +
-        message +
-        '</span>';
 }
 
 
@@ -1229,48 +1726,47 @@ function resultMessage(type,message){
 function stopScanner(){
 
     scannerRunning=false;
+
     scanLocked=false;
 
     if(codeReader){
 
         try{
+
             codeReader.reset();
-        }
-        catch(e){
-
-            console.log(
-                "Scanner reset:",
-                e
-            );
 
         }
+        catch(e){}
 
         codeReader=null;
+
     }
 
     const video =
-        document.getElementById("camera");
+        document.getElementById(
+            "camera"
+        );
 
-    /*
-     * Stop any active video tracks.
-     * This is important on Android so the
-     * camera is completely released.
-     */
-
-    if(video && video.srcObject){
+    if(
+        video &&
+        video.srcObject
+    ){
 
         try{
 
             video.srcObject
-                .getTracks()
-                .forEach(
-                    track=>track.stop()
-                );
+            .getTracks()
+            .forEach(
+                function(track){
+                    track.stop();
+                }
+            );
 
         }
         catch(e){}
 
         video.srcObject=null;
+
     }
 
     document.getElementById(
@@ -1285,11 +1781,12 @@ function stopScanner(){
         "cameraStatus"
     ).innerHTML =
         "Camera is stopped.";
+
 }
 
 
 /* =====================================================
-   BARCODE SEARCH
+   SEARCH BARCODE
 ===================================================== */
 
 async function searchBarcode(){
@@ -1297,7 +1794,8 @@ async function searchBarcode(){
     const barcode =
         document.getElementById(
             "barcode"
-        ).value.trim();
+        ).value
+        .trim();
 
     const result =
         document.getElementById(
@@ -1321,7 +1819,10 @@ async function searchBarcode(){
     result.innerHTML =
         "🔎 Searching inventory...";
 
-    const {data,error} =
+    const {
+        data,
+        error
+    } =
         await supabaseClient
         .from("products")
         .select("*")
@@ -1333,7 +1834,9 @@ async function searchBarcode(){
         result.innerHTML =
         '<span class="error">' +
         '❌ Search error<br><br>' +
-        escapeHTML(error.message) +
+        escapeHTML(
+            error.message
+        ) +
         '</span>';
 
         return;
@@ -1358,6 +1861,7 @@ async function searchBarcode(){
     }
 
     showSearchResult(data);
+
 }
 
 
@@ -1380,18 +1884,25 @@ function showSearchResult(product){
     if(product.image){
 
         image =
-        '<br><img class="product-image" ' +
+        '<br><img ' +
+        'class="product-image" ' +
         'src="' +
-        escapeHTML(product.image) +
+        escapeHTML(
+            product.image
+        ) +
         '" ' +
-        'onerror="this.style.display=\'none\'">';
+        'onerror="' +
+        "this.style.display='none'" +
+        '">';
+
     }
 
     result.innerHTML =
 
     '<div class="product-name">' +
     escapeHTML(
-        product.product_name
+        product.product_name ||
+        "-"
     ) +
     '</div>' +
 
@@ -1400,22 +1911,34 @@ function showSearchResult(product){
     '<br>' +
 
     '<strong>Barcode:</strong> ' +
-    escapeHTML(product.barcode || "-") +
+    escapeHTML(
+        product.barcode || "-"
+    ) +
 
     '<br><strong>Brand:</strong> ' +
-    escapeHTML(product.brand || "-") +
+    escapeHTML(
+        product.brand || "-"
+    ) +
 
     '<br><strong>Category:</strong> ' +
-    escapeHTML(product.category || "-") +
+    escapeHTML(
+        product.category || "-"
+    ) +
 
     '<br><strong>Stock:</strong> ' +
-    Number(product.stock || 0) +
+    Number(
+        product.stock || 0
+    ) +
 
     '<br><strong>Minimum:</strong> ' +
-    Number(product.minimum_stock || 0) +
+    Number(
+        product.minimum_stock || 0
+    ) +
 
     '<br><strong>Price:</strong> ₱' +
-    Number(product.price || 0).toFixed(2) +
+    Number(
+        product.price || 0
+    ).toFixed(2) +
 
     '<br><br>' +
 
@@ -1444,11 +1967,12 @@ function showSearchResult(product){
     ')">' +
     '✏️ EDIT PRODUCT' +
     '</button>';
+
 }
 
 
 /* =====================================================
-   ADD PRODUCT
+   ADD PRODUCT MODAL
 ===================================================== */
 
 function openAddModal(){
@@ -1501,11 +2025,12 @@ function openAddModal(){
     document.getElementById(
         "productModal"
     ).style.display="flex";
+
 }
 
 
 /* =====================================================
-   CLOSE MODAL
+   CLOSE PRODUCT MODAL
 ===================================================== */
 
 function closeModal(){
@@ -1513,6 +2038,7 @@ function closeModal(){
     document.getElementById(
         "productModal"
     ).style.display="none";
+
 }
 
 
@@ -1579,6 +2105,7 @@ async function saveProduct(){
         document.getElementById(
             "formImage"
         ).value.trim()
+
     };
 
     if(
@@ -1609,7 +2136,9 @@ async function saveProduct(){
         response =
             await supabaseClient
             .from("products")
-            .insert([product]);
+            .insert([
+                product
+            ]);
 
     }
 
@@ -1631,19 +2160,22 @@ async function saveProduct(){
 
     closeModal();
 
-    loadProducts();
+    await loadProducts();
+
 }
 
 
 /* =====================================================
-   EDIT
+   EDIT PRODUCT
 ===================================================== */
 
 function editProduct(id){
 
     const product =
         productsData.find(
-            p => p.id == id
+            function(p){
+                return p.id == id;
+            }
         );
 
     if(!product)return;
@@ -1655,95 +2187,58 @@ function editProduct(id){
 
     document.getElementById(
         "editProductId"
-    ).value=product.id;
+    ).value =
+        product.id;
 
     document.getElementById(
         "formBarcode"
-    ).value=product.barcode || "";
+    ).value =
+        product.barcode || "";
 
     document.getElementById(
         "formProductName"
-    ).value=product.product_name || "";
+    ).value =
+        product.product_name || "";
 
     document.getElementById(
         "formBrand"
-    ).value=product.brand || "";
+    ).value =
+        product.brand || "";
 
     document.getElementById(
         "formCategory"
-    ).value=product.category || "";
+    ).value =
+        product.category || "";
 
     document.getElementById(
         "formUnit"
-    ).value=product.unit || "";
+    ).value =
+        product.unit || "";
 
     document.getElementById(
         "formStock"
-    ).value=product.stock || 0;
+    ).value =
+        product.stock || 0;
 
     document.getElementById(
         "formMinimumStock"
-    ).value=product.minimum_stock || 0;
+    ).value =
+        product.minimum_stock || 0;
 
     document.getElementById(
         "formPrice"
-    ).value=product.price || 0;
+    ).value =
+        product.price || 0;
 
     document.getElementById(
         "formImage"
-    ).value=product.image || "";
+    ).value =
+        product.image || "";
 
     document.getElementById(
         "productModal"
     ).style.display="flex";
-}
 
-
-/* =====================================================
-   DELETE
-===================================================== */
-
-async function deleteProduct(id){
-
-    const product =
-        productsData.find(
-            p => p.id == id
-        );
-
-    if(!product)return;
-
-    if(
-        !confirm(
-            "Delete " +
-            product.product_name +
-            "?"
-        )
-    ){
-
-        return;
-    }
-
-    const {error} =
-        await supabaseClient
-        .from("products")
-        .delete()
-        .eq("id",id);
-
-    if(error){
-
-        alert(
-            "❌ Delete failed:\n\n" +
-            error.message
-        );
-
-        return;
-    }
-
-    alert(
-        "✅ Product deleted."
-    );
-
-    loadProducts();
 }
 
 
@@ -1755,7 +2250,9 @@ function openStockModal(id,action){
 
     const product =
         productsData.find(
-            p => p.id == id
+            function(p){
+                return p.id == id;
+            }
         );
 
     if(!product)return;
@@ -1783,4 +2280,199 @@ function openStockModal(id,action){
     if(action==="in"){
 
         title.textContent =
-            "📥 Stock In - "
+            "📥 Stock In - " +
+            product.product_name;
+
+        button.textContent =
+            "📥 CONFIRM STOCK IN";
+
+        button.className="blue";
+
+    }
+    else{
+
+        title.textContent =
+            "📤 Stock Out - " +
+            product.product_name;
+
+        button.textContent =
+            "📤 CONFIRM STOCK OUT";
+
+        button.className="red";
+
+    }
+
+    document.getElementById(
+        "stockModal"
+    ).style.display="flex";
+
+}
+
+
+/* =====================================================
+   CLOSE STOCK MODAL
+===================================================== */
+
+function closeStockModal(){
+
+    document.getElementById(
+        "stockModal"
+    ).style.display="none";
+
+}
+
+
+/* =====================================================
+   STOCK IN / OUT
+===================================================== */
+
+async function confirmStock(){
+
+    const id =
+        document.getElementById(
+            "stockProductId"
+        ).value;
+
+    const quantity =
+        Number(
+            document.getElementById(
+                "stockQuantity"
+            ).value || 0
+        );
+
+    if(quantity<=0){
+
+        alert(
+            "Enter a valid quantity."
+        );
+
+        return;
+    }
+
+    const product =
+        productsData.find(
+            function(p){
+                return p.id == id;
+            }
+        );
+
+    if(!product)return;
+
+    const current =
+        Number(
+            product.stock || 0
+        );
+
+    let newStock;
+
+    if(stockAction==="in"){
+
+        newStock =
+            current + quantity;
+
+    }
+    else{
+
+        if(quantity>current){
+
+            alert(
+                "❌ Stock Out cannot be greater than current stock.\n\n" +
+                "Current stock: " +
+                current
+            );
+
+            return;
+        }
+
+        newStock =
+            current - quantity;
+
+    }
+
+    const {
+        error
+    } =
+        await supabaseClient
+        .from("products")
+        .update({
+            stock:newStock
+        })
+        .eq("id",id);
+
+    if(error){
+
+        alert(
+            "❌ Stock update failed:\n\n" +
+            error.message
+        );
+
+        return;
+    }
+
+    alert(
+        "✅ Stock updated!\n\n" +
+        "New stock: " +
+        newStock
+    );
+
+    closeStockModal();
+
+    await loadProducts();
+
+    const barcode =
+        document.getElementById(
+            "barcode"
+        ).value.trim();
+
+    if(barcode){
+
+        searchBarcode();
+
+    }
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHTML(value){
+
+    if(
+        value===null ||
+        value===undefined
+    ){
+
+        return "";
+
+    }
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+</script>
+
+</body>
+</html>
