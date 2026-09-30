@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Can Goods Inventory</title>
 
 <script src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js"></script>
@@ -10,795 +10,198 @@
 
 <style>
 *{box-sizing:border-box}
-
-body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#f1f5f1;
-    color:#222
-}
-
-/* ================= LOGIN ================= */
-
-.login-screen{
-    position:fixed;
-    inset:0;
-    background:#176b3a;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    z-index:9999
-}
-
-.login-box{
-    width:100%;
-    max-width:400px;
-    background:#fff;
-    padding:28px 22px;
-    border-radius:18px;
-    box-shadow:0 5px 25px rgba(0,0,0,.25);
-    text-align:center
-}
-
-.login-icon{
-    font-size:55px
-}
-
-.login-box h2{
-    margin:5px 0 0;
-    color:#176b3a;
-    font-size:24px
-}
-
-.login-subtitle{
-    color:#777;
-    margin:8px 0 20px
-}
-
-.login-box label{
-    text-align:left
-}
-
-.password-wrapper{
-    position:relative
-}
-
-.password-wrapper input{
-    padding-right:55px
-}
-
-.show-password{
-    position:absolute;
-    right:5px;
-    top:7px;
-    width:45px;
-    height:42px;
-    padding:0;
-    margin:0;
-    background:transparent;
-    color:#555;
-    font-size:18px
-}
-
-.login-button{
-    margin-top:18px;
-    background:#176b3a
-}
-
-.login-button:disabled{
-    opacity:.6
-}
-
-#loginMessage{
-    margin-top:15px;
-    font-size:14px;
-    font-weight:bold
-}
-
-/* ================= HEADER ================= */
-
-.header{
-    background:#176b3a;
-    color:white;
-    padding:18px 15px;
-    text-align:center
-}
-
-.header h1{
-    margin:0;
-    font-size:25px
-}
-
-.header p{
-    margin:6px 0 0;
-    font-size:14px
-}
-
-.user-info{
-    margin-top:10px;
-    font-size:12px;
-    opacity:.9
-}
-
-.logout-button{
-    max-width:180px;
-    margin:10px auto 0;
-    background:#555
-}
-
-/* ================= CONTAINER ================= */
-
-.container{
-    max-width:800px;
-    margin:auto;
-    padding:15px
-}
-
-.cards{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px
-}
-
-.card{
-    background:white;
-    padding:18px;
-    border-radius:14px;
-    box-shadow:0 2px 8px rgba(0,0,0,.08)
-}
-
-.card h2{
-    margin:0;
-    color:#176b3a;
-    font-size:28px
-}
-
-.card p{
-    margin:5px 0 0;
-    color:#666
-}
-
-.section{
-    background:white;
-    margin-top:15px;
-    padding:18px;
-    border-radius:14px;
-    box-shadow:0 2px 8px rgba(0,0,0,.08)
-}
-
-.section h3{
-    margin-top:0
-}
-
-/* ================= INPUT ================= */
-
-input,select{
-    width:100%;
-    padding:13px;
-    margin-top:7px;
-    border:1px solid #ccc;
-    border-radius:8px;
-    font-size:16px;
-    background:white
-}
-
-label{
-    display:block;
-    margin-top:12px;
-    font-weight:bold
-}
-
-button{
-    width:100%;
-    padding:13px;
-    margin-top:10px;
-    border:0;
-    border-radius:8px;
-    background:#176b3a;
-    color:white;
-    font-size:16px;
-    font-weight:bold;
-    cursor:pointer
-}
-
-button:active{
-    transform:scale(.98)
-}
-
-button:disabled{
-    opacity:.6;
-    cursor:not-allowed
-}
-
-.yellow{background:#e6a900}
-.red{background:#c62828}
-.blue{background:#1976d2}
-.gray{background:#666}
-
-/* ================= CAMERA ================= */
-
-.camera-wrapper{
-    position:relative;
-    width:100%;
-    background:#000;
-    border-radius:12px;
-    overflow:hidden;
-    margin-top:10px;
-    display:none
-}
-
-#camera{
-    width:100%;
-    height:auto;
-    min-height:250px;
-    max-height:420px;
-    object-fit:cover;
-    display:block;
-    background:#000
-}
-
-.scan-overlay{
-    position:absolute;
-    inset:0;
-    pointer-events:none
-}
-
-.scan-frame{
-    position:absolute;
-    left:12%;
-    right:12%;
-    top:25%;
-    bottom:25%;
-    border:3px solid #00ff66;
-    border-radius:12px;
-    box-shadow:0 0 0 9999px rgba(0,0,0,.25)
-}
-
-.scan-line{
-    position:absolute;
-    left:12%;
-    right:12%;
-    top:25%;
-    height:3px;
-    background:red;
-    box-shadow:0 0 8px red;
-    animation:scanMove 2s linear infinite
-}
-
-@keyframes scanMove{
-    0%{top:25%}
-    50%{top:75%}
-    100%{top:25%}
-}
-
-.camera-message{
-    text-align:center;
-    color:white;
-    background:rgba(0,0,0,.65);
-    position:absolute;
-    left:0;
-    right:0;
-    bottom:0;
-    padding:8px;
-    font-size:13px
-}
-
-.camera-status{
-    margin-top:10px;
-    padding:10px;
-    border-radius:8px;
-    background:#f5f5f5;
-    font-size:14px;
-    text-align:center
-}
-
-/* ================= RESULT ================= */
-
-#result{
-    margin-top:15px;
-    padding:15px;
-    border-radius:10px;
-    background:#eef7ef;
-    display:none
-}
-
-.success{
-    color:#176b3a;
-    font-weight:bold
-}
-
-.error{
-    color:#c62828;
-    font-weight:bold
-}
-
-.warning{
-    color:#9a6900;
-    font-weight:bold
-}
-
-/* ================= PRODUCTS ================= */
-
-.product{
-    background:#fafafa;
-    border:1px solid #ddd;
-    border-radius:12px;
-    padding:12px;
-    margin-top:12px
-}
-
-.product-image{
-    width:100%;
-    max-height:180px;
-    object-fit:contain;
-    border-radius:8px;
-    background:#eee;
-    margin-bottom:10px
-}
-
-.product-name{
-    font-size:18px;
-    font-weight:bold;
-    color:#176b3a
-}
-
-.product-info{
-    margin-top:5px;
-    font-size:14px;
-    line-height:1.6
-}
-
-.status{
-    display:inline-block;
-    padding:5px 9px;
-    border-radius:6px;
-    font-size:13px;
-    font-weight:bold;
-    margin-top:5px
-}
-
-.status-in{
-    background:#d8f3dc;
-    color:#176b3a
-}
-
-.status-low{
-    background:#fff0c2;
-    color:#9a6900
-}
-
-.status-out{
-    background:#ffd9d9;
-    color:#c62828
-}
-
-.product-buttons{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:7px;
-    margin-top:10px
-}
-
-.product-buttons button{
-    margin-top:0;
-    font-size:13px;
-    padding:10px
-}
-
-.empty{
-    text-align:center;
-    color:#777;
-    padding:20px
-}
-
-.loading{
-    text-align:center;
-    padding:15px;
-    color:#666
-}
-
-/* ================= MODAL ================= */
-
-.modal{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.6);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:15px;
-    z-index:1000
-}
-
-.modal-box{
-    background:white;
-    width:100%;
-    max-width:520px;
-    max-height:90vh;
-    overflow-y:auto;
-    border-radius:15px;
-    padding:20px
-}
-
-.modal-box h2{
-    margin-top:0;
-    color:#176b3a
-}
-
-@media(min-width:600px){
-    .cards{
-        grid-template-columns:repeat(4,1fr)
-    }
-}
+body{margin:0;font-family:Arial,sans-serif;background:#f1f5f1;color:#222}
+.header{background:#176b3a;color:#fff;padding:18px 15px;text-align:center}
+.header h1{margin:0;font-size:25px}.header p{margin:6px 0;font-size:14px}
+.user-info{font-size:12px;opacity:.9}
+.container{max-width:850px;margin:auto;padding:15px}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.card,.section{background:#fff;border-radius:14px;box-shadow:0 2px 8px #0001}
+.card{padding:18px}.card h2{margin:0;color:#176b3a;font-size:28px}.card p{margin:5px 0;color:#666}
+.section{margin-top:15px;padding:18px}.section h3{margin-top:0}
+input{width:100%;padding:13px;margin-top:7px;border:1px solid #ccc;border-radius:8px;font-size:16px}
+label{display:block;margin-top:12px;font-weight:bold}
+button{width:100%;padding:13px;margin-top:10px;border:0;border-radius:8px;background:#176b3a;color:#fff;font-size:16px;font-weight:bold}
+button:disabled{opacity:.55}.yellow{background:#e6a900}.red{background:#c62828}.blue{background:#1976d2}.gray{background:#666}
+.login-screen{position:fixed;inset:0;background:#176b3a;display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999}
+.login-box{width:100%;max-width:400px;background:#fff;padding:28px 22px;border-radius:18px;box-shadow:0 5px 25px #0004;text-align:center}
+.login-icon{font-size:55px}.login-box h2{margin:5px 0;color:#176b3a}.login-subtitle{color:#777}
+.password-wrap{position:relative}.password-wrap button{position:absolute;right:5px;top:7px;width:45px;margin:0;padding:9px;background:transparent;color:#555}
+#loginMessage{margin-top:15px;font-size:14px;font-weight:bold}
+.logout{max-width:180px;margin:10px auto 0;background:#555}
+.camera-wrap{position:relative;background:#000;border-radius:12px;overflow:hidden;margin-top:10px;display:none}
+#camera{width:100%;max-height:420px;display:block;object-fit:cover}
+.scan-frame{position:absolute;left:12%;right:12%;top:25%;bottom:25%;border:3px solid #00ff66;border-radius:12px}
+.scan-line{position:absolute;left:12%;right:12%;top:25%;height:3px;background:red;animation:scan 2s linear infinite}
+@keyframes scan{0%{top:25%}50%{top:75%}100%{top:25%}}
+.camera-msg{position:absolute;bottom:0;width:100%;background:#000a;color:#fff;text-align:center;padding:8px;font-size:13px}
+.camera-status{text-align:center;background:#f5f5f5;padding:9px;margin-top:8px;border-radius:8px;font-size:13px}
+#result{display:none;margin-top:15px;padding:15px;background:#eef7ef;border-radius:10px}
+.error{color:#c62828;font-weight:bold}.warning{color:#9a6900;font-weight:bold}.success{color:#176b3a;font-weight:bold}
+.product{background:#fafafa;border:1px solid #ddd;border-radius:12px;padding:12px;margin-top:12px}
+.product-image{width:100%;max-height:180px;object-fit:contain;border-radius:8px;background:#eee}
+.product-name{font-size:18px;font-weight:bold;color:#176b3a}
+.product-info{font-size:14px;line-height:1.6;margin-top:5px}
+.status{display:inline-block;padding:5px 9px;border-radius:6px;font-size:13px;font-weight:bold;margin-top:5px}
+.status-in{background:#d8f3dc;color:#176b3a}.status-low{background:#fff0c2;color:#9a6900}.status-out{background:#ffd9d9;color:#c62828}
+.product-buttons{display:grid;grid-template-columns:1fr 1fr;gap:7px}.product-buttons button{font-size:13px;padding:10px}
+.history-row{border:1px solid #ddd;border-radius:10px;padding:12px;margin-top:10px;background:#fafafa}
+.history-in{color:#176b3a;font-weight:bold}.history-out{color:#c62828;font-weight:bold}
+.modal{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;padding:15px;z-index:1000}
+.modal-box{background:#fff;width:100%;max-width:520px;max-height:90vh;overflow:auto;border-radius:15px;padding:20px}
+.empty,.loading{text-align:center;color:#777;padding:20px}
+@media(min-width:600px){.cards{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
 
 <body>
 
-<!-- =====================================================
-     LOGIN SCREEN
-===================================================== -->
-
+<!-- LOGIN -->
 <div id="loginScreen" class="login-screen">
+<div class="login-box">
+<div class="login-icon">🥫</div>
+<h2>Can Goods Inventory</h2>
+<p class="login-subtitle">Please login to continue</p>
 
-    <div class="login-box">
+<label>Email</label>
+<input id="loginEmail" type="email" placeholder="Enter your email">
 
-        <div class="login-icon">🥫</div>
-
-        <h2>Can Goods Inventory</h2>
-
-        <p class="login-subtitle">
-            Please login to continue
-        </p>
-
-        <label>Email</label>
-
-        <input
-            id="loginEmail"
-            type="email"
-            placeholder="Enter your email"
-            autocomplete="email">
-
-        <label>Password</label>
-
-        <div class="password-wrapper">
-
-            <input
-                id="loginPassword"
-                type="password"
-                placeholder="Enter your password"
-                autocomplete="current-password">
-
-            <button
-                type="button"
-                class="show-password"
-                onclick="togglePassword()">
-                👁️
-            </button>
-
-        </div>
-
-        <button
-            id="loginButton"
-            class="login-button"
-            onclick="loginUser()">
-            🔐 LOGIN
-        </button>
-
-        <div id="loginMessage"></div>
-
-    </div>
-
+<label>Password</label>
+<div class="password-wrap">
+<input id="loginPassword" type="password" placeholder="Enter your password">
+<button type="button" onclick="togglePassword()">👁️</button>
 </div>
 
+<button id="loginButton" onclick="loginUser()">🔐 LOGIN</button>
+<div id="loginMessage"></div>
+</div>
+</div>
 
-<!-- =====================================================
-     MAIN APPLICATION
-===================================================== -->
-
+<!-- APP -->
 <div id="app" style="display:none">
 
 <div class="header">
-
-    <h1>🥫 Can Goods Inventory</h1>
-
-    <p>Inventory Management System</p>
-
-    <div
-        id="userInfo"
-        class="user-info">
-    </div>
-
-    <button
-        class="logout-button"
-        onclick="logoutUser()">
-        🚪 LOGOUT
-    </button>
-
+<h1>🥫 Can Goods Inventory</h1>
+<p>Inventory Management System</p>
+<div id="userInfo" class="user-info"></div>
+<button class="logout" onclick="logoutUser()">🚪 LOGOUT</button>
 </div>
-
 
 <div class="container">
 
-<!-- =====================================================
-     DASHBOARD
-===================================================== -->
-
+<!-- DASHBOARD -->
 <div class="cards">
-
-    <div class="card">
-        <h2 id="productsCount">0</h2>
-        <p>Products</p>
-    </div>
-
-    <div class="card">
-        <h2 id="stockCount">0</h2>
-        <p>Total Stock</p>
-    </div>
-
-    <div class="card">
-        <h2 id="lowStockCount">0</h2>
-        <p>Low Stock</p>
-    </div>
-
-    <div class="card">
-        <h2 id="outStockCount">0</h2>
-        <p>Out of Stock</p>
-    </div>
-
+<div class="card"><h2 id="productsCount">0</h2><p>Products</p></div>
+<div class="card"><h2 id="stockCount">0</h2><p>Total Stock</p></div>
+<div class="card"><h2 id="lowStockCount">0</h2><p>Low Stock</p></div>
+<div class="card"><h2 id="outStockCount">0</h2><p>Out of Stock</p></div>
 </div>
 
-
-<!-- =====================================================
-     BARCODE SCANNER
-===================================================== -->
-
+<!-- SCANNER -->
 <div class="section">
+<h3>📷 Barcode Scanner</h3>
 
-    <h3>📷 Barcode Scanner</h3>
-
-    <div
-        id="cameraWrapper"
-        class="camera-wrapper">
-
-        <video
-            id="camera"
-            autoplay
-            muted
-            playsinline>
-        </video>
-
-        <div class="scan-overlay">
-
-            <div class="scan-frame"></div>
-
-            <div class="scan-line"></div>
-
-            <div class="camera-message">
-                Place barcode inside the green box
-            </div>
-
-        </div>
-
-    </div>
-
-    <div
-        id="cameraStatus"
-        class="camera-status">
-        Camera is stopped.
-    </div>
-
-    <button
-        class="yellow"
-        onclick="startScanner()">
-        📷 START SCANNER
-    </button>
-
-    <button
-        id="stopButton"
-        class="red"
-        onclick="stopScanner()"
-        style="display:none">
-        ⛔ STOP CAMERA
-    </button>
-
-    <label>Barcode</label>
-
-    <input
-        id="barcode"
-        type="text"
-        inputmode="numeric"
-        autocomplete="off"
-        placeholder="Scan or enter barcode">
-
-    <button onclick="searchBarcode()">
-        🔍 SEARCH BARCODE
-    </button>
-
-    <div id="result"></div>
-
+<div id="cameraWrap" class="camera-wrap">
+<video id="camera" autoplay muted playsinline></video>
+<div class="scan-frame"></div>
+<div class="scan-line"></div>
+<div class="camera-msg">Place barcode inside the green box</div>
 </div>
 
+<div id="cameraStatus" class="camera-status">Camera is stopped.</div>
 
-<!-- =====================================================
-     PRODUCT MANAGEMENT
-===================================================== -->
+<button class="yellow" onclick="startScanner()">📷 START SCANNER</button>
+<button id="stopButton" class="red" onclick="stopScanner()" style="display:none">⛔ STOP CAMERA</button>
 
+<label>Barcode</label>
+<input id="barcode" inputmode="numeric" placeholder="Scan or enter barcode">
+
+<button onclick="searchBarcode()">🔍 SEARCH BARCODE</button>
+<div id="result"></div>
+</div>
+
+<!-- PRODUCT MANAGEMENT -->
 <div class="section">
-
-    <h3>📦 Product Management</h3>
-
-    <button onclick="openAddModal()">
-        ➕ ADD NEW PRODUCT
-    </button>
-
+<h3>📦 Product Management</h3>
+<button onclick="openAddModal()">➕ ADD NEW PRODUCT</button>
 </div>
 
-
-<!-- =====================================================
-     PRODUCT LIST
-===================================================== -->
-
+<!-- PRODUCT LIST -->
 <div class="section">
-
-    <h3>📋 Product List</h3>
-
-    <input
-        id="productSearch"
-        type="text"
-        placeholder="🔎 Search product, brand or barcode"
-        oninput="filterProducts()">
-
-    <div id="productList">
-        <div class="loading">
-            Loading products...
-        </div>
-    </div>
-
+<h3>📋 Product List</h3>
+<input id="productSearch" placeholder="🔎 Search product, brand or barcode" oninput="filterProducts()">
+<div id="productList"><div class="loading">Loading products...</div></div>
 </div>
 
+<!-- HISTORY -->
+<div class="section">
+<h3>📋 Stock History</h3>
+
+<button class="blue" onclick="loadHistory()">🔄 REFRESH HISTORY</button>
+
+<div id="historyList">
+<div class="loading">Loading stock history...</div>
 </div>
 </div>
 
+</div>
+</div>
 
-<!-- =====================================================
-     ADD / EDIT PRODUCT MODAL
-===================================================== -->
-
+<!-- PRODUCT MODAL -->
 <div id="productModal" class="modal">
-
 <div class="modal-box">
 
-<h2 id="modalTitle">
-    ➕ Add Product
-</h2>
-
-<input
-    type="hidden"
-    id="editProductId">
+<h2 id="modalTitle">➕ Add Product</h2>
+<input type="hidden" id="editProductId">
 
 <label>Barcode *</label>
-
-<input
-    id="formBarcode"
-    type="text"
-    inputmode="numeric"
-    placeholder="Barcode number">
+<input id="formBarcode" inputmode="numeric" placeholder="Barcode number">
 
 <label>Product Name *</label>
-
-<input
-    id="formProductName"
-    type="text"
-    placeholder="Example: Mega Sardines">
+<input id="formProductName" placeholder="Example: Mega Sardines">
 
 <label>Brand</label>
-
-<input
-    id="formBrand"
-    type="text"
-    placeholder="Example: Mega">
+<input id="formBrand" placeholder="Example: Mega">
 
 <label>Category</label>
-
-<input
-    id="formCategory"
-    type="text"
-    placeholder="Example: Sardines">
+<input id="formCategory" placeholder="Example: Sardines">
 
 <label>Unit</label>
-
-<input
-    id="formUnit"
-    type="text"
-    placeholder="Example: can">
+<input id="formUnit" placeholder="Example: can">
 
 <label>Stock</label>
-
-<input
-    id="formStock"
-    type="number"
-    min="0"
-    value="0">
+<input id="formStock" type="number" min="0" value="0">
 
 <label>Minimum Stock</label>
-
-<input
-    id="formMinimumStock"
-    type="number"
-    min="0"
-    value="5">
+<input id="formMinimumStock" type="number" min="0" value="5">
 
 <label>Price</label>
-
-<input
-    id="formPrice"
-    type="number"
-    min="0"
-    step="0.01"
-    value="0">
+<input id="formPrice" type="number" min="0" step="0.01" value="0">
 
 <label>Product Image URL</label>
+<input id="formImage" placeholder="https://example.com/image.jpg">
 
-<input
-    id="formImage"
-    type="text"
-    placeholder="https://example.com/image.jpg">
-
-<button onclick="saveProduct()">
-    💾 SAVE PRODUCT
-</button>
-
-<button
-    class="gray"
-    onclick="closeModal()">
-    ✖ CLOSE
-</button>
+<button onclick="saveProduct()">💾 SAVE PRODUCT</button>
+<button class="gray" onclick="closeModal()">✖ CLOSE</button>
 
 </div>
 </div>
 
-
-<!-- =====================================================
-     STOCK MODAL
-===================================================== -->
-
+<!-- STOCK MODAL -->
 <div id="stockModal" class="modal">
-
 <div class="modal-box">
 
-<h2 id="stockModalTitle">
-    📦 Stock
-</h2>
-
-<input
-    type="hidden"
-    id="stockProductId">
+<h2 id="stockModalTitle">📦 Stock</h2>
+<input type="hidden" id="stockProductId">
 
 <label>Quantity</label>
+<input id="stockQuantity" type="number" min="1" value="1">
 
-<input
-    id="stockQuantity"
-    type="number"
-    min="1"
-    value="1">
-
-<button
-    id="stockConfirmButton"
-    onclick="confirmStock()">
-    CONFIRM
-</button>
-
-<button
-    class="gray"
-    onclick="closeStockModal()">
-    ✖ CANCEL
-</button>
+<button id="stockConfirmButton" onclick="confirmStock()">CONFIRM</button>
+<button class="gray" onclick="closeStockModal()">✖ CANCEL</button>
 
 </div>
 </div>
-
 
 <script>
 
@@ -814,1430 +217,614 @@ const SUPABASE_KEY =
 
 const supabaseClient =
 window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
+SUPABASE_URL,
+SUPABASE_KEY
 );
 
-
-/* =====================================================
-   VARIABLES
-===================================================== */
-
-let codeReader = null;
-let productsData = [];
-let stockAction = "";
-let scannerRunning = false;
-let scanLocked = false;
+let codeReader=null;
+let productsData=[];
+let stockAction="";
+let scannerRunning=false;
+let scanLocked=false;
 
 
 /* =====================================================
-   START APP
+   AUTH
 ===================================================== */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    checkLogin
-);
+document.addEventListener("DOMContentLoaded",checkLogin);
 
+supabaseClient.auth.onAuthStateChange(
+function(event,session){
 
-/* =====================================================
-   CHECK LOGIN
-===================================================== */
+if(session) showApp(session);
+else showLogin();
+
+});
+
 
 async function checkLogin(){
 
-    const {
-        data:{
-            session
-        }
-    } =
-        await supabaseClient
-        .auth
-        .getSession();
+const {data:{session}} =
+await supabaseClient.auth.getSession();
 
-    if(session){
+if(session) showApp(session);
+else showLogin();
 
-        showApp(session);
-
-    }
-    else{
-
-        showLogin();
-
-    }
 }
 
-
-/* =====================================================
-   AUTH STATE
-===================================================== */
-
-supabaseClient
-.auth
-.onAuthStateChange(
-    function(event,session){
-
-        if(session){
-
-            showApp(session);
-
-        }
-        else{
-
-            showLogin();
-
-        }
-
-    }
-);
-
-
-/* =====================================================
-   SHOW LOGIN
-===================================================== */
 
 function showLogin(){
 
-    stopScanner();
+stopScanner();
 
-    document.getElementById(
-        "loginScreen"
-    ).style.display="flex";
-
-    document.getElementById(
-        "app"
-    ).style.display="none";
+document.getElementById("loginScreen").style.display="flex";
+document.getElementById("app").style.display="none";
 
 }
 
-
-/* =====================================================
-   SHOW APP
-===================================================== */
 
 function showApp(session){
 
-    document.getElementById(
-        "loginScreen"
-    ).style.display="none";
+document.getElementById("loginScreen").style.display="none";
+document.getElementById("app").style.display="block";
 
-    document.getElementById(
-        "app"
-    ).style.display="block";
+document.getElementById("userInfo").textContent =
+"Logged in as: "+(session.user.email||"User");
 
-    const email =
-        session.user.email || "";
+loadProducts();
+loadHistory();
 
-    document.getElementById(
-        "userInfo"
-    ).textContent =
-        "Logged in as: " + email;
-
-    loadProducts();
 }
 
-
-/* =====================================================
-   LOGIN
-===================================================== */
 
 async function loginUser(){
 
-    const email =
-        document.getElementById(
-            "loginEmail"
-        ).value.trim();
+const email =
+document.getElementById("loginEmail").value.trim();
 
-    const password =
-        document.getElementById(
-            "loginPassword"
-        ).value;
+const password =
+document.getElementById("loginPassword").value;
 
-    const button =
-        document.getElementById(
-            "loginButton"
-        );
+const button =
+document.getElementById("loginButton");
 
-    const message =
-        document.getElementById(
-            "loginMessage"
-        );
+const message =
+document.getElementById("loginMessage");
 
-    if(!email || !password){
+if(!email||!password){
 
-        message.style.color="#c62828";
-
-        message.innerHTML =
-            "⚠️ Please enter email and password.";
-
-        return;
-    }
-
-    button.disabled=true;
-
-    button.textContent =
-        "🔄 LOGGING IN...";
-
-    message.innerHTML="";
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-        .auth
-        .signInWithPassword({
-            email:email,
-            password:password
-        });
-
-    if(error){
-
-        message.style.color="#c62828";
-
-        message.innerHTML =
-            "❌ Login failed.<br>" +
-            escapeHTML(error.message);
-
-        button.disabled=false;
-
-        button.textContent =
-            "🔐 LOGIN";
-
-        return;
-    }
-
-    if(data.session){
-
-        message.style.color="#176b3a";
-
-        message.innerHTML =
-            "✅ Login successful!";
-
-        showApp(data.session);
-
-    }
+message.style.color="#c62828";
+message.textContent="⚠️ Please enter email and password.";
+return;
 
 }
 
+button.disabled=true;
+button.textContent="🔄 LOGGING IN...";
+message.textContent="";
 
-/* =====================================================
-   LOGOUT
-===================================================== */
+const {data,error} =
+await supabaseClient.auth.signInWithPassword({
+email:email,
+password:password
+});
+
+if(error){
+
+message.style.color="#c62828";
+message.innerHTML="❌ Login failed.<br>"+escapeHTML(error.message);
+
+button.disabled=false;
+button.textContent="🔐 LOGIN";
+return;
+
+}
+
+button.disabled=false;
+button.textContent="🔐 LOGIN";
+
+if(data.session) showApp(data.session);
+
+}
+
 
 async function logoutUser(){
 
-    stopScanner();
+stopScanner();
 
-    const {
-        error
-    } =
-        await supabaseClient
-        .auth
-        .signOut();
+await supabaseClient.auth.signOut();
 
-    if(error){
-
-        alert(
-            "Logout failed:\n\n" +
-            error.message
-        );
-
-        return;
-    }
-
-    showLogin();
+showLogin();
 
 }
 
-
-/* =====================================================
-   SHOW / HIDE PASSWORD
-===================================================== */
 
 function togglePassword(){
 
-    const password =
-        document.getElementById(
-            "loginPassword"
-        );
+const input=document.getElementById("loginPassword");
 
-    if(
-        password.type === "password"
-    ){
-
-        password.type="text";
-
-    }
-    else{
-
-        password.type="password";
-
-    }
+input.type =
+input.type==="password" ? "text" : "password";
 
 }
 
 
 /* =====================================================
-   LOAD PRODUCTS
+   PRODUCTS
 ===================================================== */
 
 async function loadProducts(){
 
-    const list =
-        document.getElementById(
-            "productList"
-        );
+const list=document.getElementById("productList");
 
-    list.innerHTML =
-        '<div class="loading">' +
-        'Loading products...' +
-        '</div>';
+list.innerHTML='<div class="loading">Loading products...</div>';
 
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-        .from("products")
-        .select("*")
-        .order(
-            "created_at",
-            {ascending:false}
-        );
+const {data,error} =
+await supabaseClient
+.from("products")
+.select("*")
+.order("created_at",{ascending:false});
 
-    if(error){
+if(error){
 
-        console.error(error);
-
-        list.innerHTML =
-        '<div class="error">' +
-        '❌ Database error<br><br>' +
-        escapeHTML(error.message) +
-        '</div>';
-
-        return;
-    }
-
-    productsData =
-        data || [];
-
-    updateDashboard();
-
-    displayProducts(
-        productsData
-    );
+list.innerHTML='<div class="error">❌ '+escapeHTML(error.message)+'</div>';
+return;
 
 }
 
+productsData=data||[];
 
-/* =====================================================
-   DASHBOARD
-===================================================== */
+updateDashboard();
+displayProducts(productsData);
+
+}
+
 
 function updateDashboard(){
 
-    let total=0;
-    let low=0;
-    let out=0;
+let total=0,low=0,out=0;
 
-    productsData.forEach(
-        function(product){
+productsData.forEach(p=>{
 
-            const stock =
-                Number(
-                    product.stock || 0
-                );
+const stock=Number(p.stock||0);
+const min=Number(p.minimum_stock||0);
 
-            const minimum =
-                Number(
-                    product.minimum_stock || 0
-                );
+total+=stock;
 
-            total += stock;
+if(stock===0) out++;
+else if(stock<=min) low++;
 
-            if(stock===0){
+});
 
-                out++;
-
-            }
-            else if(stock<=minimum){
-
-                low++;
-
-            }
-
-        }
-    );
-
-    document.getElementById(
-        "productsCount"
-    ).textContent =
-        productsData.length;
-
-    document.getElementById(
-        "stockCount"
-    ).textContent =
-        total;
-
-    document.getElementById(
-        "lowStockCount"
-    ).textContent =
-        low;
-
-    document.getElementById(
-        "outStockCount"
-    ).textContent =
-        out;
+document.getElementById("productsCount").textContent=productsData.length;
+document.getElementById("stockCount").textContent=total;
+document.getElementById("lowStockCount").textContent=low;
+document.getElementById("outStockCount").textContent=out;
 
 }
 
 
-/* =====================================================
-   STATUS
-===================================================== */
+function getStatus(p){
 
-function getStatus(product){
+const stock=Number(p.stock||0);
+const min=Number(p.minimum_stock||0);
 
-    const stock =
-        Number(
-            product.stock || 0
-        );
+if(stock===0)
+return {text:"🔴 OUT OF STOCK",class:"status-out"};
 
-    const minimum =
-        Number(
-            product.minimum_stock || 0
-        );
+if(stock<=min)
+return {text:"🟡 LOW STOCK",class:"status-low"};
 
-    if(stock===0){
-
-        return {
-            text:"🔴 OUT OF STOCK",
-            class:"status-out"
-        };
-
-    }
-
-    if(stock<=minimum){
-
-        return {
-            text:"🟡 LOW STOCK",
-            class:"status-low"
-        };
-
-    }
-
-    return {
-        text:"🟢 IN STOCK",
-        class:"status-in"
-    };
+return {text:"🟢 IN STOCK",class:"status-in"};
 
 }
 
-
-/* =====================================================
-   DISPLAY PRODUCTS
-===================================================== */
 
 function displayProducts(products){
 
-    const list =
-        document.getElementById(
-            "productList"
-        );
+const list=document.getElementById("productList");
 
-    if(!products.length){
+if(!products.length){
 
-        list.innerHTML =
-        '<div class="empty">' +
-        '📦 No products found.' +
-        '</div>';
-
-        return;
-    }
-
-    list.innerHTML="";
-
-    products.forEach(
-        function(product){
-
-            const status =
-                getStatus(product);
-
-            let image="";
-
-            if(product.image){
-
-                image =
-                '<img ' +
-                'class="product-image" ' +
-                'src="' +
-                escapeHTML(
-                    product.image
-                ) +
-                '" ' +
-                'onerror="' +
-                "this.style.display='none'" +
-                '">';
-
-            }
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-            div.className="product";
-
-            div.innerHTML =
-
-            image +
-
-            '<div class="product-name">' +
-            escapeHTML(
-                product.product_name || "-"
-            ) +
-            '</div>' +
-
-            '<div class="product-info">' +
-
-            '<strong>Barcode:</strong> ' +
-            escapeHTML(
-                product.barcode || "-"
-            ) +
-
-            '<br><strong>Brand:</strong> ' +
-            escapeHTML(
-                product.brand || "-"
-            ) +
-
-            '<br><strong>Category:</strong> ' +
-            escapeHTML(
-                product.category || "-"
-            ) +
-
-            '<br><strong>Unit:</strong> ' +
-            escapeHTML(
-                product.unit || "-"
-            ) +
-
-            '<br><strong>Stock:</strong> ' +
-            Number(
-                product.stock || 0
-            ) +
-
-            '<br><strong>Minimum:</strong> ' +
-            Number(
-                product.minimum_stock || 0
-            ) +
-
-            '<br><strong>Price:</strong> ₱' +
-            Number(
-                product.price || 0
-            ).toFixed(2) +
-
-            '<br>' +
-
-            '<span class="status ' +
-            status.class +
-            '">' +
-            status.text +
-            '</span>' +
-
-            '</div>' +
-
-            '<div class="product-buttons">' +
-
-            '<button class="blue" ' +
-            'onclick="openStockModal(' +
-            product.id +
-            ',\'in\')">' +
-            '📥 STOCK IN' +
-            '</button>' +
-
-            '<button class="red" ' +
-            'onclick="openStockModal(' +
-            product.id +
-            ',\'out\')">' +
-            '📤 STOCK OUT' +
-            '</button>' +
-
-            '<button ' +
-            'onclick="editProduct(' +
-            product.id +
-            ')">' +
-            '✏️ EDIT' +
-            '</button>' +
-
-            '<button ' +
-            'class="gray" ' +
-            'disabled ' +
-            'title="Delete will be enabled after security setup">' +
-            '🗑️ DELETE' +
-            '</button>' +
-
-            '</div>';
-
-            list.appendChild(div);
-
-        }
-    );
+list.innerHTML='<div class="empty">📦 No products found.</div>';
+return;
 
 }
 
+list.innerHTML="";
 
-/* =====================================================
-   FILTER PRODUCTS
-===================================================== */
+products.forEach(p=>{
+
+const s=getStatus(p);
+
+let image="";
+
+if(p.image){
+
+image='<img class="product-image" src="'+
+escapeHTML(p.image)+
+'" onerror="this.style.display=\'none\'">';
+
+}
+
+const div=document.createElement("div");
+div.className="product";
+
+div.innerHTML=
+
+image+
+
+'<div class="product-name">'+
+escapeHTML(p.product_name||"-")+
+'</div>'+
+
+'<div class="product-info">'+
+'<strong>Barcode:</strong> '+escapeHTML(p.barcode||"-")+
+'<br><strong>Brand:</strong> '+escapeHTML(p.brand||"-")+
+'<br><strong>Category:</strong> '+escapeHTML(p.category||"-")+
+'<br><strong>Unit:</strong> '+escapeHTML(p.unit||"-")+
+'<br><strong>Stock:</strong> '+Number(p.stock||0)+
+'<br><strong>Minimum:</strong> '+Number(p.minimum_stock||0)+
+'<br><strong>Price:</strong> ₱'+Number(p.price||0).toFixed(2)+
+'<br><span class="status '+s.class+'">'+s.text+'</span>'+
+'</div>'+
+
+'<div class="product-buttons">'+
+
+'<button class="blue" onclick="openStockModal('+p.id+',\'in\')">📥 STOCK IN</button>'+
+
+'<button class="red" onclick="openStockModal('+p.id+',\'out\')">📤 STOCK OUT</button>'+
+
+'<button onclick="editProduct('+p.id+')">✏️ EDIT</button>'+
+
+'<button class="gray" disabled>🗑️ DELETE</button>'+
+
+'</div>';
+
+list.appendChild(div);
+
+});
+
+}
+
 
 function filterProducts(){
 
-    const q =
-        document.getElementById(
-            "productSearch"
-        ).value
-        .toLowerCase()
-        .trim();
+const q=document.getElementById("productSearch")
+.value.toLowerCase().trim();
 
-    if(!q){
+if(!q){
 
-        displayProducts(
-            productsData
-        );
+displayProducts(productsData);
+return;
 
-        return;
-    }
+}
 
-    const filtered =
-        productsData.filter(
-            function(product){
-
-                return String(
-                    product.barcode || ""
-                )
-                .toLowerCase()
-                .includes(q)
-
-                ||
-
-                String(
-                    product.product_name || ""
-                )
-                .toLowerCase()
-                .includes(q)
-
-                ||
-
-                String(
-                    product.brand || ""
-                )
-                .toLowerCase()
-                .includes(q)
-
-                ||
-
-                String(
-                    product.category || ""
-                )
-                .toLowerCase()
-                .includes(q);
-
-            }
-        );
-
-    displayProducts(filtered);
+displayProducts(
+productsData.filter(p=>
+String(p.barcode||"").toLowerCase().includes(q)||
+String(p.product_name||"").toLowerCase().includes(q)||
+String(p.brand||"").toLowerCase().includes(q)||
+String(p.category||"").toLowerCase().includes(q)
+)
+);
 
 }
 
 
 /* =====================================================
-   START BARCODE SCANNER
+   CAMERA
 ===================================================== */
 
 async function startScanner(){
 
-    if(scannerRunning){
+if(scannerRunning)return;
 
-        return;
+const video=document.getElementById("camera");
+const wrap=document.getElementById("cameraWrap");
+const stop=document.getElementById("stopButton");
+const status=document.getElementById("cameraStatus");
+const result=document.getElementById("result");
 
-    }
+result.style.display="block";
+result.innerHTML="📷 Requesting camera permission...";
+status.textContent="📷 Starting camera...";
+scanLocked=false;
 
-    const video =
-        document.getElementById(
-            "camera"
-        );
+try{
 
-    const wrapper =
-        document.getElementById(
-            "cameraWrapper"
-        );
+const stream=
+await navigator.mediaDevices.getUserMedia({
+video:{facingMode:{ideal:"environment"}},
+audio:false
+});
 
-    const stopButton =
-        document.getElementById(
-            "stopButton"
-        );
+stream.getTracks().forEach(t=>t.stop());
 
-    const status =
-        document.getElementById(
-            "cameraStatus"
-        );
+codeReader=new ZXing.BrowserMultiFormatReader();
 
-    const result =
-        document.getElementById(
-            "result"
-        );
+wrap.style.display="block";
+stop.style.display="block";
+scannerRunning=true;
 
-    result.style.display="block";
+status.textContent="📷 Camera active — scan a barcode.";
+result.innerHTML="🔎 Looking for barcode...";
 
-    result.innerHTML =
-        "📷 Requesting camera permission...";
+await codeReader.decodeFromConstraints(
+{
+audio:false,
+video:{
+facingMode:{ideal:"environment"},
+width:{ideal:1280},
+height:{ideal:720}
+}
+},
+video,
+function(scanResult){
 
-    status.innerHTML =
-        "📷 Starting camera...";
+if(scanResult&&!scanLocked){
 
-    scanLocked=false;
+scanLocked=true;
 
-    try{
+const code=scanResult.getText();
 
-        if(!window.isSecureContext){
+document.getElementById("barcode").value=code;
 
-            throw new Error(
-                "Camera requires HTTPS."
-            );
+result.innerHTML=
+'<span class="success">✅ Barcode detected!<br>'+
+escapeHTML(code)+'</span>';
 
-        }
-
-        if(
-            !navigator.mediaDevices ||
-            !navigator.mediaDevices.getUserMedia
-        ){
-
-            throw new Error(
-                "Camera is not supported by this browser."
-            );
-
-        }
-
-        /*
-         * Request camera permission first.
-         */
-
-        const stream =
-            await navigator.mediaDevices
-            .getUserMedia({
-
-                video:{
-                    facingMode:{
-                        ideal:"environment"
-                    }
-                },
-
-                audio:false
-
-            });
-
-        /*
-         * Release temporary stream.
-         */
-
-        stream
-        .getTracks()
-        .forEach(
-            function(track){
-                track.stop();
-            }
-        );
-
-        codeReader =
-            new ZXing.BrowserMultiFormatReader();
-
-        wrapper.style.display="block";
-
-        stopButton.style.display="block";
-
-        scannerRunning=true;
-
-        status.innerHTML =
-            "📷 Camera active — point the barcode inside the green box.";
-
-        result.innerHTML =
-            "🔎 Looking for barcode...";
-
-        const constraints = {
-
-            audio:false,
-
-            video:{
-
-                facingMode:{
-                    ideal:"environment"
-                },
-
-                width:{
-                    ideal:1280
-                },
-
-                height:{
-                    ideal:720
-                }
-
-            }
-
-        };
-
-        await codeReader
-        .decodeFromConstraints(
-            constraints,
-            video,
-            function(
-                scanResult,
-                scanError
-            ){
-
-                if(
-                    scanResult &&
-                    !scanLocked
-                ){
-
-                    scanLocked=true;
-
-                    const code =
-                        scanResult.getText();
-
-                    document.getElementById(
-                        "barcode"
-                    ).value =
-                        code;
-
-                    status.innerHTML =
-                        "✅ Barcode detected: " +
-                        escapeHTML(code);
-
-                    result.innerHTML =
-                        '<span class="success">' +
-                        '✅ Barcode detected!<br>' +
-                        escapeHTML(code) +
-                        '</span>';
-
-                    setTimeout(
-                        function(){
-
-                            stopScanner();
-
-                            searchBarcode();
-
-                        },
-                        400
-                    );
-
-                }
-
-            }
-        );
-
-    }
-    catch(error){
-
-        console.error(
-            "Camera error:",
-            error
-        );
-
-        scannerRunning=false;
-
-        if(codeReader){
-
-            try{
-                codeReader.reset();
-            }
-            catch(e){}
-
-            codeReader=null;
-        }
-
-        wrapper.style.display="none";
-
-        stopButton.style.display="none";
-
-        status.innerHTML =
-            "❌ Camera stopped.";
-
-        let message =
-            "❌ Camera could not start.";
-
-        if(
-            error &&
-            error.name ===
-            "NotAllowedError"
-        ){
-
-            message =
-            "❌ Camera permission was denied.<br><br>" +
-            "Please allow camera permission in Chrome.";
-
-        }
-        else if(
-            error &&
-            error.name ===
-            "NotFoundError"
-        ){
-
-            message =
-            "❌ No camera was found.";
-
-        }
-        else if(
-            error &&
-            error.name ===
-            "NotReadableError"
-        ){
-
-            message =
-            "❌ Camera is being used by another app.";
-
-        }
-        else{
-
-            message =
-            "❌ Camera error:<br><br>" +
-            escapeHTML(
-                error.message ||
-                String(error)
-            );
-
-        }
-
-        result.style.display="block";
-
-        result.innerHTML =
-            '<span class="error">' +
-            message +
-            '</span>';
-
-    }
+setTimeout(()=>{
+stopScanner();
+searchBarcode();
+},400);
 
 }
 
+}
+);
 
-/* =====================================================
-   STOP SCANNER
-===================================================== */
+}
+catch(error){
+
+console.error(error);
+
+scannerRunning=false;
+
+if(codeReader){
+
+try{codeReader.reset()}catch(e){}
+codeReader=null;
+
+}
+
+wrap.style.display="none";
+stop.style.display="none";
+
+status.textContent="❌ Camera stopped.";
+
+let msg="❌ Camera could not start.";
+
+if(error.name==="NotAllowedError")
+msg="❌ Camera permission was denied. Please allow camera permission in Chrome.";
+
+else if(error.name==="NotFoundError")
+msg="❌ No camera was found.";
+
+else if(error.name==="NotReadableError")
+msg="❌ Camera is being used by another app.";
+
+else
+msg="❌ Camera error:<br>"+escapeHTML(error.message||String(error));
+
+result.innerHTML='<span class="error">'+msg+'</span>';
+
+}
+
+}
+
 
 function stopScanner(){
 
-    scannerRunning=false;
+scannerRunning=false;
+scanLocked=false;
 
-    scanLocked=false;
+if(codeReader){
 
-    if(codeReader){
+try{codeReader.reset()}catch(e){}
+codeReader=null;
 
-        try{
+}
 
-            codeReader.reset();
+const video=document.getElementById("camera");
 
-        }
-        catch(e){}
+if(video&&video.srcObject){
 
-        codeReader=null;
+try{
+video.srcObject.getTracks().forEach(t=>t.stop());
+}catch(e){}
 
-    }
+video.srcObject=null;
 
-    const video =
-        document.getElementById(
-            "camera"
-        );
+}
 
-    if(
-        video &&
-        video.srcObject
-    ){
-
-        try{
-
-            video.srcObject
-            .getTracks()
-            .forEach(
-                function(track){
-                    track.stop();
-                }
-            );
-
-        }
-        catch(e){}
-
-        video.srcObject=null;
-
-    }
-
-    document.getElementById(
-        "cameraWrapper"
-    ).style.display="none";
-
-    document.getElementById(
-        "stopButton"
-    ).style.display="none";
-
-    document.getElementById(
-        "cameraStatus"
-    ).innerHTML =
-        "Camera is stopped.";
+document.getElementById("cameraWrap").style.display="none";
+document.getElementById("stopButton").style.display="none";
+document.getElementById("cameraStatus").textContent="Camera is stopped.";
 
 }
 
 
 /* =====================================================
-   SEARCH BARCODE
+   BARCODE SEARCH
 ===================================================== */
 
 async function searchBarcode(){
 
-    const barcode =
-        document.getElementById(
-            "barcode"
-        ).value
-        .trim();
+const barcode=document.getElementById("barcode").value.trim();
+const result=document.getElementById("result");
 
-    const result =
-        document.getElementById(
-            "result"
-        );
+if(!barcode){
 
-    if(!barcode){
+result.style.display="block";
+result.innerHTML='<span class="error">⚠️ Please enter a barcode.</span>';
+return;
 
-        result.style.display="block";
+}
 
-        result.innerHTML =
-        '<span class="error">' +
-        '⚠️ Please enter a barcode.' +
-        '</span>';
+result.style.display="block";
+result.innerHTML="🔎 Searching inventory...";
 
-        return;
-    }
+const {data,error}=
+await supabaseClient
+.from("products")
+.select("*")
+.eq("barcode",barcode)
+.maybeSingle();
 
-    result.style.display="block";
+if(error){
 
-    result.innerHTML =
-        "🔎 Searching inventory...";
+result.innerHTML='<span class="error">❌ '+escapeHTML(error.message)+'</span>';
+return;
 
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-        .from("products")
-        .select("*")
-        .eq("barcode",barcode)
-        .maybeSingle();
+}
 
-    if(error){
+if(!data){
 
-        result.innerHTML =
-        '<span class="error">' +
-        '❌ Search error<br><br>' +
-        escapeHTML(
-            error.message
-        ) +
-        '</span>';
+result.innerHTML=
+'<span class="warning">⚠️ Product not found.</span><br><br>'+
+'<strong>Barcode:</strong> '+escapeHTML(barcode);
 
-        return;
-    }
+return;
 
-    if(!data){
+}
 
-        result.innerHTML =
-        '<span class="warning">' +
-        '⚠️ Product not found.' +
-        '</span><br><br>' +
+showSearchResult(data);
 
-        '<strong>Barcode:</strong> ' +
-        escapeHTML(barcode) +
+}
 
-        '<br><br>' +
 
-        'You can add this product ' +
-        'using ADD NEW PRODUCT.';
+function showSearchResult(p){
 
-        return;
-    }
+const result=document.getElementById("result");
+const s=getStatus(p);
 
-    showSearchResult(data);
+let image="";
+
+if(p.image)
+image='<br><img class="product-image" src="'+escapeHTML(p.image)+'">';
+
+result.innerHTML=
+'<div class="product-name">'+escapeHTML(p.product_name||"-")+'</div>'+
+image+'<br>'+
+'<strong>Barcode:</strong> '+escapeHTML(p.barcode||"-")+
+'<br><strong>Brand:</strong> '+escapeHTML(p.brand||"-")+
+'<br><strong>Category:</strong> '+escapeHTML(p.category||"-")+
+'<br><strong>Stock:</strong> '+Number(p.stock||0)+
+'<br><strong>Minimum:</strong> '+Number(p.minimum_stock||0)+
+'<br><strong>Price:</strong> ₱'+Number(p.price||0).toFixed(2)+
+'<br><span class="status '+s.class+'">'+s.text+'</span>'+
+'<button class="blue" onclick="openStockModal('+p.id+',\'in\')">📥 STOCK IN</button>'+
+'<button class="red" onclick="openStockModal('+p.id+',\'out\')">📤 STOCK OUT</button>'+
+'<button onclick="editProduct('+p.id+')">✏️ EDIT PRODUCT</button>';
 
 }
 
 
 /* =====================================================
-   SEARCH RESULT
-===================================================== */
-
-function showSearchResult(product){
-
-    const result =
-        document.getElementById(
-            "result"
-        );
-
-    const status =
-        getStatus(product);
-
-    let image="";
-
-    if(product.image){
-
-        image =
-        '<br><img ' +
-        'class="product-image" ' +
-        'src="' +
-        escapeHTML(
-            product.image
-        ) +
-        '" ' +
-        'onerror="' +
-        "this.style.display='none'" +
-        '">';
-
-    }
-
-    result.innerHTML =
-
-    '<div class="product-name">' +
-    escapeHTML(
-        product.product_name ||
-        "-"
-    ) +
-    '</div>' +
-
-    image +
-
-    '<br>' +
-
-    '<strong>Barcode:</strong> ' +
-    escapeHTML(
-        product.barcode || "-"
-    ) +
-
-    '<br><strong>Brand:</strong> ' +
-    escapeHTML(
-        product.brand || "-"
-    ) +
-
-    '<br><strong>Category:</strong> ' +
-    escapeHTML(
-        product.category || "-"
-    ) +
-
-    '<br><strong>Stock:</strong> ' +
-    Number(
-        product.stock || 0
-    ) +
-
-    '<br><strong>Minimum:</strong> ' +
-    Number(
-        product.minimum_stock || 0
-    ) +
-
-    '<br><strong>Price:</strong> ₱' +
-    Number(
-        product.price || 0
-    ).toFixed(2) +
-
-    '<br><br>' +
-
-    '<span class="status ' +
-    status.class +
-    '">' +
-    status.text +
-    '</span>' +
-
-    '<button class="blue" ' +
-    'onclick="openStockModal(' +
-    product.id +
-    ',\'in\')">' +
-    '📥 STOCK IN' +
-    '</button>' +
-
-    '<button class="red" ' +
-    'onclick="openStockModal(' +
-    product.id +
-    ',\'out\')">' +
-    '📤 STOCK OUT' +
-    '</button>' +
-
-    '<button onclick="editProduct(' +
-    product.id +
-    ')">' +
-    '✏️ EDIT PRODUCT' +
-    '</button>';
-
-}
-
-
-/* =====================================================
-   ADD PRODUCT MODAL
+   ADD / EDIT
 ===================================================== */
 
 function openAddModal(){
 
-    document.getElementById(
-        "modalTitle"
-    ).textContent =
-        "➕ Add Product";
-
-    document.getElementById(
-        "editProductId"
-    ).value="";
-
-    document.getElementById(
-        "formBarcode"
-    ).value="";
-
-    document.getElementById(
-        "formProductName"
-    ).value="";
-
-    document.getElementById(
-        "formBrand"
-    ).value="";
-
-    document.getElementById(
-        "formCategory"
-    ).value="";
-
-    document.getElementById(
-        "formUnit"
-    ).value="";
-
-    document.getElementById(
-        "formStock"
-    ).value="0";
-
-    document.getElementById(
-        "formMinimumStock"
-    ).value="5";
-
-    document.getElementById(
-        "formPrice"
-    ).value="0";
-
-    document.getElementById(
-        "formImage"
-    ).value="";
-
-    document.getElementById(
-        "productModal"
-    ).style.display="flex";
+document.getElementById("modalTitle").textContent="➕ Add Product";
+document.getElementById("editProductId").value="";
+document.getElementById("formBarcode").value="";
+document.getElementById("formProductName").value="";
+document.getElementById("formBrand").value="";
+document.getElementById("formCategory").value="";
+document.getElementById("formUnit").value="";
+document.getElementById("formStock").value=0;
+document.getElementById("formMinimumStock").value=5;
+document.getElementById("formPrice").value=0;
+document.getElementById("formImage").value="";
+document.getElementById("productModal").style.display="flex";
 
 }
 
-
-/* =====================================================
-   CLOSE PRODUCT MODAL
-===================================================== */
 
 function closeModal(){
 
-    document.getElementById(
-        "productModal"
-    ).style.display="none";
+document.getElementById("productModal").style.display="none";
 
 }
 
-
-/* =====================================================
-   SAVE PRODUCT
-===================================================== */
 
 async function saveProduct(){
 
-    const id =
-        document.getElementById(
-            "editProductId"
-        ).value;
+const id=document.getElementById("editProductId").value;
 
-    const product={
+const product={
+barcode:document.getElementById("formBarcode").value.trim(),
+product_name:document.getElementById("formProductName").value.trim(),
+brand:document.getElementById("formBrand").value.trim(),
+category:document.getElementById("formCategory").value.trim(),
+unit:document.getElementById("formUnit").value.trim(),
+stock:Number(document.getElementById("formStock").value||0),
+minimum_stock:Number(document.getElementById("formMinimumStock").value||0),
+price:Number(document.getElementById("formPrice").value||0),
+image:document.getElementById("formImage").value.trim()
+};
 
-        barcode:
-        document.getElementById(
-            "formBarcode"
-        ).value.trim(),
+if(!product.barcode||!product.product_name){
 
-        product_name:
-        document.getElementById(
-            "formProductName"
-        ).value.trim(),
+alert("Please enter Barcode and Product Name.");
+return;
 
-        brand:
-        document.getElementById(
-            "formBrand"
-        ).value.trim(),
+}
 
-        category:
-        document.getElementById(
-            "formCategory"
-        ).value.trim(),
+let response;
 
-        unit:
-        document.getElementById(
-            "formUnit"
-        ).value.trim(),
+if(id)
+response=await supabaseClient.from("products").update(product).eq("id",id);
+else
+response=await supabaseClient.from("products").insert([product]);
 
-        stock:
-        Number(
-            document.getElementById(
-                "formStock"
-            ).value || 0
-        ),
+if(response.error){
 
-        minimum_stock:
-        Number(
-            document.getElementById(
-                "formMinimumStock"
-            ).value || 0
-        ),
+alert("❌ Error:\n\n"+response.error.message);
+return;
 
-        price:
-        Number(
-            document.getElementById(
-                "formPrice"
-            ).value || 0
-        ),
+}
 
-        image:
-        document.getElementById(
-            "formImage"
-        ).value.trim()
+alert(id?"✅ Product updated!":"✅ Product added!");
 
-    };
-
-    if(
-        !product.barcode ||
-        !product.product_name
-    ){
-
-        alert(
-            "Please enter Barcode and Product Name."
-        );
-
-        return;
-    }
-
-    let response;
-
-    if(id){
-
-        response =
-            await supabaseClient
-            .from("products")
-            .update(product)
-            .eq("id",id);
-
-    }
-    else{
-
-        response =
-            await supabaseClient
-            .from("products")
-            .insert([
-                product
-            ]);
-
-    }
-
-    if(response.error){
-
-        alert(
-            "❌ Error:\n\n" +
-            response.error.message
-        );
-
-        return;
-    }
-
-    alert(
-        id
-        ? "✅ Product updated!"
-        : "✅ Product added!"
-    );
-
-    closeModal();
-
-    await loadProducts();
+closeModal();
+await loadProducts();
 
 }
 
 
-/* =====================================================
-   EDIT PRODUCT
-===================================================== */
-
 function editProduct(id){
 
-    const product =
-        productsData.find(
-            function(p){
-                return p.id == id;
-            }
-        );
+const p=productsData.find(x=>x.id==id);
 
-    if(!product)return;
+if(!p)return;
 
-    document.getElementById(
-        "modalTitle"
-    ).textContent =
-        "✏️ Edit Product";
+document.getElementById("modalTitle").textContent="✏️ Edit Product";
+document.getElementById("editProductId").value=p.id;
+document.getElementById("formBarcode").value=p.barcode||"";
+document.getElementById("formProductName").value=p.product_name||"";
+document.getElementById("formBrand").value=p.brand||"";
+document.getElementById("formCategory").value=p.category||"";
+document.getElementById("formUnit").value=p.unit||"";
+document.getElementById("formStock").value=p.stock||0;
+document.getElementById("formMinimumStock").value=p.minimum_stock||0;
+document.getElementById("formPrice").value=p.price||0;
+document.getElementById("formImage").value=p.image||"";
 
-    document.getElementById(
-        "editProductId"
-    ).value =
-        product.id;
-
-    document.getElementById(
-        "formBarcode"
-    ).value =
-        product.barcode || "";
-
-    document.getElementById(
-        "formProductName"
-    ).value =
-        product.product_name || "";
-
-    document.getElementById(
-        "formBrand"
-    ).value =
-        product.brand || "";
-
-    document.getElementById(
-        "formCategory"
-    ).value =
-        product.category || "";
-
-    document.getElementById(
-        "formUnit"
-    ).value =
-        product.unit || "";
-
-    document.getElementById(
-        "formStock"
-    ).value =
-        product.stock || 0;
-
-    document.getElementById(
-        "formMinimumStock"
-    ).value =
-        product.minimum_stock || 0;
-
-    document.getElementById(
-        "formPrice"
-    ).value =
-        product.price || 0;
-
-    document.getElementById(
-        "formImage"
-    ).value =
-        product.image || "";
-
-    document.getElementById(
-        "productModal"
-    ).style.display="flex";
+document.getElementById("productModal").style.display="flex";
 
 }
 
@@ -2248,227 +835,269 @@ function editProduct(id){
 
 function openStockModal(id,action){
 
-    const product =
-        productsData.find(
-            function(p){
-                return p.id == id;
-            }
-        );
+const p=productsData.find(x=>x.id==id);
 
-    if(!product)return;
+if(!p)return;
 
-    stockAction=action;
+stockAction=action;
 
-    document.getElementById(
-        "stockProductId"
-    ).value=id;
+document.getElementById("stockProductId").value=id;
+document.getElementById("stockQuantity").value=1;
 
-    document.getElementById(
-        "stockQuantity"
-    ).value=1;
+document.getElementById("stockModalTitle").textContent=
+(action==="in"?"📥 Stock In - ":"📤 Stock Out - ")+p.product_name;
 
-    const title =
-        document.getElementById(
-            "stockModalTitle"
-        );
+const b=document.getElementById("stockConfirmButton");
 
-    const button =
-        document.getElementById(
-            "stockConfirmButton"
-        );
+b.textContent=
+action==="in"?"📥 CONFIRM STOCK IN":"📤 CONFIRM STOCK OUT";
 
-    if(action==="in"){
+b.className=action==="in"?"blue":"red";
 
-        title.textContent =
-            "📥 Stock In - " +
-            product.product_name;
-
-        button.textContent =
-            "📥 CONFIRM STOCK IN";
-
-        button.className="blue";
-
-    }
-    else{
-
-        title.textContent =
-            "📤 Stock Out - " +
-            product.product_name;
-
-        button.textContent =
-            "📤 CONFIRM STOCK OUT";
-
-        button.className="red";
-
-    }
-
-    document.getElementById(
-        "stockModal"
-    ).style.display="flex";
+document.getElementById("stockModal").style.display="flex";
 
 }
 
-
-/* =====================================================
-   CLOSE STOCK MODAL
-===================================================== */
 
 function closeStockModal(){
 
-    document.getElementById(
-        "stockModal"
-    ).style.display="none";
+document.getElementById("stockModal").style.display="none";
 
 }
 
 
 /* =====================================================
-   STOCK IN / OUT
+   STOCK IN / OUT + HISTORY
 ===================================================== */
 
 async function confirmStock(){
 
-    const id =
-        document.getElementById(
-            "stockProductId"
-        ).value;
+const id=document.getElementById("stockProductId").value;
 
-    const quantity =
-        Number(
-            document.getElementById(
-                "stockQuantity"
-            ).value || 0
-        );
+const quantity=Number(
+document.getElementById("stockQuantity").value||0
+);
 
-    if(quantity<=0){
+if(quantity<=0){
 
-        alert(
-            "Enter a valid quantity."
-        );
+alert("Enter a valid quantity.");
+return;
 
-        return;
-    }
+}
 
-    const product =
-        productsData.find(
-            function(p){
-                return p.id == id;
-            }
-        );
+const product=productsData.find(x=>x.id==id);
 
-    if(!product)return;
+if(!product)return;
 
-    const current =
-        Number(
-            product.stock || 0
-        );
+const current=Number(product.stock||0);
 
-    let newStock;
+let newStock;
 
-    if(stockAction==="in"){
+if(stockAction==="in"){
 
-        newStock =
-            current + quantity;
+newStock=current+quantity;
 
-    }
-    else{
+}
+else{
 
-        if(quantity>current){
+if(quantity>current){
 
-            alert(
-                "❌ Stock Out cannot be greater than current stock.\n\n" +
-                "Current stock: " +
-                current
-            );
+alert(
+"❌ Stock Out cannot be greater than current stock.\n\n"+
+"Current stock: "+current
+);
 
-            return;
-        }
+return;
 
-        newStock =
-            current - quantity;
+}
 
-    }
+newStock=current-quantity;
 
-    const {
-        error
-    } =
-        await supabaseClient
-        .from("products")
-        .update({
-            stock:newStock
-        })
-        .eq("id",id);
+}
 
-    if(error){
 
-        alert(
-            "❌ Stock update failed:\n\n" +
-            error.message
-        );
+/* GET CURRENT USER */
 
-        return;
-    }
+const {
+data:{user}
+}=await supabaseClient.auth.getUser();
 
-    alert(
-        "✅ Stock updated!\n\n" +
-        "New stock: " +
-        newStock
-    );
+if(!user){
 
-    closeStockModal();
+alert("❌ Your login session has expired. Please login again.");
+return;
 
-    await loadProducts();
+}
 
-    const barcode =
-        document.getElementById(
-            "barcode"
-        ).value.trim();
 
-    if(barcode){
+/* UPDATE STOCK */
 
-        searchBarcode();
+const {error:updateError}=
+await supabaseClient
+.from("products")
+.update({stock:newStock})
+.eq("id",id);
 
-    }
+if(updateError){
+
+alert(
+"❌ Stock update failed:\n\n"+
+updateError.message
+);
+
+return;
+
+}
+
+
+/* SAVE HISTORY */
+
+const historyRecord={
+product_id:product.id,
+product_name:product.product_name,
+barcode:product.barcode,
+action:stockAction==="in"?"STOCK IN":"STOCK OUT",
+quantity:quantity,
+stock_before:current,
+stock_after:newStock,
+user_id:user.id,
+user_email:user.email
+};
+
+const {error:historyError}=
+await supabaseClient
+.from("stock_history")
+.insert([historyRecord]);
+
+if(historyError){
+
+alert(
+"⚠️ Stock was updated, but history could not be saved.\n\n"+
+historyError.message
+);
+
+}
+else{
+
+alert(
+"✅ Stock updated!\n\n"+
+"Product: "+product.product_name+
+"\n"+
+"Action: "+(stockAction==="in"?"STOCK IN":"STOCK OUT")+
+"\n"+
+"Quantity: "+quantity+
+"\n"+
+"New stock: "+newStock
+);
+
+}
+
+closeStockModal();
+
+await loadProducts();
+await loadHistory();
+
+const barcode=document.getElementById("barcode").value.trim();
+
+if(barcode) searchBarcode();
 
 }
 
 
 /* =====================================================
-   ESCAPE HTML
+   STOCK HISTORY
+===================================================== */
+
+async function loadHistory(){
+
+const list=document.getElementById("historyList");
+
+list.innerHTML=
+'<div class="loading">Loading stock history...</div>';
+
+const {data,error}=
+await supabaseClient
+.from("stock_history")
+.select("*")
+.order("created_at",{ascending:false})
+.limit(100);
+
+if(error){
+
+list.innerHTML=
+'<div class="error">❌ History error<br><br>'+
+escapeHTML(error.message)+
+'</div>';
+
+return;
+
+}
+
+if(!data||!data.length){
+
+list.innerHTML=
+'<div class="empty">📋 No stock transactions yet.</div>';
+
+return;
+
+}
+
+list.innerHTML="";
+
+data.forEach(h=>{
+
+const div=document.createElement("div");
+
+div.className="history-row";
+
+const date=h.created_at
+?new Date(h.created_at).toLocaleString()
+:"-";
+
+const isIn=h.action==="STOCK IN";
+
+div.innerHTML=
+
+'<strong>'+escapeHTML(h.product_name||"-")+'</strong>'+
+'<br><small>'+escapeHTML(date)+'</small>'+
+'<br><br>'+
+'<span class="'+
+(isIn?"history-in":"history-out")+
+'">'+
+(isIn?"📥 STOCK IN":"📤 STOCK OUT")+
+'</span>'+
+'<br>'+
+'<strong>Barcode:</strong> '+escapeHTML(h.barcode||"-")+
+'<br>'+
+'<strong>Quantity:</strong> '+Number(h.quantity||0)+
+'<br>'+
+'<strong>Stock Before:</strong> '+Number(h.stock_before||0)+
+'<br>'+
+'<strong>Stock After:</strong> '+Number(h.stock_after||0)+
+'<br>'+
+'<strong>User:</strong> '+escapeHTML(h.user_email||"-");
+
+list.appendChild(div);
+
+});
+
+}
+
+
+/* =====================================================
+   ESCAPE
 ===================================================== */
 
 function escapeHTML(value){
 
-    if(
-        value===null ||
-        value===undefined
-    ){
+if(value===null||value===undefined)return "";
 
-        return "";
-
-    }
-
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+return String(value)
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
 
 }
 
