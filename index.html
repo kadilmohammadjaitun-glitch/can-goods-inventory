@@ -10,198 +10,936 @@
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f1f5f1;color:#222}
-.header{background:#176b3a;color:#fff;padding:18px 15px;text-align:center}
-.header h1{margin:0;font-size:25px}.header p{margin:6px 0;font-size:14px}
-.user-info{font-size:12px;opacity:.9}
-.container{max-width:850px;margin:auto;padding:15px}
-.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.card,.section{background:#fff;border-radius:14px;box-shadow:0 2px 8px #0001}
-.card{padding:18px}.card h2{margin:0;color:#176b3a;font-size:28px}.card p{margin:5px 0;color:#666}
-.section{margin-top:15px;padding:18px}.section h3{margin-top:0}
-input{width:100%;padding:13px;margin-top:7px;border:1px solid #ccc;border-radius:8px;font-size:16px}
-label{display:block;margin-top:12px;font-weight:bold}
-button{width:100%;padding:13px;margin-top:10px;border:0;border-radius:8px;background:#176b3a;color:#fff;font-size:16px;font-weight:bold}
-button:disabled{opacity:.55}.yellow{background:#e6a900}.red{background:#c62828}.blue{background:#1976d2}.gray{background:#666}
-.login-screen{position:fixed;inset:0;background:#176b3a;display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999}
-.login-box{width:100%;max-width:400px;background:#fff;padding:28px 22px;border-radius:18px;box-shadow:0 5px 25px #0004;text-align:center}
-.login-icon{font-size:55px}.login-box h2{margin:5px 0;color:#176b3a}.login-subtitle{color:#777}
-.password-wrap{position:relative}.password-wrap button{position:absolute;right:5px;top:7px;width:45px;margin:0;padding:9px;background:transparent;color:#555}
-#loginMessage{margin-top:15px;font-size:14px;font-weight:bold}
-.logout{max-width:180px;margin:10px auto 0;background:#555}
-.camera-wrap{position:relative;background:#000;border-radius:12px;overflow:hidden;margin-top:10px;display:none}
-#camera{width:100%;max-height:420px;display:block;object-fit:cover}
-.scan-frame{position:absolute;left:12%;right:12%;top:25%;bottom:25%;border:3px solid #00ff66;border-radius:12px}
-.scan-line{position:absolute;left:12%;right:12%;top:25%;height:3px;background:red;animation:scan 2s linear infinite}
-@keyframes scan{0%{top:25%}50%{top:75%}100%{top:25%}}
-.camera-msg{position:absolute;bottom:0;width:100%;background:#000a;color:#fff;text-align:center;padding:8px;font-size:13px}
-.camera-status{text-align:center;background:#f5f5f5;padding:9px;margin-top:8px;border-radius:8px;font-size:13px}
-#result{display:none;margin-top:15px;padding:15px;background:#eef7ef;border-radius:10px}
-.error{color:#c62828;font-weight:bold}.warning{color:#9a6900;font-weight:bold}.success{color:#176b3a;font-weight:bold}
-.product{background:#fafafa;border:1px solid #ddd;border-radius:12px;padding:12px;margin-top:12px}
-.product-image{width:100%;max-height:180px;object-fit:contain;border-radius:8px;background:#eee}
-.product-name{font-size:18px;font-weight:bold;color:#176b3a}
-.product-info{font-size:14px;line-height:1.6;margin-top:5px}
-.status{display:inline-block;padding:5px 9px;border-radius:6px;font-size:13px;font-weight:bold;margin-top:5px}
-.status-in{background:#d8f3dc;color:#176b3a}.status-low{background:#fff0c2;color:#9a6900}.status-out{background:#ffd9d9;color:#c62828}
-.product-buttons{display:grid;grid-template-columns:1fr 1fr;gap:7px}.product-buttons button{font-size:13px;padding:10px}
-.history-row{border:1px solid #ddd;border-radius:10px;padding:12px;margin-top:10px;background:#fafafa}
-.history-in{color:#176b3a;font-weight:bold}.history-out{color:#c62828;font-weight:bold}
-.modal{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;padding:15px;z-index:1000}
-.modal-box{background:#fff;width:100%;max-width:520px;max-height:90vh;overflow:auto;border-radius:15px;padding:20px}
-.empty,.loading{text-align:center;color:#777;padding:20px}
-@media(min-width:600px){.cards{grid-template-columns:repeat(4,1fr)}}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f1f5f1;
+color:#222
+}
+
+.header{
+background:#176b3a;
+color:#fff;
+padding:18px 15px;
+text-align:center
+}
+
+.header h1{
+margin:0;
+font-size:25px
+}
+
+.header p{
+margin:6px 0;
+font-size:14px
+}
+
+.user-info{
+font-size:12px;
+opacity:.9
+}
+
+.container{
+max-width:850px;
+margin:auto;
+padding:15px
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px
+}
+
+.card,.section{
+background:#fff;
+border-radius:14px;
+box-shadow:0 2px 8px #0001
+}
+
+.card{
+padding:18px
+}
+
+.card h2{
+margin:0;
+color:#176b3a;
+font-size:28px
+}
+
+.card p{
+margin:5px 0;
+color:#666
+}
+
+.section{
+margin-top:15px;
+padding:18px
+}
+
+.section h3{
+margin-top:0
+}
+
+input,select{
+width:100%;
+padding:13px;
+margin-top:7px;
+border:1px solid #ccc;
+border-radius:8px;
+font-size:16px;
+background:#fff
+}
+
+label{
+display:block;
+margin-top:12px;
+font-weight:bold
+}
+
+button{
+width:100%;
+padding:13px;
+margin-top:10px;
+border:0;
+border-radius:8px;
+background:#176b3a;
+color:#fff;
+font-size:16px;
+font-weight:bold
+}
+
+button:disabled{
+opacity:.55
+}
+
+.yellow{
+background:#e6a900
+}
+
+.red{
+background:#c62828
+}
+
+.blue{
+background:#1976d2
+}
+
+.gray{
+background:#666
+}
+
+.login-screen{
+position:fixed;
+inset:0;
+background:#176b3a;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+z-index:9999
+}
+
+.login-box{
+width:100%;
+max-width:400px;
+background:#fff;
+padding:28px 22px;
+border-radius:18px;
+box-shadow:0 5px 25px #0004;
+text-align:center
+}
+
+.login-icon{
+font-size:55px
+}
+
+.login-box h2{
+margin:5px 0;
+color:#176b3a
+}
+
+.login-subtitle{
+color:#777
+}
+
+.password-wrap{
+position:relative
+}
+
+.password-wrap button{
+position:absolute;
+right:5px;
+top:7px;
+width:45px;
+margin:0;
+padding:9px;
+background:transparent;
+color:#555
+}
+
+#loginMessage{
+margin-top:15px;
+font-size:14px;
+font-weight:bold
+}
+
+.logout{
+max-width:180px;
+margin:10px auto 0;
+background:#555
+}
+
+.camera-wrap{
+position:relative;
+background:#000;
+border-radius:12px;
+overflow:hidden;
+margin-top:10px;
+display:none
+}
+
+#camera{
+width:100%;
+max-height:420px;
+display:block;
+object-fit:cover
+}
+
+.scan-frame{
+position:absolute;
+left:12%;
+right:12%;
+top:25%;
+bottom:25%;
+border:3px solid #00ff66;
+border-radius:12px
+}
+
+.scan-line{
+position:absolute;
+left:12%;
+right:12%;
+top:25%;
+height:3px;
+background:red;
+animation:scan 2s linear infinite
+}
+
+@keyframes scan{
+0%{top:25%}
+50%{top:75%}
+100%{top:25%}
+}
+
+.camera-msg{
+position:absolute;
+bottom:0;
+width:100%;
+background:#000a;
+color:#fff;
+text-align:center;
+padding:8px;
+font-size:13px
+}
+
+.camera-status{
+text-align:center;
+background:#f5f5f5;
+padding:9px;
+margin-top:8px;
+border-radius:8px;
+font-size:13px
+}
+
+#result{
+display:none;
+margin-top:15px;
+padding:15px;
+background:#eef7ef;
+border-radius:10px
+}
+
+.error{
+color:#c62828;
+font-weight:bold
+}
+
+.warning{
+color:#9a6900;
+font-weight:bold
+}
+
+.success{
+color:#176b3a;
+font-weight:bold
+}
+
+.product{
+background:#fafafa;
+border:1px solid #ddd;
+border-radius:12px;
+padding:12px;
+margin-top:12px
+}
+
+.product-image{
+width:100%;
+max-height:180px;
+object-fit:contain;
+border-radius:8px;
+background:#eee
+}
+
+.product-name{
+font-size:18px;
+font-weight:bold;
+color:#176b3a
+}
+
+.product-info{
+font-size:14px;
+line-height:1.6;
+margin-top:5px
+}
+
+.status{
+display:inline-block;
+padding:5px 9px;
+border-radius:6px;
+font-size:13px;
+font-weight:bold;
+margin-top:5px
+}
+
+.status-in{
+background:#d8f3dc;
+color:#176b3a
+}
+
+.status-low{
+background:#fff0c2;
+color:#9a6900
+}
+
+.status-out{
+background:#ffd9d9;
+color:#c62828
+}
+
+.product-buttons{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:7px
+}
+
+.product-buttons button{
+font-size:13px;
+padding:10px
+}
+
+.history-row{
+border:1px solid #ddd;
+border-radius:10px;
+padding:12px;
+margin-top:10px;
+background:#fafafa
+}
+
+.history-in{
+color:#176b3a;
+font-weight:bold
+}
+
+.history-out{
+color:#c62828;
+font-weight:bold
+}
+
+.modal{
+position:fixed;
+inset:0;
+background:#0009;
+display:none;
+align-items:center;
+justify-content:center;
+padding:15px;
+z-index:1000
+}
+
+.modal-box{
+background:#fff;
+width:100%;
+max-width:520px;
+max-height:90vh;
+overflow:auto;
+border-radius:15px;
+padding:20px
+}
+
+.empty,.loading{
+text-align:center;
+color:#777;
+padding:20px
+}
+
+/* REPORTS */
+
+.report-summary{
+background:#eef7ef;
+border-radius:10px;
+padding:13px;
+margin-top:15px;
+line-height:1.8
+}
+
+.report-table-wrap{
+width:100%;
+overflow-x:auto;
+margin-top:12px
+}
+
+.report-table{
+width:100%;
+border-collapse:collapse;
+font-size:12px;
+background:#fff
+}
+
+.report-table th,
+.report-table td{
+border:1px solid #ddd;
+padding:8px;
+text-align:left;
+white-space:nowrap
+}
+
+.report-table th{
+background:#176b3a;
+color:#fff
+}
+
+.report-table tr:nth-child(even){
+background:#f8f8f8
+}
+
+.report-empty{
+text-align:center;
+padding:20px;
+color:#777
+}
+
+.report-title{
+font-size:20px;
+font-weight:bold;
+color:#176b3a;
+margin-top:10px
+}
+
+.report-note{
+font-size:12px;
+color:#777;
+margin-top:5px
+}
+
+@media(min-width:600px){
+
+.cards{
+grid-template-columns:repeat(4,1fr)
+}
+
+}
+
+@media(max-width:599px){
+
+.report-table{
+font-size:11px
+}
+
+.report-table th,
+.report-table td{
+padding:7px
+}
+
+}
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
+<!-- =====================================================
+     LOGIN
+===================================================== -->
+
 <div id="loginScreen" class="login-screen">
+
 <div class="login-box">
+
 <div class="login-icon">🥫</div>
+
 <h2>Can Goods Inventory</h2>
-<p class="login-subtitle">Please login to continue</p>
+
+<p class="login-subtitle">
+Please login to continue
+</p>
 
 <label>Email</label>
-<input id="loginEmail" type="email" placeholder="Enter your email">
+
+<input
+id="loginEmail"
+type="email"
+placeholder="Enter your email">
 
 <label>Password</label>
+
 <div class="password-wrap">
-<input id="loginPassword" type="password" placeholder="Enter your password">
-<button type="button" onclick="togglePassword()">👁️</button>
+
+<input
+id="loginPassword"
+type="password"
+placeholder="Enter your password">
+
+<button
+type="button"
+onclick="togglePassword()">
+👁️
+</button>
+
 </div>
 
-<button id="loginButton" onclick="loginUser()">🔐 LOGIN</button>
+<button
+id="loginButton"
+onclick="loginUser()">
+🔐 LOGIN
+</button>
+
 <div id="loginMessage"></div>
+
 </div>
 </div>
 
-<!-- APP -->
+
+<!-- =====================================================
+     APP
+===================================================== -->
+
 <div id="app" style="display:none">
 
 <div class="header">
+
 <h1>🥫 Can Goods Inventory</h1>
+
 <p>Inventory Management System</p>
+
 <div id="userInfo" class="user-info"></div>
-<button class="logout" onclick="logoutUser()">🚪 LOGOUT</button>
+
+<button
+class="logout"
+onclick="logoutUser()">
+🚪 LOGOUT
+</button>
+
 </div>
+
 
 <div class="container">
 
-<!-- DASHBOARD -->
+
+<!-- =====================================================
+     DASHBOARD
+===================================================== -->
+
 <div class="cards">
-<div class="card"><h2 id="productsCount">0</h2><p>Products</p></div>
-<div class="card"><h2 id="stockCount">0</h2><p>Total Stock</p></div>
-<div class="card"><h2 id="lowStockCount">0</h2><p>Low Stock</p></div>
-<div class="card"><h2 id="outStockCount">0</h2><p>Out of Stock</p></div>
+
+<div class="card">
+<h2 id="productsCount">0</h2>
+<p>Products</p>
 </div>
 
-<!-- SCANNER -->
+<div class="card">
+<h2 id="stockCount">0</h2>
+<p>Total Stock</p>
+</div>
+
+<div class="card">
+<h2 id="lowStockCount">0</h2>
+<p>Low Stock</p>
+</div>
+
+<div class="card">
+<h2 id="outStockCount">0</h2>
+<p>Out of Stock</p>
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     SCANNER
+===================================================== -->
+
 <div class="section">
+
 <h3>📷 Barcode Scanner</h3>
 
-<div id="cameraWrap" class="camera-wrap">
-<video id="camera" autoplay muted playsinline></video>
+<div
+id="cameraWrap"
+class="camera-wrap">
+
+<video
+id="camera"
+autoplay
+muted
+playsinline>
+</video>
+
 <div class="scan-frame"></div>
+
 <div class="scan-line"></div>
-<div class="camera-msg">Place barcode inside the green box</div>
+
+<div class="camera-msg">
+Place barcode inside the green box
 </div>
 
-<div id="cameraStatus" class="camera-status">Camera is stopped.</div>
+</div>
 
-<button class="yellow" onclick="startScanner()">📷 START SCANNER</button>
-<button id="stopButton" class="red" onclick="stopScanner()" style="display:none">⛔ STOP CAMERA</button>
+<div
+id="cameraStatus"
+class="camera-status">
+Camera is stopped.
+</div>
+
+<button
+class="yellow"
+onclick="startScanner()">
+📷 START SCANNER
+</button>
+
+<button
+id="stopButton"
+class="red"
+onclick="stopScanner()"
+style="display:none">
+⛔ STOP CAMERA
+</button>
 
 <label>Barcode</label>
-<input id="barcode" inputmode="numeric" placeholder="Scan or enter barcode">
 
-<button onclick="searchBarcode()">🔍 SEARCH BARCODE</button>
+<input
+id="barcode"
+inputmode="numeric"
+placeholder="Scan or enter barcode">
+
+<button
+onclick="searchBarcode()">
+🔍 SEARCH BARCODE
+</button>
+
 <div id="result"></div>
+
 </div>
 
-<!-- PRODUCT MANAGEMENT -->
+
+<!-- =====================================================
+     PRODUCT MANAGEMENT
+===================================================== -->
+
 <div class="section">
+
 <h3>📦 Product Management</h3>
-<button onclick="openAddModal()">➕ ADD NEW PRODUCT</button>
+
+<button
+onclick="openAddModal()">
+➕ ADD NEW PRODUCT
+</button>
+
 </div>
 
-<!-- PRODUCT LIST -->
+
+<!-- =====================================================
+     PRODUCT LIST
+===================================================== -->
+
 <div class="section">
+
 <h3>📋 Product List</h3>
-<input id="productSearch" placeholder="🔎 Search product, brand or barcode" oninput="filterProducts()">
-<div id="productList"><div class="loading">Loading products...</div></div>
+
+<input
+id="productSearch"
+placeholder="🔎 Search product, brand or barcode"
+oninput="filterProducts()">
+
+<div id="productList">
+<div class="loading">
+Loading products...
+</div>
 </div>
 
-<!-- HISTORY -->
+</div>
+
+
+<!-- =====================================================
+     STOCK HISTORY
+===================================================== -->
+
 <div class="section">
+
 <h3>📋 Stock History</h3>
 
-<button class="blue" onclick="loadHistory()">🔄 REFRESH HISTORY</button>
+<button
+class="blue"
+onclick="loadHistory()">
+🔄 REFRESH HISTORY
+</button>
 
 <div id="historyList">
-<div class="loading">Loading stock history...</div>
+
+<div class="loading">
+Loading stock history...
 </div>
+
 </div>
+
+</div>
+
+
+<!-- =====================================================
+     REPORTS
+===================================================== -->
+
+<div class="section">
+
+<h3>📊 Reports & Export</h3>
+
+<label>Report Type</label>
+
+<select
+id="reportType"
+onchange="generateReport()">
+
+<option value="inventory">
+📦 Inventory Report
+</option>
+
+<option value="history">
+🧾 Stock Movement Report
+</option>
+
+</select>
+
+
+<label>Search Report</label>
+
+<input
+id="reportSearch"
+placeholder="🔎 Search product, barcode or brand"
+oninput="generateReport()">
+
+
+<div id="dateFilters">
+
+<label>From Date</label>
+
+<input
+id="reportFromDate"
+type="date"
+onchange="generateReport()">
+
+<label>To Date</label>
+
+<input
+id="reportToDate"
+type="date"
+onchange="generateReport">
+
+</div>
+
+
+<button
+class="blue"
+onclick="generateReport()">
+🔄 GENERATE REPORT
+</button>
+
+
+<button
+onclick="printReport()">
+🖨️ PRINT REPORT
+</button>
+
+
+<button
+class="yellow"
+onclick="exportReportCSV()">
+📥 EXPORT CSV
+</button>
+
+
+<div id="reportSummary"></div>
+
+
+<div id="reportResult">
+
+<div class="loading">
+Generate a report to display results.
+</div>
+
+</div>
+
+</div>
+
 
 </div>
 </div>
 
-<!-- PRODUCT MODAL -->
-<div id="productModal" class="modal">
+
+<!-- =====================================================
+     PRODUCT MODAL
+===================================================== -->
+
+<div
+id="productModal"
+class="modal">
+
 <div class="modal-box">
 
-<h2 id="modalTitle">➕ Add Product</h2>
-<input type="hidden" id="editProductId">
+<h2 id="modalTitle">
+➕ Add Product
+</h2>
+
+<input
+type="hidden"
+id="editProductId">
+
 
 <label>Barcode *</label>
-<input id="formBarcode" inputmode="numeric" placeholder="Barcode number">
+
+<input
+id="formBarcode"
+inputmode="numeric"
+placeholder="Barcode number">
+
 
 <label>Product Name *</label>
-<input id="formProductName" placeholder="Example: Mega Sardines">
+
+<input
+id="formProductName"
+placeholder="Example: Mega Sardines">
+
 
 <label>Brand</label>
-<input id="formBrand" placeholder="Example: Mega">
+
+<input
+id="formBrand"
+placeholder="Example: Mega">
+
 
 <label>Category</label>
-<input id="formCategory" placeholder="Example: Sardines">
+
+<input
+id="formCategory"
+placeholder="Example: Sardines">
+
 
 <label>Unit</label>
-<input id="formUnit" placeholder="Example: can">
+
+<input
+id="formUnit"
+placeholder="Example: can">
+
 
 <label>Stock</label>
-<input id="formStock" type="number" min="0" value="0">
+
+<input
+id="formStock"
+type="number"
+min="0"
+value="0">
+
 
 <label>Minimum Stock</label>
-<input id="formMinimumStock" type="number" min="0" value="5">
+
+<input
+id="formMinimumStock"
+type="number"
+min="0"
+value="5">
+
 
 <label>Price</label>
-<input id="formPrice" type="number" min="0" step="0.01" value="0">
+
+<input
+id="formPrice"
+type="number"
+min="0"
+step="0.01"
+value="0">
+
 
 <label>Product Image URL</label>
-<input id="formImage" placeholder="https://example.com/image.jpg">
 
-<button onclick="saveProduct()">💾 SAVE PRODUCT</button>
-<button class="gray" onclick="closeModal()">✖ CLOSE</button>
+<input
+id="formImage"
+placeholder="https://example.com/image.jpg">
+
+
+<button
+onclick="saveProduct()">
+💾 SAVE PRODUCT
+</button>
+
+<button
+class="gray"
+onclick="closeModal()">
+✖ CLOSE
+</button>
 
 </div>
 </div>
 
-<!-- STOCK MODAL -->
-<div id="stockModal" class="modal">
+
+<!-- =====================================================
+     STOCK MODAL
+===================================================== -->
+
+<div
+id="stockModal"
+class="modal">
+
 <div class="modal-box">
 
-<h2 id="stockModalTitle">📦 Stock</h2>
-<input type="hidden" id="stockProductId">
+<h2 id="stockModalTitle">
+📦 Stock
+</h2>
+
+<input
+type="hidden"
+id="stockProductId">
 
 <label>Quantity</label>
-<input id="stockQuantity" type="number" min="1" value="1">
 
-<button id="stockConfirmButton" onclick="confirmStock()">CONFIRM</button>
-<button class="gray" onclick="closeStockModal()">✖ CANCEL</button>
+<input
+id="stockQuantity"
+type="number"
+min="1"
+value="1">
+
+<button
+id="stockConfirmButton"
+onclick="confirmStock()">
+CONFIRM
+</button>
+
+<button
+class="gray"
+onclick="closeStockModal()">
+✖ CANCEL
+</button>
 
 </div>
 </div>
+
 
 <script>
 
@@ -221,8 +959,10 @@ SUPABASE_URL,
 SUPABASE_KEY
 );
 
+
 let codeReader=null;
 let productsData=[];
+let historyData=[];
 let stockAction="";
 let scannerRunning=false;
 let scanLocked=false;
@@ -232,24 +972,35 @@ let scanLocked=false;
    AUTH
 ===================================================== */
 
-document.addEventListener("DOMContentLoaded",checkLogin);
+document.addEventListener(
+"DOMContentLoaded",
+checkLogin
+);
+
 
 supabaseClient.auth.onAuthStateChange(
 function(event,session){
 
-if(session) showApp(session);
-else showLogin();
+if(session)
+showApp(session);
+else
+showLogin();
 
-});
+}
+);
 
 
 async function checkLogin(){
 
-const {data:{session}} =
+const {
+data:{session}
+}=
 await supabaseClient.auth.getSession();
 
-if(session) showApp(session);
-else showLogin();
+if(session)
+showApp(session);
+else
+showLogin();
 
 }
 
@@ -258,19 +1009,32 @@ function showLogin(){
 
 stopScanner();
 
-document.getElementById("loginScreen").style.display="flex";
-document.getElementById("app").style.display="none";
+document.getElementById(
+"loginScreen"
+).style.display="flex";
+
+document.getElementById(
+"app"
+).style.display="none";
 
 }
 
 
 function showApp(session){
 
-document.getElementById("loginScreen").style.display="none";
-document.getElementById("app").style.display="block";
+document.getElementById(
+"loginScreen"
+).style.display="none";
 
-document.getElementById("userInfo").textContent =
-"Logged in as: "+(session.user.email||"User");
+document.getElementById(
+"app"
+).style.display="block";
+
+document.getElementById(
+"userInfo"
+).textContent=
+"Logged in as: "+
+(session.user.email||"User");
 
 loadProducts();
 loadHistory();
@@ -280,51 +1044,81 @@ loadHistory();
 
 async function loginUser(){
 
-const email =
-document.getElementById("loginEmail").value.trim();
+const email=
+document.getElementById(
+"loginEmail"
+).value.trim();
 
-const password =
-document.getElementById("loginPassword").value;
+const password=
+document.getElementById(
+"loginPassword"
+).value;
 
-const button =
-document.getElementById("loginButton");
+const button=
+document.getElementById(
+"loginButton"
+);
 
-const message =
-document.getElementById("loginMessage");
+const message=
+document.getElementById(
+"loginMessage"
+);
 
 if(!email||!password){
 
 message.style.color="#c62828";
-message.textContent="⚠️ Please enter email and password.";
+
+message.textContent=
+"⚠️ Please enter email and password.";
+
 return;
 
 }
 
 button.disabled=true;
-button.textContent="🔄 LOGGING IN...";
+
+button.textContent=
+"🔄 LOGGING IN...";
+
 message.textContent="";
 
-const {data,error} =
+
+const {
+data,
+error
+}=
 await supabaseClient.auth.signInWithPassword({
 email:email,
 password:password
 });
 
+
 if(error){
 
 message.style.color="#c62828";
-message.innerHTML="❌ Login failed.<br>"+escapeHTML(error.message);
+
+message.innerHTML=
+"❌ Login failed.<br>"+
+escapeHTML(error.message);
 
 button.disabled=false;
-button.textContent="🔐 LOGIN";
+
+button.textContent=
+"🔐 LOGIN";
+
 return;
 
 }
 
-button.disabled=false;
-button.textContent="🔐 LOGIN";
 
-if(data.session) showApp(data.session);
+button.disabled=false;
+
+button.textContent=
+"🔐 LOGIN";
+
+
+if(data.session)
+showApp(data.session);
 
 }
 
@@ -342,10 +1136,15 @@ showLogin();
 
 function togglePassword(){
 
-const input=document.getElementById("loginPassword");
+const input=
+document.getElementById(
+"loginPassword"
+);
 
-input.type =
-input.type==="password" ? "text" : "password";
+input.type=
+input.type==="password"
+?"text"
+:"password";
 
 }
 
@@ -356,26 +1155,41 @@ input.type==="password" ? "text" : "password";
 
 async function loadProducts(){
 
-const list=document.getElementById("productList");
+const list=
+document.getElementById(
+"productList"
+);
 
-list.innerHTML='<div class="loading">Loading products...</div>';
+list.innerHTML=
+'<div class="loading">Loading products...</div>';
 
-const {data,error} =
+
+const {
+data,
+error
+}=
 await supabaseClient
 .from("products")
 .select("*")
 .order("created_at",{ascending:false});
 
+
 if(error){
 
-list.innerHTML='<div class="error">❌ '+escapeHTML(error.message)+'</div>';
+list.innerHTML=
+'<div class="error">❌ '+
+escapeHTML(error.message)+
+'</div>';
+
 return;
 
 }
 
+
 productsData=data||[];
 
 updateDashboard();
+
 displayProducts(productsData);
 
 }
@@ -383,104 +1197,193 @@ displayProducts(productsData);
 
 function updateDashboard(){
 
-let total=0,low=0,out=0;
+let total=0;
+let low=0;
+let out=0;
+
 
 productsData.forEach(p=>{
 
-const stock=Number(p.stock||0);
-const min=Number(p.minimum_stock||0);
+const stock=
+Number(p.stock||0);
+
+const min=
+Number(p.minimum_stock||0);
 
 total+=stock;
 
-if(stock===0) out++;
-else if(stock<=min) low++;
+
+if(stock===0)
+out++;
+
+else if(stock<=min)
+low++;
 
 });
 
-document.getElementById("productsCount").textContent=productsData.length;
-document.getElementById("stockCount").textContent=total;
-document.getElementById("lowStockCount").textContent=low;
-document.getElementById("outStockCount").textContent=out;
+
+document.getElementById(
+"productsCount"
+).textContent=
+productsData.length;
+
+
+document.getElementById(
+"stockCount"
+).textContent=
+total;
+
+
+document.getElementById(
+"lowStockCount"
+).textContent=
+low;
+
+
+document.getElementById(
+"outStockCount"
+).textContent=
+out;
 
 }
 
 
 function getStatus(p){
 
-const stock=Number(p.stock||0);
-const min=Number(p.minimum_stock||0);
+const stock=
+Number(p.stock||0);
+
+const min=
+Number(p.minimum_stock||0);
+
 
 if(stock===0)
-return {text:"🔴 OUT OF STOCK",class:"status-out"};
+
+return{
+text:"🔴 OUT OF STOCK",
+class:"status-out"
+};
+
 
 if(stock<=min)
-return {text:"🟡 LOW STOCK",class:"status-low"};
 
-return {text:"🟢 IN STOCK",class:"status-in"};
+return{
+text:"🟡 LOW STOCK",
+class:"status-low"
+};
+
+
+return{
+text:"🟢 IN STOCK",
+class:"status-in"
+};
 
 }
 
 
 function displayProducts(products){
 
-const list=document.getElementById("productList");
+const list=
+document.getElementById(
+"productList"
+);
+
 
 if(!products.length){
 
-list.innerHTML='<div class="empty">📦 No products found.</div>';
+list.innerHTML=
+'<div class="empty">📦 No products found.</div>';
+
 return;
 
 }
 
+
 list.innerHTML="";
+
 
 products.forEach(p=>{
 
-const s=getStatus(p);
+const s=
+getStatus(p);
 
 let image="";
 
+
 if(p.image){
 
-image='<img class="product-image" src="'+
+image=
+'<img class="product-image" src="'+
 escapeHTML(p.image)+
 '" onerror="this.style.display=\'none\'">';
 
 }
 
-const div=document.createElement("div");
+
+const div=
+document.createElement("div");
+
 div.className="product";
+
 
 div.innerHTML=
 
 image+
 
 '<div class="product-name">'+
-escapeHTML(p.product_name||"-")+
+escapeHTML(
+p.product_name||"-"
+)+
 '</div>'+
 
 '<div class="product-info">'+
-'<strong>Barcode:</strong> '+escapeHTML(p.barcode||"-")+
-'<br><strong>Brand:</strong> '+escapeHTML(p.brand||"-")+
-'<br><strong>Category:</strong> '+escapeHTML(p.category||"-")+
-'<br><strong>Unit:</strong> '+escapeHTML(p.unit||"-")+
-'<br><strong>Stock:</strong> '+Number(p.stock||0)+
-'<br><strong>Minimum:</strong> '+Number(p.minimum_stock||0)+
-'<br><strong>Price:</strong> ₱'+Number(p.price||0).toFixed(2)+
-'<br><span class="status '+s.class+'">'+s.text+'</span>'+
+
+'<strong>Barcode:</strong> '+
+escapeHTML(p.barcode||"-")+
+
+'<br><strong>Brand:</strong> '+
+escapeHTML(p.brand||"-")+
+
+'<br><strong>Category:</strong> '+
+escapeHTML(p.category||"-")+
+
+'<br><strong>Unit:</strong> '+
+escapeHTML(p.unit||"-")+
+
+'<br><strong>Stock:</strong> '+
+Number(p.stock||0)+
+
+'<br><strong>Minimum:</strong> '+
+Number(p.minimum_stock||0)+
+
+'<br><strong>Price:</strong> ₱'+
+Number(p.price||0).toFixed(2)+
+
+'<br><span class="status '+
+s.class+'">'+
+s.text+
+'</span>'+
+
 '</div>'+
 
 '<div class="product-buttons">'+
 
-'<button class="blue" onclick="openStockModal('+p.id+',\'in\')">📥 STOCK IN</button>'+
+'<button class="blue" onclick="openStockModal('+
+p.id+
+',\'in\')">📥 STOCK IN</button>'+
 
-'<button class="red" onclick="openStockModal('+p.id+',\'out\')">📤 STOCK OUT</button>'+
+'<button class="red" onclick="openStockModal('+
+p.id+
+',\'out\')">📤 STOCK OUT</button>'+
 
-'<button onclick="editProduct('+p.id+')">✏️ EDIT</button>'+
+'<button onclick="editProduct('+
+p.id+
+')">✏️ EDIT</button>'+
 
 '<button class="gray" disabled>🗑️ DELETE</button>'+
 
 '</div>';
+
 
 list.appendChild(div);
 
@@ -491,23 +1394,45 @@ list.appendChild(div);
 
 function filterProducts(){
 
-const q=document.getElementById("productSearch")
-.value.toLowerCase().trim();
+const q=
+document.getElementById(
+"productSearch"
+).value
+.toLowerCase()
+.trim();
+
 
 if(!q){
 
 displayProducts(productsData);
+
 return;
 
 }
 
+
 displayProducts(
+
 productsData.filter(p=>
-String(p.barcode||"").toLowerCase().includes(q)||
-String(p.product_name||"").toLowerCase().includes(q)||
-String(p.brand||"").toLowerCase().includes(q)||
-String(p.category||"").toLowerCase().includes(q)
+
+String(p.barcode||"")
+.toLowerCase()
+.includes(q)||
+
+String(p.product_name||"")
+.toLowerCase()
+.includes(q)||
+
+String(p.brand||"")
+.toLowerCase()
+.includes(q)||
+
+String(p.category||"")
+.toLowerCase()
+.includes(q)
+
 )
+
 );
 
 }
@@ -519,70 +1444,135 @@ String(p.category||"").toLowerCase().includes(q)
 
 async function startScanner(){
 
-if(scannerRunning)return;
+if(scannerRunning)
+return;
 
-const video=document.getElementById("camera");
-const wrap=document.getElementById("cameraWrap");
-const stop=document.getElementById("stopButton");
-const status=document.getElementById("cameraStatus");
-const result=document.getElementById("result");
+
+const video=
+document.getElementById("camera");
+
+const wrap=
+document.getElementById(
+"cameraWrap"
+);
+
+const stop=
+document.getElementById(
+"stopButton"
+);
+
+const status=
+document.getElementById(
+"cameraStatus"
+);
+
+const result=
+document.getElementById(
+"result"
+);
+
 
 result.style.display="block";
-result.innerHTML="📷 Requesting camera permission...";
-status.textContent="📷 Starting camera...";
+
+result.innerHTML=
+"📷 Requesting camera permission...";
+
+status.textContent=
+"📷 Starting camera...";
+
 scanLocked=false;
+
 
 try{
 
 const stream=
 await navigator.mediaDevices.getUserMedia({
-video:{facingMode:{ideal:"environment"}},
+video:{
+facingMode:{
+ideal:"environment"
+}
+},
 audio:false
 });
 
-stream.getTracks().forEach(t=>t.stop());
 
-codeReader=new ZXing.BrowserMultiFormatReader();
+stream.getTracks()
+.forEach(t=>t.stop());
+
+
+codeReader=
+new ZXing.BrowserMultiFormatReader();
+
 
 wrap.style.display="block";
+
 stop.style.display="block";
+
 scannerRunning=true;
 
-status.textContent="📷 Camera active — scan a barcode.";
-result.innerHTML="🔎 Looking for barcode...";
+
+status.textContent=
+"📷 Camera active — scan a barcode.";
+
+result.innerHTML=
+"🔎 Looking for barcode...";
+
 
 await codeReader.decodeFromConstraints(
+
 {
 audio:false,
 video:{
-facingMode:{ideal:"environment"},
-width:{ideal:1280},
-height:{ideal:720}
+facingMode:{
+ideal:"environment"
+},
+width:{
+ideal:1280
+},
+height:{
+ideal:720
+}
 }
 },
+
 video,
+
 function(scanResult){
 
-if(scanResult&&!scanLocked){
+if(
+scanResult &&
+!scanLocked
+){
 
 scanLocked=true;
 
-const code=scanResult.getText();
+const code=
+scanResult.getText();
 
-document.getElementById("barcode").value=code;
+document.getElementById(
+"barcode"
+).value=code;
+
 
 result.innerHTML=
-'<span class="success">✅ Barcode detected!<br>'+
-escapeHTML(code)+'</span>';
+'<span class="success">'+
+'✅ Barcode detected!<br>'+
+escapeHTML(code)+
+'</span>';
+
 
 setTimeout(()=>{
+
 stopScanner();
+
 searchBarcode();
+
 },400);
 
 }
 
 }
+
 );
 
 }
@@ -592,33 +1582,61 @@ console.error(error);
 
 scannerRunning=false;
 
+
 if(codeReader){
 
-try{codeReader.reset()}catch(e){}
+try{
+codeReader.reset()
+}catch(e){}
+
 codeReader=null;
 
 }
 
+
 wrap.style.display="none";
+
 stop.style.display="none";
 
-status.textContent="❌ Camera stopped.";
+status.textContent=
+"❌ Camera stopped.";
 
-let msg="❌ Camera could not start.";
+
+let msg=
+"❌ Camera could not start.";
+
 
 if(error.name==="NotAllowedError")
-msg="❌ Camera permission was denied. Please allow camera permission in Chrome.";
+
+msg=
+"❌ Camera permission was denied. Please allow camera permission in Chrome.";
+
 
 else if(error.name==="NotFoundError")
-msg="❌ No camera was found.";
+
+msg=
+"❌ No camera was found.";
+
 
 else if(error.name==="NotReadableError")
-msg="❌ Camera is being used by another app.";
+
+msg=
+"❌ Camera is being used by another app.";
+
 
 else
-msg="❌ Camera error:<br>"+escapeHTML(error.message||String(error));
 
-result.innerHTML='<span class="error">'+msg+'</span>';
+msg=
+"❌ Camera error:<br>"+
+escapeHTML(
+error.message||String(error)
+);
+
+
+result.innerHTML=
+'<span class="error">'+
+msg+
+'</span>';
 
 }
 
@@ -628,30 +1646,61 @@ result.innerHTML='<span class="error">'+msg+'</span>';
 function stopScanner(){
 
 scannerRunning=false;
+
 scanLocked=false;
+
 
 if(codeReader){
 
-try{codeReader.reset()}catch(e){}
+try{
+codeReader.reset()
+}catch(e){}
+
 codeReader=null;
 
 }
 
-const video=document.getElementById("camera");
 
-if(video&&video.srcObject){
+const video=
+document.getElementById(
+"camera"
+);
+
+
+if(
+video &&
+video.srcObject
+){
 
 try{
-video.srcObject.getTracks().forEach(t=>t.stop());
-}catch(e){}
+
+video.srcObject
+.getTracks()
+.forEach(t=>t.stop());
+
+}
+catch(e){}
+
 
 video.srcObject=null;
 
 }
 
-document.getElementById("cameraWrap").style.display="none";
-document.getElementById("stopButton").style.display="none";
-document.getElementById("cameraStatus").textContent="Camera is stopped.";
+
+document.getElementById(
+"cameraWrap"
+).style.display="none";
+
+
+document.getElementById(
+"stopButton"
+).style.display="none";
+
+
+document.getElementById(
+"cameraStatus"
+).textContent=
+"Camera is stopped.";
 
 }
 
@@ -662,43 +1711,73 @@ document.getElementById("cameraStatus").textContent="Camera is stopped.";
 
 async function searchBarcode(){
 
-const barcode=document.getElementById("barcode").value.trim();
-const result=document.getElementById("result");
+const barcode=
+document.getElementById(
+"barcode"
+).value.trim();
+
+const result=
+document.getElementById(
+"result"
+);
+
 
 if(!barcode){
 
 result.style.display="block";
-result.innerHTML='<span class="error">⚠️ Please enter a barcode.</span>';
+
+result.innerHTML=
+'<span class="error">'+
+'⚠️ Please enter a barcode.'+
+'</span>';
+
 return;
 
 }
 
-result.style.display="block";
-result.innerHTML="🔎 Searching inventory...";
 
-const {data,error}=
+result.style.display="block";
+
+result.innerHTML=
+"🔎 Searching inventory...";
+
+
+const {
+data,
+error
+}=
 await supabaseClient
 .from("products")
 .select("*")
 .eq("barcode",barcode)
 .maybeSingle();
 
+
 if(error){
 
-result.innerHTML='<span class="error">❌ '+escapeHTML(error.message)+'</span>';
+result.innerHTML=
+'<span class="error">❌ '+
+escapeHTML(error.message)+
+'</span>';
+
 return;
 
 }
+
 
 if(!data){
 
 result.innerHTML=
-'<span class="warning">⚠️ Product not found.</span><br><br>'+
-'<strong>Barcode:</strong> '+escapeHTML(barcode);
+'<span class="warning">'+
+'⚠️ Product not found.'+
+'</span><br><br>'+
+'<strong>Barcode:</strong> '+
+escapeHTML(barcode);
 
 return;
 
 }
+
 
 showSearchResult(data);
 
@@ -707,27 +1786,69 @@ showSearchResult(data);
 
 function showSearchResult(p){
 
-const result=document.getElementById("result");
-const s=getStatus(p);
+const result=
+document.getElementById(
+"result"
+);
+
+const s=
+getStatus(p);
 
 let image="";
 
+
 if(p.image)
-image='<br><img class="product-image" src="'+escapeHTML(p.image)+'">';
+
+image=
+'<br><img class="product-image" src="'+
+escapeHTML(p.image)+
+'">';
+
 
 result.innerHTML=
-'<div class="product-name">'+escapeHTML(p.product_name||"-")+'</div>'+
-image+'<br>'+
-'<strong>Barcode:</strong> '+escapeHTML(p.barcode||"-")+
-'<br><strong>Brand:</strong> '+escapeHTML(p.brand||"-")+
-'<br><strong>Category:</strong> '+escapeHTML(p.category||"-")+
-'<br><strong>Stock:</strong> '+Number(p.stock||0)+
-'<br><strong>Minimum:</strong> '+Number(p.minimum_stock||0)+
-'<br><strong>Price:</strong> ₱'+Number(p.price||0).toFixed(2)+
-'<br><span class="status '+s.class+'">'+s.text+'</span>'+
-'<button class="blue" onclick="openStockModal('+p.id+',\'in\')">📥 STOCK IN</button>'+
-'<button class="red" onclick="openStockModal('+p.id+',\'out\')">📤 STOCK OUT</button>'+
-'<button onclick="editProduct('+p.id+')">✏️ EDIT PRODUCT</button>';
+
+'<div class="product-name">'+
+escapeHTML(
+p.product_name||"-"
+)+
+'</div>'+
+
+image+
+
+'<br><strong>Barcode:</strong> '+
+escapeHTML(p.barcode||"-")+
+
+'<br><strong>Brand:</strong> '+
+escapeHTML(p.brand||"-")+
+
+'<br><strong>Category:</strong> '+
+escapeHTML(p.category||"-")+
+
+'<br><strong>Stock:</strong> '+
+Number(p.stock||0)+
+
+'<br><strong>Minimum:</strong> '+
+Number(p.minimum_stock||0)+
+
+'<br><strong>Price:</strong> ₱'+
+Number(p.price||0).toFixed(2)+
+
+'<br><span class="status '+
+s.class+'">'+
+s.text+
+'</span>'+
+
+'<button class="blue" onclick="openStockModal('+
+p.id+
+',\'in\')">📥 STOCK IN</button>'+
+
+'<button class="red" onclick="openStockModal('+
+p.id+
+',\'out\')">📤 STOCK OUT</button>'+
+
+'<button onclick="editProduct('+
+p.id+
+')">✏️ EDIT PRODUCT</button>';
 
 }
 
@@ -738,69 +1859,196 @@ image+'<br>'+
 
 function openAddModal(){
 
-document.getElementById("modalTitle").textContent="➕ Add Product";
-document.getElementById("editProductId").value="";
-document.getElementById("formBarcode").value="";
-document.getElementById("formProductName").value="";
-document.getElementById("formBrand").value="";
-document.getElementById("formCategory").value="";
-document.getElementById("formUnit").value="";
-document.getElementById("formStock").value=0;
-document.getElementById("formMinimumStock").value=5;
-document.getElementById("formPrice").value=0;
-document.getElementById("formImage").value="";
-document.getElementById("productModal").style.display="flex";
+document.getElementById(
+"modalTitle"
+).textContent=
+"➕ Add Product";
+
+
+document.getElementById(
+"editProductId"
+).value="";
+
+
+document.getElementById(
+"formBarcode"
+).value="";
+
+
+document.getElementById(
+"formProductName"
+).value="";
+
+
+document.getElementById(
+"formBrand"
+).value="";
+
+
+document.getElementById(
+"formCategory"
+).value="";
+
+
+document.getElementById(
+"formUnit"
+).value="";
+
+
+document.getElementById(
+"formStock"
+).value=0;
+
+
+document.getElementById(
+"formMinimumStock"
+).value=5;
+
+
+document.getElementById(
+"formPrice"
+).value=0;
+
+
+document.getElementById(
+"formImage"
+).value="";
+
+
+document.getElementById(
+"productModal"
+).style.display="flex";
 
 }
 
 
 function closeModal(){
 
-document.getElementById("productModal").style.display="none";
+document.getElementById(
+"productModal"
+).style.display="none";
 
 }
 
 
 async function saveProduct(){
 
-const id=document.getElementById("editProductId").value;
+const id=
+document.getElementById(
+"editProductId"
+).value;
+
 
 const product={
-barcode:document.getElementById("formBarcode").value.trim(),
-product_name:document.getElementById("formProductName").value.trim(),
-brand:document.getElementById("formBrand").value.trim(),
-category:document.getElementById("formCategory").value.trim(),
-unit:document.getElementById("formUnit").value.trim(),
-stock:Number(document.getElementById("formStock").value||0),
-minimum_stock:Number(document.getElementById("formMinimumStock").value||0),
-price:Number(document.getElementById("formPrice").value||0),
-image:document.getElementById("formImage").value.trim()
+
+barcode:
+document.getElementById(
+"formBarcode"
+).value.trim(),
+
+product_name:
+document.getElementById(
+"formProductName"
+).value.trim(),
+
+brand:
+document.getElementById(
+"formBrand"
+).value.trim(),
+
+category:
+document.getElementById(
+"formCategory"
+).value.trim(),
+
+unit:
+document.getElementById(
+"formUnit"
+).value.trim(),
+
+stock:
+Number(
+document.getElementById(
+"formStock"
+).value||0
+),
+
+minimum_stock:
+Number(
+document.getElementById(
+"formMinimumStock"
+).value||0
+),
+
+price:
+Number(
+document.getElementById(
+"formPrice"
+).value||0
+),
+
+image:
+document.getElementById(
+"formImage"
+).value.trim()
+
 };
 
-if(!product.barcode||!product.product_name){
 
-alert("Please enter Barcode and Product Name.");
+if(
+!product.barcode||
+!product.product_name
+){
+
+alert(
+"Please enter Barcode and Product Name."
+);
+
 return;
 
 }
+
 
 let response;
 
+
 if(id)
-response=await supabaseClient.from("products").update(product).eq("id",id);
+
+response=
+await supabaseClient
+.from("products")
+.update(product)
+.eq("id",id);
+
 else
-response=await supabaseClient.from("products").insert([product]);
+
+response=
+await supabaseClient
+.from("products")
+.insert([product]);
+
 
 if(response.error){
 
-alert("❌ Error:\n\n"+response.error.message);
+alert(
+"❌ Error:\n\n"+
+response.error.message
+);
+
 return;
 
 }
 
-alert(id?"✅ Product updated!":"✅ Product added!");
+
+alert(
+id
+?"✅ Product updated!"
+:"✅ Product added!"
+);
+
 
 closeModal();
+
 await loadProducts();
 
 }
@@ -808,23 +2056,83 @@ await loadProducts();
 
 function editProduct(id){
 
-const p=productsData.find(x=>x.id==id);
+const p=
+productsData.find(
+x=>x.id==id
+);
 
-if(!p)return;
 
-document.getElementById("modalTitle").textContent="✏️ Edit Product";
-document.getElementById("editProductId").value=p.id;
-document.getElementById("formBarcode").value=p.barcode||"";
-document.getElementById("formProductName").value=p.product_name||"";
-document.getElementById("formBrand").value=p.brand||"";
-document.getElementById("formCategory").value=p.category||"";
-document.getElementById("formUnit").value=p.unit||"";
-document.getElementById("formStock").value=p.stock||0;
-document.getElementById("formMinimumStock").value=p.minimum_stock||0;
-document.getElementById("formPrice").value=p.price||0;
-document.getElementById("formImage").value=p.image||"";
+if(!p)
+return;
 
-document.getElementById("productModal").style.display="flex";
+
+document.getElementById(
+"modalTitle"
+).textContent=
+"✏️ Edit Product";
+
+
+document.getElementById(
+"editProductId"
+).value=p.id;
+
+
+document.getElementById(
+"formBarcode"
+).value=p.barcode||"";
+
+
+document.getElementById(
+"formProductName"
+).value=
+p.product_name||"";
+
+
+document.getElementById(
+"formBrand"
+).value=
+p.brand||"";
+
+
+document.getElementById(
+"formCategory"
+).value=
+p.category||"";
+
+
+document.getElementById(
+"formUnit"
+).value=
+p.unit||"";
+
+
+document.getElementById(
+"formStock"
+).value=
+p.stock||0;
+
+
+document.getElementById(
+"formMinimumStock"
+).value=
+p.minimum_stock||0;
+
+
+document.getElementById(
+"formPrice"
+).value=
+p.price||0;
+
+
+document.getElementById(
+"formImage"
+).value=
+p.image||"";
+
+
+document.getElementById(
+"productModal"
+).style.display="flex";
 
 }
 
@@ -835,33 +2143,70 @@ document.getElementById("productModal").style.display="flex";
 
 function openStockModal(id,action){
 
-const p=productsData.find(x=>x.id==id);
+const p=
+productsData.find(
+x=>x.id==id
+);
 
-if(!p)return;
+
+if(!p)
+return;
+
 
 stockAction=action;
 
-document.getElementById("stockProductId").value=id;
-document.getElementById("stockQuantity").value=1;
 
-document.getElementById("stockModalTitle").textContent=
-(action==="in"?"📥 Stock In - ":"📤 Stock Out - ")+p.product_name;
+document.getElementById(
+"stockProductId"
+).value=id;
 
-const b=document.getElementById("stockConfirmButton");
+
+document.getElementById(
+"stockQuantity"
+).value=1;
+
+
+document.getElementById(
+"stockModalTitle"
+).textContent=
+(
+action==="in"
+?"📥 Stock In - "
+:"📤 Stock Out - "
+)+
+p.product_name;
+
+
+const b=
+document.getElementById(
+"stockConfirmButton"
+);
+
 
 b.textContent=
-action==="in"?"📥 CONFIRM STOCK IN":"📤 CONFIRM STOCK OUT";
+action==="in"
+?"📥 CONFIRM STOCK IN"
+:"📤 CONFIRM STOCK OUT";
 
-b.className=action==="in"?"blue":"red";
 
-document.getElementById("stockModal").style.display="flex";
+b.className=
+action==="in"
+?"blue"
+:"red";
+
+
+document.getElementById(
+"stockModal"
+).style.display="flex";
 
 }
 
 
 function closeStockModal(){
 
-document.getElementById("stockModal").style.display="none";
+document.getElementById(
+"stockModal"
+).style.display="none";
 
 }
 
@@ -872,30 +2217,55 @@ document.getElementById("stockModal").style.display="none";
 
 async function confirmStock(){
 
-const id=document.getElementById("stockProductId").value;
+const id=
+document.getElementById(
+"stockProductId"
+).value;
 
-const quantity=Number(
-document.getElementById("stockQuantity").value||0
+
+const quantity=
+Number(
+document.getElementById(
+"stockQuantity"
+).value||0
 );
+
 
 if(quantity<=0){
 
-alert("Enter a valid quantity.");
+alert(
+"Enter a valid quantity."
+);
+
 return;
 
 }
 
-const product=productsData.find(x=>x.id==id);
 
-if(!product)return;
+const product=
+productsData.find(
+x=>x.id==id
+);
 
-const current=Number(product.stock||0);
+
+if(!product)
+return;
+
+
+const current=
+Number(
+product.stock||0
+);
+
 
 let newStock;
 
+
 if(stockAction==="in"){
 
-newStock=current+quantity;
+newStock=
+current+
+quantity;
 
 }
 else{
@@ -904,14 +2274,17 @@ if(quantity>current){
 
 alert(
 "❌ Stock Out cannot be greater than current stock.\n\n"+
-"Current stock: "+current
+"Current stock: "+
+current
 );
 
 return;
 
 }
 
-newStock=current-quantity;
+newStock=
+current-
+quantity;
 
 }
 
@@ -920,11 +2293,16 @@ newStock=current-quantity;
 
 const {
 data:{user}
-}=await supabaseClient.auth.getUser();
+}=
+await supabaseClient.auth.getUser();
+
 
 if(!user){
 
-alert("❌ Your login session has expired. Please login again.");
+alert(
+"❌ Your login session has expired. Please login again."
+);
+
 return;
 
 }
@@ -932,11 +2310,16 @@ return;
 
 /* UPDATE STOCK */
 
-const {error:updateError}=
+const {
+error:updateError
+}=
 await supabaseClient
 .from("products")
-.update({stock:newStock})
+.update({
+stock:newStock
+})
 .eq("id",id);
+
 
 if(updateError){
 
@@ -953,21 +2336,48 @@ return;
 /* SAVE HISTORY */
 
 const historyRecord={
-product_id:product.id,
-product_name:product.product_name,
-barcode:product.barcode,
-action:stockAction==="in"?"STOCK IN":"STOCK OUT",
-quantity:quantity,
-stock_before:current,
-stock_after:newStock,
-user_id:user.id,
-user_email:user.email
+
+product_id:
+product.id,
+
+product_name:
+product.product_name,
+
+barcode:
+product.barcode,
+
+action:
+stockAction==="in"
+?"STOCK IN"
+:"STOCK OUT",
+
+quantity:
+quantity,
+
+stock_before:
+current,
+
+stock_after:
+newStock,
+
+user_id:
+user.id,
+
+user_email:
+user.email
+
 };
 
-const {error:historyError}=
+
+const {
+error:historyError
+}=
 await supabaseClient
 .from("stock_history")
-.insert([historyRecord]);
+.insert([
+historyRecord
+]);
+
 
 if(historyError){
 
@@ -981,25 +2391,41 @@ else{
 
 alert(
 "✅ Stock updated!\n\n"+
-"Product: "+product.product_name+
+"Product: "+
+product.product_name+
 "\n"+
-"Action: "+(stockAction==="in"?"STOCK IN":"STOCK OUT")+
+"Action: "+
+(
+stockAction==="in"
+?"STOCK IN"
+:"STOCK OUT"
+)+
 "\n"+
-"Quantity: "+quantity+
+"Quantity: "+
+quantity+
 "\n"+
-"New stock: "+newStock
+"New stock: "+
+newStock
 );
 
 }
 
+
 closeStockModal();
 
 await loadProducts();
+
 await loadHistory();
 
-const barcode=document.getElementById("barcode").value.trim();
 
-if(barcode) searchBarcode();
+const barcode=
+document.getElementById(
+"barcode"
+).value.trim();
+
+
+if(barcode)
+searchBarcode();
 
 }
 
@@ -1010,22 +2436,39 @@ if(barcode) searchBarcode();
 
 async function loadHistory(){
 
-const list=document.getElementById("historyList");
+const list=
+document.getElementById(
+"historyList"
+);
+
 
 list.innerHTML=
-'<div class="loading">Loading stock history...</div>';
+'<div class="loading">'+
+'Loading stock history...'+
+'</div>';
 
-const {data,error}=
+
+const {
+data,
+error
+}=
 await supabaseClient
 .from("stock_history")
 .select("*")
-.order("created_at",{ascending:false})
+.order(
+"created_at",
+{
+ascending:false
+}
+)
 .limit(100);
+
 
 if(error){
 
 list.innerHTML=
-'<div class="error">❌ History error<br><br>'+
+'<div class="error">'+
+'❌ History error<br><br>'+
 escapeHTML(error.message)+
 '</div>';
 
@@ -1033,71 +2476,1177 @@ return;
 
 }
 
-if(!data||!data.length){
+
+historyData=
+data||[];
+
+
+if(
+!historyData.length
+){
 
 list.innerHTML=
-'<div class="empty">📋 No stock transactions yet.</div>';
+'<div class="empty">'+
+'📋 No stock transactions yet.'+
+'</div>';
 
 return;
 
 }
 
+
 list.innerHTML="";
 
-data.forEach(h=>{
 
-const div=document.createElement("div");
+historyData.forEach(
+h=>{
 
-div.className="history-row";
+const div=
+document.createElement("div");
 
-const date=h.created_at
-?new Date(h.created_at).toLocaleString()
+
+div.className=
+"history-row";
+
+
+const date=
+h.created_at
+?new Date(
+h.created_at
+).toLocaleString()
 :"-";
 
-const isIn=h.action==="STOCK IN";
+
+const isIn=
+h.action==="STOCK IN";
+
 
 div.innerHTML=
 
-'<strong>'+escapeHTML(h.product_name||"-")+'</strong>'+
-'<br><small>'+escapeHTML(date)+'</small>'+
+'<strong>'+
+escapeHTML(
+h.product_name||"-"
+)+
+'</strong>'+
+
+'<br><small>'+
+escapeHTML(date)+
+'</small>'+
+
 '<br><br>'+
+
 '<span class="'+
-(isIn?"history-in":"history-out")+
+(
+isIn
+?"history-in"
+:"history-out"
+)+
 '">'+
-(isIn?"📥 STOCK IN":"📤 STOCK OUT")+
+
+(
+isIn
+?"📥 STOCK IN"
+:"📤 STOCK OUT"
+)+
+
 '</span>'+
+
 '<br>'+
-'<strong>Barcode:</strong> '+escapeHTML(h.barcode||"-")+
+
+'<strong>Barcode:</strong> '+
+escapeHTML(
+h.barcode||"-"
+)+
+
 '<br>'+
-'<strong>Quantity:</strong> '+Number(h.quantity||0)+
+
+'<strong>Quantity:</strong> '+
+Number(h.quantity||0)+
+
 '<br>'+
-'<strong>Stock Before:</strong> '+Number(h.stock_before||0)+
+
+'<strong>Stock Before:</strong> '+
+Number(h.stock_before||0)+
+
 '<br>'+
-'<strong>Stock After:</strong> '+Number(h.stock_after||0)+
+
+'<strong>Stock After:</strong> '+
+Number(h.stock_after||0)+
+
 '<br>'+
-'<strong>User:</strong> '+escapeHTML(h.user_email||"-");
+
+'<strong>User:</strong> '+
+escapeHTML(
+h.user_email||"-"
+);
+
 
 list.appendChild(div);
+
+}
+
+);
+
+}
+
+
+/* =====================================================
+   REPORTS
+===================================================== */
+
+function getReportType(){
+
+return document.getElementById(
+"reportType"
+).value;
+
+}
+
+
+function getReportSearch(){
+
+return document.getElementById(
+"reportSearch"
+).value
+.toLowerCase()
+.trim();
+
+}
+
+
+function dateOnly(dateValue){
+
+if(!dateValue)
+return "";
+
+return dateValue;
+
+}
+
+
+function isDateInRange(dateString,from,to){
+
+if(!dateString)
+return false;
+
+
+const date=
+new Date(dateString);
+
+
+const day=
+date.toISOString()
+.substring(0,10);
+
+
+if(from && day<from)
+return false;
+
+
+if(to && day>to)
+return false;
+
+
+return true;
+
+}
+
+
+function generateReport(){
+
+const type=
+getReportType();
+
+const search=
+getReportSearch();
+
+
+const from=
+dateOnly(
+document.getElementById(
+"reportFromDate"
+).value
+);
+
+
+const to=
+dateOnly(
+document.getElementById(
+"reportToDate"
+).value
+);
+
+
+if(from && to && from>to){
+
+document.getElementById(
+"reportSummary"
+).innerHTML=
+'<div class="error">'+
+'⚠️ From Date cannot be later than To Date.'+
+'</div>';
+
+document.getElementById(
+"reportResult"
+).innerHTML="";
+
+return;
+
+}
+
+
+if(type==="inventory"){
+
+generateInventoryReport(
+search
+);
+
+}
+else{
+
+generateHistoryReport(
+search,
+from,
+to
+);
+
+}
+
+}
+
+
+/* =====================================================
+   INVENTORY REPORT
+===================================================== */
+
+function generateInventoryReport(search){
+
+let rows=
+productsData.filter(p=>{
+
+if(!search)
+return true;
+
+
+return (
+
+String(p.product_name||"")
+.toLowerCase()
+.includes(search)||
+
+String(p.barcode||"")
+.toLowerCase()
+.includes(search)||
+
+String(p.brand||"")
+.toLowerCase()
+.includes(search)||
+
+String(p.category||"")
+.toLowerCase()
+.includes(search)
+
+);
+
+});
+
+
+let totalStock=0;
+let lowStock=0;
+let outStock=0;
+
+
+rows.forEach(p=>{
+
+const stock=
+Number(p.stock||0);
+
+const min=
+Number(p.minimum_stock||0);
+
+
+totalStock+=stock;
+
+
+if(stock===0)
+outStock++;
+
+else if(stock<=min)
+lowStock++;
+
+});
+
+
+document.getElementById(
+"reportSummary"
+).innerHTML=
+
+'<div class="report-summary">'+
+
+'<strong>📦 INVENTORY SUMMARY</strong>'+
+
+'<br>Products: '+
+rows.length+
+
+'<br>Total Stock: '+
+totalStock+
+
+'<br>Low Stock: '+
+lowStock+
+
+'<br>Out of Stock: '+
+outStock+
+
+'</div>';
+
+
+if(!rows.length){
+
+document.getElementById(
+"reportResult"
+).innerHTML=
+'<div class="report-empty">'+
+'📦 No products found.'+
+'</div>';
+
+return;
+
+}
+
+
+let html=
+
+'<div class="report-title">'+
+'📦 Inventory Report'+
+'</div>'+
+
+'<div class="report-note">'+
+'Generated: '+
+new Date().toLocaleString()+
+'</div>'+
+
+'<div class="report-table-wrap">'+
+
+'<table class="report-table">'+
+
+'<thead>'+
+'<tr>'+
+'<th>#</th>'+
+'<th>Product</th>'+
+'<th>Barcode</th>'+
+'<th>Brand</th>'+
+'<th>Category</th>'+
+'<th>Unit</th>'+
+'<th>Stock</th>'+
+'<th>Minimum</th>'+
+'<th>Price</th>'+
+'<th>Status</th>'+
+'</tr>'+
+'</thead>'+
+
+'<tbody>';
+
+
+rows.forEach(
+(p,index)=>{
+
+const status=
+getStatus(p);
+
+
+html+=
+
+'<tr>'+
+
+'<td>'+
+(index+1)+
+'</td>'+
+
+'<td>'+
+escapeHTML(
+p.product_name||"-"
+)+
+'</td>'+
+
+'<td>'+
+escapeHTML(
+p.barcode||"-"
+)+
+'</td>'+
+
+'<td>'+
+escapeHTML(
+p.brand||"-"
+)+
+'</td>'+
+
+'<td>'+
+escapeHTML(
+p.category||"-"
+)+
+'</td>'+
+
+'<td>'+
+escapeHTML(
+p.unit||"-"
+)+
+'</td>'+
+
+'<td>'+
+Number(p.stock||0)+
+'</td>'+
+
+'<td>'+
+Number(
+p.minimum_stock||0
+)+
+'</td>'+
+
+'<td>₱'+
+Number(
+p.price||0
+).toFixed(2)+
+'</td>'+
+
+'<td>'+
+escapeHTML(
+status.text
+)+
+'</td>'+
+
+'</tr>';
+
+});
+
+
+html+=
+'</tbody>'+
+'</table>'+
+'</div>';
+
+
+document.getElementById(
+"reportResult"
+).innerHTML=
+html;
+
+}
+
+
+/* =====================================================
+   STOCK MOVEMENT REPORT
+===================================================== */
+
+function generateHistoryReport(
+search,
+from,
+to
+){
+
+let rows=
+historyData.filter(h=>{
+
+if(!isDateInRange(
+h.created_at,
+from,
+to
+))
+
+return false;
+
+
+if(!search)
+return true;
+
+
+return (
+
+String(h.product_name||"")
+.toLowerCase()
+.includes(search)||
+
+String(h.barcode||"")
+.toLowerCase()
+.includes(search)||
+
+String(h.user_email||"")
+.toLowerCase()
+.includes(search)||
+
+String(h.action||"")
+.toLowerCase()
+.includes(search)
+
+);
+
+});
+
+
+let totalIn=0;
+let totalOut=0;
+let transactions=rows.length;
+
+
+rows.forEach(h=>{
+
+const qty=
+Number(h.quantity||0);
+
+
+if(h.action==="STOCK IN")
+totalIn+=qty;
+
+else
+totalOut+=qty;
+
+});
+
+
+document.getElementById(
+"reportSummary"
+).innerHTML=
+
+'<div class="report-summary">'+
+
+'<strong>🧾 STOCK MOVEMENT SUMMARY</strong>'+
+
+'<br>Transactions: '+
+transactions+
+
+'<br>Total Stock In: '+
+totalIn+
+
+'<br>Total Stock Out: '+
+totalOut+
+
+'</div>';
+
+
+if(!rows.length){
+
+document.getElementById(
+"reportResult"
+).innerHTML=
+'<div class="report-empty">'+
+'🧾 No stock movement found.'+
+'</div>';
+
+return;
+
+}
+
+
+let html=
+
+'<div class="report-title">'+
+'🧾 Stock Movement Report'+
+'</div>'+
+
+'<div class="report-note">'+
+'Generated: '+
+new Date().toLocaleString()+
+'</div>'+
+
+'<div class="report-table-wrap">'+
+
+'<table class="report-table">'+
+
+'<thead>'+
+'<tr>'+
+'<th>#</th>'+
+'<th>Date / Time</th>'+
+'<th>Product</th>'+
+'<th>Barcode</th>'+
+'<th>Action</th>'+
+'<th>Quantity</th>'+
+'<th>Before</th>'+
+'<th>After</th>'+
+'<th>User</th>'+
+'</tr>'+
+'</thead>'+
+
+'<tbody>';
+
+
+rows.forEach(
+(h,index)=>{
+
+const date=
+h.created_at
+?new Date(
+h.created_at
+).toLocaleString()
+:"-";
+
+
+html+=
+
+'<tr>'+
+
+'<td>'+
+(index+1)+
+'</td>'+
+
+'<td>'+
+escapeHTML(date)+
+'</td>'+
+
+'<td>'+
+escapeHTML(
+h.product_name||"-"
+)+
+'</td>'+
+
+'<td>'+
+escapeHTML(
+h.barcode||"-"
+)+
+'</td>'+
+
+'<td>'+
+escapeHTML(
+h.action||"-"
+)+
+'</td>'+
+
+'<td>'+
+Number(h.quantity||0)+
+'</td>'+
+
+'<td>'+
+Number(
+h.stock_before||0
+)+
+'</td>'+
+
+'<td>'+
+Number(
+h.stock_after||0
+)+
+'</td>'+
+
+'<td>'+
+escapeHTML(
+h.user_email||"-"
+)+
+'</td>'+
+
+'</tr>';
+
+});
+
+
+html+=
+'</tbody>'+
+'</table>'+
+'</div>';
+
+
+document.getElementById(
+"reportResult"
+).innerHTML=
+html;
+
+}
+
+
+/* =====================================================
+   PRINT REPORT
+===================================================== */
+
+function printReport(){
+
+const report=
+document.getElementById(
+"reportResult"
+).innerHTML;
+
+
+const summary=
+document.getElementById(
+"reportSummary"
+).innerHTML;
+
+
+if(
+!report ||
+report.includes(
+"Generate a report"
+)
+){
+
+alert(
+"Please generate a report first."
+);
+
+return;
+
+}
+
+
+const printWindow=
+window.open(
+"",
+"_blank"
+);
+
+
+if(!printWindow){
+
+alert(
+"⚠️ Please allow pop-ups in Chrome to print the report."
+);
+
+return;
+
+}
+
+
+printWindow.document.write(`
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>
+Can Goods Inventory Report
+</title>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+padding:20px;
+color:#222
+}
+
+h1{
+color:#176b3a;
+text-align:center
+}
+
+.summary{
+margin-bottom:15px;
+padding:12px;
+border:1px solid #ddd
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+font-size:11px
+}
+
+th,td{
+border:1px solid #999;
+padding:6px;
+text-align:left
+}
+
+th{
+background:#176b3a;
+color:white
+}
+
+.note{
+font-size:11px;
+color:#666;
+margin-bottom:10px
+}
+
+@media print{
+
+button{
+display:none
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>
+🥫 Can Goods Inventory
+</h1>
+
+<h2>
+Inventory Report
+</h2>
+
+<div class="summary">
+${summary}
+</div>
+
+${report}
+
+</body>
+
+</html>
+
+`);
+
+
+printWindow.document.close();
+
+printWindow.focus();
+
+
+setTimeout(
+function(){
+
+printWindow.print();
+
+},
+500
+);
+
+}
+
+
+/* =====================================================
+   CSV EXPORT
+===================================================== */
+
+function csvEscape(value){
+
+if(
+value===null ||
+value===undefined
+)
+
+return '""';
+
+
+let text=
+String(value);
+
+
+text=
+text.replace(
+/"/g,
+'""'
+);
+
+
+return '"'+text+'"';
+
+}
+
+
+function exportReportCSV(){
+
+const type=
+getReportType();
+
+
+const search=
+getReportSearch();
+
+
+const from=
+document.getElementById(
+"reportFromDate"
+).value;
+
+
+const to=
+document.getElementById(
+"reportToDate"
+).value;
+
+
+let csv="";
+
+
+if(type==="inventory"){
+
+let rows=
+productsData.filter(p=>{
+
+if(!search)
+return true;
+
+
+return (
+
+String(p.product_name||"")
+.toLowerCase()
+.includes(search)||
+
+String(p.barcode||"")
+.toLowerCase()
+.includes(search)||
+
+String(p.brand||"")
+.toLowerCase()
+.includes(search)||
+
+String(p.category||"")
+.toLowerCase()
+.includes(search)
+
+);
+
+});
+
+
+if(!rows.length){
+
+alert(
+"No inventory records to export."
+);
+
+return;
+
+}
+
+
+csv+=
+"Product,Barcode,Brand,Category,Unit,Stock,Minimum,Price,Status\n";
+
+
+rows.forEach(p=>{
+
+const status=
+getStatus(p).text;
+
+
+csv+=
+csvEscape(
+p.product_name||""
+)+","+
+
+csvEscape(
+p.barcode||""
+)+","+
+
+csvEscape(
+p.brand||""
+)+","+
+
+csvEscape(
+p.category||""
+)+","+
+
+csvEscape(
+p.unit||""
+)+","+
+
+csvEscape(
+Number(p.stock||0)
+)+","+
+
+csvEscape(
+Number(p.minimum_stock||0)
+)+","+
+
+csvEscape(
+Number(p.price||0).toFixed(2)
+)+","+
+
+csvEscape(status)+
+"\n";
+
+});
+
+
+}
+else{
+
+let rows=
+historyData.filter(h=>{
+
+if(!isDateInRange(
+h.created_at,
+from,
+to
+))
+
+return false;
+
+
+if(!search)
+return true;
+
+
+return (
+
+String(h.product_name||"")
+.toLowerCase()
+.includes(search)||
+
+String(h.barcode||"")
+.toLowerCase()
+.includes(search)||
+
+String(h.user_email||"")
+.toLowerCase()
+.includes(search)||
+
+String(h.action||"")
+.toLowerCase()
+.includes(search)
+
+);
+
+});
+
+
+if(!rows.length){
+
+alert(
+"No stock movement records to export."
+);
+
+return;
+
+}
+
+
+csv+=
+"Date,Product,Barcode,Action,Quantity,Stock Before,Stock After,User\n";
+
+
+rows.forEach(h=>{
+
+const date=
+h.created_at
+?new Date(
+h.created_at
+).toLocaleString()
+:"";
+
+
+csv+=
+
+csvEscape(date)+","+
+
+csvEscape(
+h.product_name||""
+)+","+
+
+csvEscape(
+h.barcode||""
+)+","+
+
+csvEscape(
+h.action||""
+)+","+
+
+csvEscape(
+Number(h.quantity||0)
+)+","+
+
+csvEscape(
+Number(h.stock_before||0)
+)+","+
+
+csvEscape(
+Number(h.stock_after||0)
+)+","+
+
+csvEscape(
+h.user_email||""
+)+
+"\n";
 
 });
 
 }
 
 
+const blob=
+new Blob(
+[
+"\ufeff"+
+csv
+],
+{
+type:"text/csv;charset=utf-8;"
+}
+);
+
+
+const url=
+URL.createObjectURL(blob);
+
+
+const a=
+document.createElement("a");
+
+
+const date=
+new Date()
+.toISOString()
+.substring(0,10);
+
+
+a.href=url;
+
+
+a.download=
+type==="inventory"
+?"inventory-report-"+date+".csv"
+:"stock-movement-report-"+date+".csv";
+
+
+document.body.appendChild(a);
+
+a.click();
+
+document.body.removeChild(a);
+
+
+URL.revokeObjectURL(url);
+
+}
+
+
 /* =====================================================
-   ESCAPE
+   ESCAPE HTML
 ===================================================== */
 
 function escapeHTML(value){
 
-if(value===null||value===undefined)return "";
+if(
+value===null ||
+value===undefined
+)
+
+return "";
+
 
 return String(value)
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
+
+.replace(
+/&/g,
+"&amp;"
+)
+
+.replace(
+/</g,
+"&lt;"
+)
+
+.replace(
+/>/g,
+"&gt;"
+)
+
+.replace(
+/"/g,
+"&quot;"
+)
+
+.replace(
+/'/g,
+"&#039;"
+);
 
 }
 
