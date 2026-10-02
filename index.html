@@ -25,7 +25,7 @@ button{width:100%;padding:13px;margin-top:10px;border:0;border-radius:8px;backgr
 .activity-online{display:inline-block;padding:5px 9px;border-radius:6px;background:#d8f3dc;color:#176b3a;font-weight:bold}
 .activity-offline{display:inline-block;padding:5px 9px;border-radius:6px;background:#ffd9d9;color:#c62828;font-weight:bold}
 .activity-idle{display:inline-block;padding:5px 9px;border-radius:6px;background:#fff0c2;color:#9a6900;font-weight:bold}
-.hidden{display:none!important}@media(min-width:600px){.cards{grid-template-columns:repeat(4,1fr)}}@media(max-width:599px){.report-table{font-size:11px}.report-table th,.report-table td{padding:7px}}
+.hidden{display:none!important}.page-hidden{display:none!important}.main-nav{display:flex;gap:8px;overflow-x:auto;padding:10px 15px;background:#fff;border-bottom:1px solid #ddd;position:sticky;top:0;z-index:900;scrollbar-width:none}.main-nav::-webkit-scrollbar{display:none}.nav-btn{width:auto;min-width:max-content;margin:0;padding:10px 14px;background:#f2f4f2;color:#333;border:1px solid #ddd;border-radius:10px 10px 0 0;font-size:14px;white-space:nowrap}.nav-btn.active{box-shadow:inset 0 -3px 0 #176b3a}.nav-btn.active{background:#fff;color:#176b3a;border-color:#ddd;border-bottom-color:#fff;box-shadow:inset 0 -3px 0 #176b3a}.page-title{font-size:20px;font-weight:bold;color:#176b3a;margin:18px 0 5px}.page-subtitle{font-size:13px;color:#777;margin:0 0 10px}@media(min-width:600px){.cards{grid-template-columns:repeat(4,1fr)}}@media(max-width:599px){.report-table{font-size:11px}.report-table th,.report-table td{padding:7px}}
 </style>
 </head>
 <body>
@@ -45,15 +45,27 @@ button{width:100%;padding:13px;margin-top:10px;border:0;border-radius:8px;backgr
 <button class="logout" onclick="logoutUser()">🚪 LOGOUT</button>
 </div>
 
+<div class="main-nav" id="mainNav">
+<button class="nav-btn active" data-page="dashboard" onclick="showPage('dashboard')">🏠 Dashboard</button>
+<button class="nav-btn" data-page="scanner" onclick="showPage('scanner')">📷 Scanner</button>
+<button class="nav-btn" data-page="products" onclick="showPage('products')">📦 Products</button>
+<button class="nav-btn" data-page="history" onclick="showPage('history')">📋 History</button>
+<button class="nav-btn" data-page="reports" onclick="showPage('reports')">📊 Reports</button>
+<button class="nav-btn hidden" id="adminNavButton" data-page="admin" onclick="showPage('admin')">⚙️ Admin</button>
+</div>
+
 <div class="container">
+<div id="dashboardPage" class="page-section">
+<div class="page-title">🏠 Dashboard</div><p class="page-subtitle">Inventory overview and quick status.</p>
 <div class="cards">
 <div class="card"><h2 id="productsCount">0</h2><p>Products</p></div>
 <div class="card"><h2 id="stockCount">0</h2><p>Total Stock</p></div>
 <div class="card"><h2 id="lowStockCount">0</h2><p>Low Stock</p></div>
 <div class="card"><h2 id="outStockCount">0</h2><p>Out of Stock</p></div>
 </div>
+</div>
 
-<div class="section">
+<div id="scannerSection" class="section page-section page-hidden">
 <h3>📷 Barcode Scanner</h3>
 <div id="cameraWrap" class="camera-wrap"><video id="camera" autoplay muted playsinline></video><div class="scan-frame"></div><div class="scan-line"></div><div class="camera-msg">Place barcode inside the green box</div></div>
 <div id="cameraStatus" class="camera-status">Camera is stopped.</div>
@@ -61,19 +73,19 @@ button{width:100%;padding:13px;margin-top:10px;border:0;border-radius:8px;backgr
 <label>Barcode</label><input id="barcode" inputmode="numeric" placeholder="Scan or enter barcode"><button onclick="searchBarcode()">🔍 SEARCH BARCODE</button><div id="result"></div>
 </div>
 
-<div id="productManagementSection" class="section">
+<div id="productManagementSection" class="section page-section page-hidden">
 <h3>📦 Product Management</h3><button id="addProductButton" onclick="openAddModal()">➕ ADD NEW PRODUCT</button>
 </div>
 
-<div class="section">
+<div id="productListSection" class="section page-section page-hidden">
 <h3>📋 Product List</h3><input id="productSearch" placeholder="🔎 Search product, brand or barcode" oninput="filterProducts()"><div id="productList"><div class="loading">Loading products...</div></div>
 </div>
 
-<div class="section">
+<div id="historySection" class="section page-section page-hidden">
 <h3>📋 Stock History</h3><button class="blue" onclick="loadHistory()">🔄 REFRESH HISTORY</button><div id="historyList"><div class="loading">Loading stock history...</div></div>
 </div>
 
-<div class="section">
+<div id="reportsSection" class="section page-section page-hidden">
 <h3>📊 Reports & Export</h3>
 <label>Report Type</label><select id="reportType" onchange="generateReport()"><option value="inventory">📦 Inventory Report</option><option value="history">🧾 Stock Movement Report</option></select>
 <label>Search Report</label><input id="reportSearch" placeholder="🔎 Search product, barcode or brand" oninput="generateReport()">
@@ -82,6 +94,7 @@ button{width:100%;padding:13px;margin-top:10px;border:0;border-radius:8px;backgr
 <div id="reportSummary"></div><div id="reportResult"><div class="loading">Generate a report to display results.</div></div>
 </div>
 
+<div id="adminPage" class="page-section page-hidden">
 <div id="staffMonitoringSection" class="section hidden">
 <h3>👥 STAFF MONITORING</h3>
 <p style="font-size:13px;color:#666">ADMIN only. Staff activity is updated automatically while the system is active.</p>
@@ -189,13 +202,28 @@ applyPermissions();
 await loadProducts();await loadHistory();if(currentRole==="ADMIN"){await loadRoleList();await loadStaffMonitoring();}startActivityHeartbeat();
 }
 
+function showPage(page){
+const pages={dashboard:["dashboardPage"],scanner:["scannerSection"],products:["productManagementSection","productListSection"],history:["historySection"],reports:["reportsSection"],admin:["adminPage"]};
+document.querySelectorAll(".page-section").forEach(el=>el.classList.add("page-hidden"));
+(pages[page]||pages.dashboard).forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove("page-hidden");});
+document.querySelectorAll(".nav-btn[data-page]").forEach(btn=>btn.classList.toggle("active",btn.dataset.page===page));
+if(page==="scanner"){document.getElementById("barcode")?.focus();}
+if(page==="history")loadHistory();
+if(page==="reports")generateReport();
+if(page==="admin"&&currentRole==="ADMIN")loadStaffMonitoring();
+window.scrollTo({top:0,behavior:"smooth"});
+}
+
 function applyPermissions(){
 const admin=currentRole==="ADMIN",staff=currentRole==="STAFF",canStock=admin||staff;
 document.getElementById("addProductButton").style.display=admin?"block":"none";
 document.getElementById("productManagementSection").style.display=admin?"block":"none";
 document.getElementById("userManagementSection").classList.toggle("hidden",!admin);
 document.getElementById("staffMonitoringSection").classList.toggle("hidden",!admin);
+document.getElementById("adminNavButton").classList.toggle("hidden",!admin);
 document.querySelectorAll('[onclick^="openStockModal"]').forEach(b=>b.style.display=canStock?"block":"none");
+if(!admin){document.getElementById("adminPage").classList.add("page-hidden");if(document.querySelector(".nav-btn[data-page=\"admin\"]"))document.querySelector(".nav-btn[data-page=\"admin\"]").classList.remove("active");}
+showPage("dashboard");
 }
 
 async function loginUser(){
