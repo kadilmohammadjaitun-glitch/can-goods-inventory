@@ -22,6 +22,12 @@ button{width:100%;padding:13px;margin-top:10px;border:0;border-radius:8px;backgr
 .report-summary{background:#eef7ef;border-radius:10px;padding:13px;margin-top:15px;line-height:1.8}.report-table-wrap{width:100%;overflow-x:auto;margin-top:12px}.report-table{width:100%;border-collapse:collapse;font-size:12px;background:#fff}.report-table th,.report-table td{border:1px solid #ddd;padding:8px;text-align:left;white-space:nowrap}.report-table th{background:#176b3a;color:#fff}.report-table tr:nth-child(even){background:#f8f8f8}.report-empty{text-align:center;padding:20px;color:#777}.report-title{font-size:20px;font-weight:bold;color:#176b3a;margin-top:10px}.report-note{font-size:12px;color:#777;margin-top:5px}
 .role-badge{display:inline-block;padding:4px 9px;border-radius:20px;background:#fff;color:#176b3a;font-weight:bold;margin-top:5px}
 .staff-monitor-row{border:1px solid #ddd;border-radius:10px;padding:12px;margin-top:10px;background:#fafafa}
+.image-upload-box{margin-top:7px;padding:12px;border:1px dashed #aaa;border-radius:10px;background:#fafafa}
+.image-upload-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.image-upload-buttons button{margin-top:0}
+.image-preview{display:none;width:100%;max-height:220px;object-fit:contain;margin-top:10px;border-radius:10px;background:#eee;border:1px solid #ddd}
+.image-upload-note{font-size:12px;color:#777;margin-top:8px;line-height:1.4}
+
 .activity-online{display:inline-block;padding:5px 9px;border-radius:6px;background:#d8f3dc;color:#176b3a;font-weight:bold}
 .activity-offline{display:inline-block;padding:5px 9px;border-radius:6px;background:#ffd9d9;color:#c62828;font-weight:bold}
 .activity-idle{display:inline-block;padding:5px 9px;border-radius:6px;background:#fff0c2;color:#9a6900;font-weight:bold}
@@ -136,7 +142,18 @@ button{width:100%;padding:13px;margin-top:10px;border:0;border-radius:8px;backgr
 <label>Stock</label><input id="formStock" type="number" min="0" value="0">
 <label>Minimum Stock</label><input id="formMinimumStock" type="number" min="0" value="5">
 <label>Price</label><input id="formPrice" type="number" min="0" step="0.01" value="0">
-<label>Product Image URL</label><input id="formImage" placeholder="https://example.com/image.jpg">
+<label>Product Image</label>
+<div class="image-upload-box">
+<div class="image-upload-buttons">
+<button type="button" class="blue" onclick="document.getElementById('captureImageInput').click()">📷 CAPTURE PHOTO</button>
+<button type="button" class="gray" onclick="document.getElementById('galleryImageInput').click()">📁 UPLOAD PHOTO</button>
+</div>
+<input id="captureImageInput" type="file" accept="image/*" capture="environment" style="display:none" onchange="handleImageSelected(this)">
+<input id="galleryImageInput" type="file" accept="image/*" style="display:none" onchange="handleImageSelected(this)">
+<input id="formImage" type="hidden" value="">
+<img id="imagePreview" class="image-preview" alt="Product image preview">
+<div id="imageUploadStatus" class="image-upload-note">No new image selected. You can capture or upload a product photo.</div>
+</div>
 <button onclick="saveProduct()">💾 SAVE PRODUCT</button><button class="gray" onclick="closeModal()">✖ CLOSE</button>
 </div></div>
 
@@ -151,7 +168,7 @@ const SUPABASE_KEY='sb_publishable_uXDEsaRgAPdwnLrcTjAj4A_j88ihGi4';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let codeReader=null,productsData=[],historyData=[],stockAction="",scannerRunning=false,scanLocked=false,currentUser=null,currentRole=null;
-let activityHeartbeat=null;
+let activityHeartbeat=null,selectedImageFile=null,imageUploadBusy=false;
 
 document.addEventListener("DOMContentLoaded",checkLogin);
 supabaseClient.auth.onAuthStateChange((event,session)=>{if(session) showApp(session); else showLogin();});
@@ -288,23 +305,135 @@ const {data,error}=await supabaseClient.from("products").select("*").eq("barcode
 }
 function showSearchResult(p){const result=document.getElementById("result"),s=getStatus(p);let image=p.image?'<br><img class="product-image" src="'+escapeHTML(p.image)+'">':"";let actions=(currentRole==="ADMIN"||currentRole==="STAFF")?'<button class="blue" onclick="openStockModal('+p.id+',\'in\')">📥 STOCK IN</button><button class="red" onclick="openStockModal('+p.id+',\'out\')">📤 STOCK OUT</button>':"";if(currentRole==="ADMIN")actions+='<button onclick="editProduct('+p.id+')">✏️ EDIT PRODUCT</button>';result.innerHTML='<div class="product-name">'+escapeHTML(p.product_name||"-")+'</div>'+image+'<br><strong>Barcode:</strong> '+escapeHTML(p.barcode||"-")+'<br><strong>Brand:</strong> '+escapeHTML(p.brand||"-")+'<br><strong>Category:</strong> '+escapeHTML(p.category||"-")+'<br><strong>Stock:</strong> '+Number(p.stock||0)+'<br><strong>Minimum:</strong> '+Number(p.minimum_stock||0)+'<br><strong>Price:</strong> ₱'+Number(p.price||0).toFixed(2)+'<br><span class="status '+s.class+'">'+s.text+'</span>'+actions;}
 
-function openAddModal(){if(currentRole!=="ADMIN")return alert("ADMIN only.");document.getElementById("modalTitle").textContent="➕ Add Product";["editProductId","formBarcode","formProductName","formBrand","formCategory","formUnit","formImage"].forEach(id=>document.getElementById(id).value="");document.getElementById("formStock").value=0;document.getElementById("formMinimumStock").value=5;document.getElementById("formPrice").value=0;document.getElementById("productModal").style.display="flex";}
+
+function resetImageUpload(){
+selectedImageFile=null;
+imageUploadBusy=false;
+const preview=document.getElementById("imagePreview");
+const status=document.getElementById("imageUploadStatus");
+const capture=document.getElementById("captureImageInput");
+const gallery=document.getElementById("galleryImageInput");
+if(preview){preview.src="";preview.style.display="none";}
+if(status)status.textContent="No new image selected. You can capture or upload a product photo.";
+if(capture)capture.value="";
+if(gallery)gallery.value="";
+}
+function handleImageSelected(input){
+const file=input&&input.files&&input.files[0];
+if(!file)return;
+if(!file.type.startsWith("image/")){
+alert("❌ Please select an image file.");
+input.value="";
+return;
+}
+if(file.size>10*1024*1024){
+alert("❌ Image is too large. Maximum size is 10 MB.");
+input.value="";
+return;
+}
+selectedImageFile=file;
+const preview=document.getElementById("imagePreview");
+const status=document.getElementById("imageUploadStatus");
+if(preview){
+preview.src=URL.createObjectURL(file);
+preview.style.display="block";
+}
+if(status)status.textContent="✅ Selected: "+file.name+" ("+Math.round(file.size/1024)+" KB)";
+}
+async function uploadProductImage(){
+if(!selectedImageFile)return "";
+if(imageUploadBusy)throw new Error("Image upload is already in progress.");
+imageUploadBusy=true;
+const status=document.getElementById("imageUploadStatus");
+try{
+if(status)status.textContent="⏳ Uploading product image...";
+const ext=(selectedImageFile.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
+const filename="product-"+Date.now()+"-"+Math.random().toString(36).slice(2,8)+"."+ext;
+const {error:uploadError}=await supabaseClient.storage.from("product-images").upload(filename,selectedImageFile,{contentType:selectedImageFile.type,upsert:false});
+if(uploadError)throw uploadError;
+const {data}=supabaseClient.storage.from("product-images").getPublicUrl(filename);
+if(!data||!data.publicUrl)throw new Error("Could not get the public image URL.");
+if(status)status.textContent="✅ Image uploaded successfully.";
+return data.publicUrl;
+}finally{
+imageUploadBusy=false;
+}
+}
+
+function openAddModal(){if(currentRole!=="ADMIN")return alert("ADMIN only.");document.getElementById("modalTitle").textContent="➕ Add Product";["editProductId","formBarcode","formProductName","formBrand","formCategory","formImage"].forEach(id=>document.getElementById(id).value="");document.getElementById("formUnit").value="Can";document.getElementById("formStock").value=0;document.getElementById("formMinimumStock").value=5;document.getElementById("formPrice").value=0;resetImageUpload();document.getElementById("productModal").style.display="flex";}
 function closeModal(){document.getElementById("productModal").style.display="none";}
 async function saveProduct(){
-if(currentRole!=="ADMIN")return alert("ADMIN only.");const id=document.getElementById("editProductId").value;
-const product={barcode:document.getElementById("formBarcode").value.trim(),product_name:document.getElementById("formProductName").value.trim(),brand:document.getElementById("formBrand").value.trim(),category:document.getElementById("formCategory").value.trim(),unit:document.getElementById("formUnit").value.trim(),stock:Number(document.getElementById("formStock").value||0),minimum_stock:Number(document.getElementById("formMinimumStock").value||0),price:Number(document.getElementById("formPrice").value||0),image:document.getElementById("formImage").value.trim()};
+if(currentRole!=="ADMIN")return alert("ADMIN only.");
+if(imageUploadBusy)return alert("⏳ Please wait for the image upload to finish.");
+
+const id=document.getElementById("editProductId").value;
+const product={
+barcode:document.getElementById("formBarcode").value.trim(),
+product_name:document.getElementById("formProductName").value.trim(),
+brand:document.getElementById("formBrand").value.trim(),
+category:document.getElementById("formCategory").value.trim(),
+unit:"Can",
+stock:Number(document.getElementById("formStock").value||0),
+minimum_stock:Number(document.getElementById("formMinimumStock").value||0),
+price:Number(document.getElementById("formPrice").value||0),
+image:document.getElementById("formImage").value.trim()
+};
+
 const allowedCategories=["Sardines","Tuna","Corned Beef","Meat Loaf","Luncheon Meat","Canned Chicken","Canned Pork","Canned Vegetables","Canned Fruits","Beans","Other Canned Goods"];
 const blockedTerms=["bottle","bottled","bote","jar","jared","sachet","pouch","plastic bottle","box","epoxy","calamansi juice bottle"];
-product.unit="Can";
+
 if(!product.barcode||!product.product_name||!product.category)return alert("Please enter Barcode, Product Name and select a canned-goods Category.");
 if(!allowedCategories.includes(product.category))return alert("❌ Canned Goods only. Please select a valid canned-goods category.");
+
 const productText=(product.product_name+" "+product.brand+" "+product.category).toLowerCase();
 const blocked=blockedTerms.find(t=>productText.includes(t));
 if(blocked)return alert("❌ This product is not allowed.\n\nCan Goods Inventory accepts canned/tin-can food products only.\nBlocked item type: "+blocked);
-let response=id?await supabaseClient.from("products").update(product).eq("id",id):await supabaseClient.from("products").insert([product]);
-if(response.error)return alert("❌ Error:\n\n"+response.error.message);alert(id?"✅ Product updated!":"✅ Product added!");closeModal();await loadProducts();
+
+try{
+if(selectedImageFile){
+product.image=await uploadProductImage();
 }
-function editProduct(id){if(currentRole!=="ADMIN")return alert("ADMIN only.");const p=productsData.find(x=>x.id==id);if(!p)return;document.getElementById("modalTitle").textContent="✏️ Edit Product";document.getElementById("editProductId").value=p.id;document.getElementById("formBarcode").value=p.barcode||"";document.getElementById("formProductName").value=p.product_name||"";document.getElementById("formBrand").value=p.brand||"";document.getElementById("formCategory").value=p.category||"";document.getElementById("formUnit").value="Can";document.getElementById("formStock").value=p.stock||0;document.getElementById("formMinimumStock").value=p.minimum_stock||0;document.getElementById("formPrice").value=p.price||0;document.getElementById("formImage").value=p.image||"";document.getElementById("productModal").style.display="flex";}
+const response=id
+?await supabaseClient.from("products").update(product).eq("id",id)
+:await supabaseClient.from("products").insert([product]);
+
+if(response.error)return alert("❌ Error:\n\n"+response.error.message);
+
+alert(id?"✅ Product updated!":"✅ Product added!");
+closeModal();
+resetImageUpload();
+await loadProducts();
+}catch(error){
+alert("❌ Could not save product.\n\n"+(error.message||String(error)));
+}
+}
+function editProduct(id){
+if(currentRole!=="ADMIN")return alert("ADMIN only.");
+const p=productsData.find(x=>x.id==id);
+if(!p)return;
+
+document.getElementById("modalTitle").textContent="✏️ Edit Product";
+document.getElementById("editProductId").value=p.id;
+document.getElementById("formBarcode").value=p.barcode||"";
+document.getElementById("formProductName").value=p.product_name||"";
+document.getElementById("formBrand").value=p.brand||"";
+document.getElementById("formCategory").value=p.category||"";
+document.getElementById("formUnit").value="Can";
+document.getElementById("formStock").value=p.stock||0;
+document.getElementById("formMinimumStock").value=p.minimum_stock||0;
+document.getElementById("formPrice").value=p.price||0;
+document.getElementById("formImage").value=p.image||"";
+
+resetImageUpload();
+if(p.image){
+const preview=document.getElementById("imagePreview");
+const status=document.getElementById("imageUploadStatus");
+preview.src=p.image;
+preview.style.display="block";
+status.textContent="Current product image. Capture or upload a new photo to replace it.";
+}
+document.getElementById("productModal").style.display="flex";
+}
 
 function openStockModal(id,action){if(currentRole!=="ADMIN"&&currentRole!=="STAFF")return alert("You do not have permission.");const p=productsData.find(x=>x.id==id);if(!p)return;stockAction=action;document.getElementById("stockProductId").value=id;document.getElementById("stockQuantity").value=1;document.getElementById("stockModalTitle").textContent=(action==="in"?"📥 Stock In - ":"📤 Stock Out - ")+p.product_name;const b=document.getElementById("stockConfirmButton");b.textContent=action==="in"?"📥 CONFIRM STOCK IN":"📤 CONFIRM STOCK OUT";b.className=action==="in"?"blue":"red";document.getElementById("stockModal").style.display="flex";}
 function closeStockModal(){document.getElementById("stockModal").style.display="none";}
