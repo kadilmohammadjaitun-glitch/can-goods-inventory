@@ -194,6 +194,7 @@ const admin=currentRole==="ADMIN",staff=currentRole==="STAFF",canStock=admin||st
 document.getElementById("addProductButton").style.display=admin?"block":"none";
 document.getElementById("productManagementSection").style.display=admin?"block":"none";
 document.getElementById("userManagementSection").classList.toggle("hidden",!admin);
+document.getElementById("staffMonitoringSection").classList.toggle("hidden",!admin);
 document.querySelectorAll('[onclick^="openStockModal"]').forEach(b=>b.style.display=canStock?"block":"none");
 }
 
