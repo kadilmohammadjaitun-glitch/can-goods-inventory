@@ -283,6 +283,7 @@ return '<div class="product-buttons">'+
 (canStock?'<button class="blue" onclick="openStockModal('+p.id+',\'in\')">📥 STOCK IN</button>':'')+
 (canStock?'<button class="red" onclick="openStockModal('+p.id+',\'out\')">📤 STOCK OUT</button>':'')+
 (currentRole==="ADMIN"?'<button onclick="editProduct('+p.id+')">✏️ EDIT</button>':'')+
+(currentRole==="ADMIN"?'<button class="red" onclick="deleteProduct('+p.id+')">🗑️ DELETE</button>':'')+
 '</div>';
 }
 function displayProducts(products){
@@ -290,6 +291,30 @@ const list=document.getElementById("productList");if(!products.length){list.inne
 products.forEach(p=>{const s=getStatus(p),div=document.createElement("div");div.className="product";let image=p.image?'<img class="product-image" src="'+escapeHTML(p.image)+'" onerror="this.style.display=\'none\'">':"";
 div.innerHTML=image+'<div class="product-name">'+escapeHTML(p.product_name||"-")+'</div><div class="product-info"><strong>Barcode:</strong> '+escapeHTML(p.barcode||"-")+'<br><strong>Brand:</strong> '+escapeHTML(p.brand||"-")+'<br><strong>Category:</strong> '+escapeHTML(p.category||"-")+'<br><strong>Unit:</strong> '+escapeHTML(p.unit||"-")+'<br><strong>Stock:</strong> '+Number(p.stock||0)+'<br><strong>Minimum:</strong> '+Number(p.minimum_stock||0)+'<br><strong>Price:</strong> ₱'+Number(p.price||0).toFixed(2)+'<br><span class="status '+s.class+'">'+s.text+'</span></div>'+productButtons(p);list.appendChild(div);});
 }
+
+async function deleteProduct(id){
+if(currentRole!=="ADMIN")return alert("ADMIN only.");
+const p=productsData.find(x=>x.id==id);
+if(!p)return;
+const confirmed=confirm("⚠️ DELETE PRODUCT?\n\nProduct: "+(p.product_name||"-")+"\nBarcode: "+(p.barcode||"-")+"\n\nThis will permanently remove the product from the inventory.\n\nContinue?");
+if(!confirmed)return;
+
+const button=document.querySelector('button[onclick="deleteProduct('+id+')"]');
+if(button){button.disabled=true;button.textContent="⏳ DELETING...";}
+
+const {error}=await supabaseClient.from("products").delete().eq("id",id);
+if(error){
+if(button){button.disabled=false;button.textContent="🗑️ DELETE";}
+alert("❌ Delete failed:\n\n"+error.message);
+return;
+}
+
+alert("✅ Product deleted successfully.");
+await loadProducts();
+const barcode=document.getElementById("barcode").value.trim();
+if(barcode)searchBarcode();
+}
+
 function filterProducts(){const q=document.getElementById("productSearch").value.toLowerCase().trim();displayProducts(!q?productsData:productsData.filter(p=>[p.barcode,p.product_name,p.brand,p.category].some(v=>String(v||"").toLowerCase().includes(q))));}
 
 async function startScanner(){
@@ -303,7 +328,7 @@ async function searchBarcode(){
 const barcode=document.getElementById("barcode").value.trim(),result=document.getElementById("result");if(!barcode){result.style.display="block";result.innerHTML='<span class="error">⚠️ Please enter a barcode.</span>';return;}result.style.display="block";result.innerHTML="🔎 Searching inventory...";
 const {data,error}=await supabaseClient.from("products").select("*").eq("barcode",barcode).maybeSingle();if(error){result.innerHTML='<span class="error">❌ '+escapeHTML(error.message)+'</span>';return;}if(!data){result.innerHTML='<span class="warning">⚠️ Product not found.</span><br><br><strong>Barcode:</strong> '+escapeHTML(barcode);return;}showSearchResult(data);
 }
-function showSearchResult(p){const result=document.getElementById("result"),s=getStatus(p);let image=p.image?'<br><img class="product-image" src="'+escapeHTML(p.image)+'">':"";let actions=(currentRole==="ADMIN"||currentRole==="STAFF")?'<button class="blue" onclick="openStockModal('+p.id+',\'in\')">📥 STOCK IN</button><button class="red" onclick="openStockModal('+p.id+',\'out\')">📤 STOCK OUT</button>':"";if(currentRole==="ADMIN")actions+='<button onclick="editProduct('+p.id+')">✏️ EDIT PRODUCT</button>';result.innerHTML='<div class="product-name">'+escapeHTML(p.product_name||"-")+'</div>'+image+'<br><strong>Barcode:</strong> '+escapeHTML(p.barcode||"-")+'<br><strong>Brand:</strong> '+escapeHTML(p.brand||"-")+'<br><strong>Category:</strong> '+escapeHTML(p.category||"-")+'<br><strong>Stock:</strong> '+Number(p.stock||0)+'<br><strong>Minimum:</strong> '+Number(p.minimum_stock||0)+'<br><strong>Price:</strong> ₱'+Number(p.price||0).toFixed(2)+'<br><span class="status '+s.class+'">'+s.text+'</span>'+actions;}
+function showSearchResult(p){const result=document.getElementById("result"),s=getStatus(p);let image=p.image?'<br><img class="product-image" src="'+escapeHTML(p.image)+'">':"";let actions=(currentRole==="ADMIN"||currentRole==="STAFF")?'<button class="blue" onclick="openStockModal('+p.id+',\'in\')">📥 STOCK IN</button><button class="red" onclick="openStockModal('+p.id+',\'out\')">📤 STOCK OUT</button>':"";if(currentRole==="ADMIN")actions+='<button onclick="editProduct('+p.id+')">✏️ EDIT PRODUCT</button><button class="red" onclick="deleteProduct('+p.id+')">🗑️ DELETE PRODUCT</button>';result.innerHTML='<div class="product-name">'+escapeHTML(p.product_name||"-")+'</div>'+image+'<br><strong>Barcode:</strong> '+escapeHTML(p.barcode||"-")+'<br><strong>Brand:</strong> '+escapeHTML(p.brand||"-")+'<br><strong>Category:</strong> '+escapeHTML(p.category||"-")+'<br><strong>Stock:</strong> '+Number(p.stock||0)+'<br><strong>Minimum:</strong> '+Number(p.minimum_stock||0)+'<br><strong>Price:</strong> ₱'+Number(p.price||0).toFixed(2)+'<br><span class="status '+s.class+'">'+s.text+'</span>'+actions;}
 
 
 function resetImageUpload(){
