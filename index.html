@@ -114,12 +114,25 @@ button{width:100%;padding:13px;margin-top:10px;border:0;border-radius:8px;backgr
 </div></div>
 
 <div id="productModal" class="modal"><div class="modal-box">
-<h2 id="modalTitle">➕ Add Product</h2><input type="hidden" id="editProductId">
+<h2 id="modalTitle">➕ Add Product</h2><div style="background:#fff8dc;border:1px solid #f0c36a;padding:10px;border-radius:10px;margin-bottom:10px;font-size:13px">🥫 <strong>CANNED GOODS ONLY</strong> — metal/tin-can food products only. Bottles, sachets, pouches, jars, boxes and non-food items are not allowed.</div><input type="hidden" id="editProductId">
 <label>Barcode *</label><input id="formBarcode" inputmode="numeric" placeholder="Barcode number">
 <label>Product Name *</label><input id="formProductName" placeholder="Example: Mega Sardines">
 <label>Brand</label><input id="formBrand" placeholder="Example: Mega">
-<label>Category</label><input id="formCategory" placeholder="Example: Sardines">
-<label>Unit</label><input id="formUnit" placeholder="Example: can">
+<label>Category *</label><select id="formCategory">
+<option value="">Select canned-goods category</option>
+<option>Sardines</option>
+<option>Tuna</option>
+<option>Corned Beef</option>
+<option>Meat Loaf</option>
+<option>Luncheon Meat</option>
+<option>Canned Chicken</option>
+<option>Canned Pork</option>
+<option>Canned Vegetables</option>
+<option>Canned Fruits</option>
+<option>Beans</option>
+<option>Other Canned Goods</option>
+</select>
+<label>Unit *</label><input id="formUnit" value="Can" readonly>
 <label>Stock</label><input id="formStock" type="number" min="0" value="0">
 <label>Minimum Stock</label><input id="formMinimumStock" type="number" min="0" value="5">
 <label>Price</label><input id="formPrice" type="number" min="0" step="0.01" value="0">
@@ -280,11 +293,18 @@ function closeModal(){document.getElementById("productModal").style.display="non
 async function saveProduct(){
 if(currentRole!=="ADMIN")return alert("ADMIN only.");const id=document.getElementById("editProductId").value;
 const product={barcode:document.getElementById("formBarcode").value.trim(),product_name:document.getElementById("formProductName").value.trim(),brand:document.getElementById("formBrand").value.trim(),category:document.getElementById("formCategory").value.trim(),unit:document.getElementById("formUnit").value.trim(),stock:Number(document.getElementById("formStock").value||0),minimum_stock:Number(document.getElementById("formMinimumStock").value||0),price:Number(document.getElementById("formPrice").value||0),image:document.getElementById("formImage").value.trim()};
-if(!product.barcode||!product.product_name)return alert("Please enter Barcode and Product Name.");
+const allowedCategories=["Sardines","Tuna","Corned Beef","Meat Loaf","Luncheon Meat","Canned Chicken","Canned Pork","Canned Vegetables","Canned Fruits","Beans","Other Canned Goods"];
+const blockedTerms=["bottle","bottled","bote","jar","jared","sachet","pouch","plastic bottle","box","epoxy","calamansi juice bottle"];
+product.unit="Can";
+if(!product.barcode||!product.product_name||!product.category)return alert("Please enter Barcode, Product Name and select a canned-goods Category.");
+if(!allowedCategories.includes(product.category))return alert("❌ Canned Goods only. Please select a valid canned-goods category.");
+const productText=(product.product_name+" "+product.brand+" "+product.category).toLowerCase();
+const blocked=blockedTerms.find(t=>productText.includes(t));
+if(blocked)return alert("❌ This product is not allowed.\n\nCan Goods Inventory accepts canned/tin-can food products only.\nBlocked item type: "+blocked);
 let response=id?await supabaseClient.from("products").update(product).eq("id",id):await supabaseClient.from("products").insert([product]);
 if(response.error)return alert("❌ Error:\n\n"+response.error.message);alert(id?"✅ Product updated!":"✅ Product added!");closeModal();await loadProducts();
 }
-function editProduct(id){if(currentRole!=="ADMIN")return alert("ADMIN only.");const p=productsData.find(x=>x.id==id);if(!p)return;document.getElementById("modalTitle").textContent="✏️ Edit Product";document.getElementById("editProductId").value=p.id;document.getElementById("formBarcode").value=p.barcode||"";document.getElementById("formProductName").value=p.product_name||"";document.getElementById("formBrand").value=p.brand||"";document.getElementById("formCategory").value=p.category||"";document.getElementById("formUnit").value=p.unit||"";document.getElementById("formStock").value=p.stock||0;document.getElementById("formMinimumStock").value=p.minimum_stock||0;document.getElementById("formPrice").value=p.price||0;document.getElementById("formImage").value=p.image||"";document.getElementById("productModal").style.display="flex";}
+function editProduct(id){if(currentRole!=="ADMIN")return alert("ADMIN only.");const p=productsData.find(x=>x.id==id);if(!p)return;document.getElementById("modalTitle").textContent="✏️ Edit Product";document.getElementById("editProductId").value=p.id;document.getElementById("formBarcode").value=p.barcode||"";document.getElementById("formProductName").value=p.product_name||"";document.getElementById("formBrand").value=p.brand||"";document.getElementById("formCategory").value=p.category||"";document.getElementById("formUnit").value="Can";document.getElementById("formStock").value=p.stock||0;document.getElementById("formMinimumStock").value=p.minimum_stock||0;document.getElementById("formPrice").value=p.price||0;document.getElementById("formImage").value=p.image||"";document.getElementById("productModal").style.display="flex";}
 
 function openStockModal(id,action){if(currentRole!=="ADMIN"&&currentRole!=="STAFF")return alert("You do not have permission.");const p=productsData.find(x=>x.id==id);if(!p)return;stockAction=action;document.getElementById("stockProductId").value=id;document.getElementById("stockQuantity").value=1;document.getElementById("stockModalTitle").textContent=(action==="in"?"📥 Stock In - ":"📤 Stock Out - ")+p.product_name;const b=document.getElementById("stockConfirmButton");b.textContent=action==="in"?"📥 CONFIRM STOCK IN":"📤 CONFIRM STOCK OUT";b.className=action==="in"?"blue":"red";document.getElementById("stockModal").style.display="flex";}
 function closeStockModal(){document.getElementById("stockModal").style.display="none";}
