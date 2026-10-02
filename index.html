@@ -21,6 +21,10 @@ button{width:100%;padding:13px;margin-top:10px;border:0;border-radius:8px;backgr
 .modal{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;padding:15px;z-index:1000}.modal-box{background:#fff;width:100%;max-width:520px;max-height:90vh;overflow:auto;border-radius:15px;padding:20px}.empty,.loading{text-align:center;color:#777;padding:20px}
 .report-summary{background:#eef7ef;border-radius:10px;padding:13px;margin-top:15px;line-height:1.8}.report-table-wrap{width:100%;overflow-x:auto;margin-top:12px}.report-table{width:100%;border-collapse:collapse;font-size:12px;background:#fff}.report-table th,.report-table td{border:1px solid #ddd;padding:8px;text-align:left;white-space:nowrap}.report-table th{background:#176b3a;color:#fff}.report-table tr:nth-child(even){background:#f8f8f8}.report-empty{text-align:center;padding:20px;color:#777}.report-title{font-size:20px;font-weight:bold;color:#176b3a;margin-top:10px}.report-note{font-size:12px;color:#777;margin-top:5px}
 .role-badge{display:inline-block;padding:4px 9px;border-radius:20px;background:#fff;color:#176b3a;font-weight:bold;margin-top:5px}
+.staff-monitor-row{border:1px solid #ddd;border-radius:10px;padding:12px;margin-top:10px;background:#fafafa}
+.activity-online{display:inline-block;padding:5px 9px;border-radius:6px;background:#d8f3dc;color:#176b3a;font-weight:bold}
+.activity-offline{display:inline-block;padding:5px 9px;border-radius:6px;background:#ffd9d9;color:#c62828;font-weight:bold}
+.activity-idle{display:inline-block;padding:5px 9px;border-radius:6px;background:#fff0c2;color:#9a6900;font-weight:bold}
 .hidden{display:none!important}@media(min-width:600px){.cards{grid-template-columns:repeat(4,1fr)}}@media(max-width:599px){.report-table{font-size:11px}.report-table th,.report-table td{padding:7px}}
 </style>
 </head>
@@ -78,6 +82,13 @@ button{width:100%;padding:13px;margin-top:10px;border:0;border-radius:8px;backgr
 <div id="reportSummary"></div><div id="reportResult"><div class="loading">Generate a report to display results.</div></div>
 </div>
 
+<div id="staffMonitoringSection" class="section hidden">
+<h3>👥 STAFF MONITORING</h3>
+<p style="font-size:13px;color:#666">ADMIN only. Staff activity is updated automatically while the system is active.</p>
+<button class="blue" onclick="loadStaffMonitoring()">🔄 REFRESH STAFF STATUS</button>
+<div id="staffMonitoringList"><div class="loading">Loading staff status...</div></div>
+</div>
+
 <div id="userManagementSection" class="section hidden">
 <h3>👥 User Role Management</h3>
 <p style="font-size:13px;color:#666">ADMIN only. Enter an existing Supabase Auth User UID and email.</p>
@@ -114,13 +125,57 @@ const SUPABASE_KEY='sb_publishable_uXDEsaRgAPdwnLrcTjAj4A_j88ihGi4';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let codeReader=null,productsData=[],historyData=[],stockAction="",scannerRunning=false,scanLocked=false,currentUser=null,currentRole=null;
+let activityHeartbeat=null;
 
 document.addEventListener("DOMContentLoaded",checkLogin);
 supabaseClient.auth.onAuthStateChange((event,session)=>{if(session) showApp(session); else showLogin();});
 
 async function checkLogin(){const {data:{session}}=await supabaseClient.auth.getSession();if(session) await showApp(session);else showLogin();}
 
-function showLogin(){stopScanner();document.getElementById("loginScreen").style.display="flex";document.getElementById("app").style.display="none";}
+async function updateMyActivity(){
+if(!currentUser)return;
+try{const {error}=await supabaseClient.rpc("update_my_activity");if(error)console.warn("Activity heartbeat:",error.message);}
+catch(e){console.warn("Activity heartbeat:",e);}
+}
+function startActivityHeartbeat(){
+stopActivityHeartbeat();
+updateMyActivity();
+activityHeartbeat=setInterval(()=>{updateMyActivity();if(currentRole==="ADMIN")loadStaffMonitoring();},60000);
+}
+function stopActivityHeartbeat(){
+if(activityHeartbeat){clearInterval(activityHeartbeat);activityHeartbeat=null;}
+}
+async function setMyOffline(){
+if(!currentUser)return;
+try{await supabaseClient.rpc("set_my_offline");}catch(e){console.warn("Offline update:",e);}
+}
+function activityStatus(lastSeen,isOnline){
+if(!lastSeen)return{text:"🔴 OFFLINE",className:"activity-offline"};
+const age=Date.now()-new Date(lastSeen).getTime();
+if(age<=150000&&isOnline)return{text:"🟢 ONLINE",className:"activity-online"};
+if(age<=300000)return{text:"🟡 IDLE",className:"activity-idle"};
+return{text:"🔴 OFFLINE",className:"activity-offline"};
+}
+async function loadStaffMonitoring(){
+if(currentRole!=="ADMIN")return;
+const list=document.getElementById("staffMonitoringList");
+if(!list)return;
+list.innerHTML='<div class="loading">Loading staff status...</div>';
+const {data,error}=await supabaseClient.from("user_activity").select("user_id,email,role,is_online,last_seen,updated_at").eq("role","STAFF").order("last_seen",{ascending:false});
+if(error){list.innerHTML='<div class="error">❌ '+escapeHTML(error.message)+'</div>';return;}
+if(!data||!data.length){list.innerHTML='<div class="empty">👷 No STAFF activity records yet.</div>';return;}
+list.innerHTML="";
+data.forEach(u=>{
+const status=activityStatus(u.last_seen,u.is_online);
+const last=u.last_seen?new Date(u.last_seen).toLocaleString():"Never";
+const div=document.createElement("div");
+div.className="staff-monitor-row";
+div.innerHTML='<strong>👷 '+escapeHTML(u.email||"-")+'</strong><br><small>Role: STAFF</small><br><br><span class="'+status.className+'">'+status.text+'</span><br><strong>🕐 Last Seen:</strong> '+escapeHTML(last);
+list.appendChild(div);
+});
+}
+
+function showLogin(){stopScanner();stopActivityHeartbeat();document.getElementById("loginScreen").style.display="flex";document.getElementById("app").style.display="none";}
 
 async function showApp(session){
 currentUser=session.user;
@@ -131,7 +186,7 @@ document.getElementById("loginScreen").style.display="none";document.getElementB
 document.getElementById("userInfo").textContent="Logged in as: "+(session.user.email||"User");
 document.getElementById("roleInfo").textContent=(currentRole==="ADMIN"?"👑 ADMIN":currentRole==="STAFF"?"👷 STAFF":"👁️ VIEWER");
 applyPermissions();
-await loadProducts();await loadHistory();if(currentRole==="ADMIN") await loadRoleList();
+await loadProducts();await loadHistory();if(currentRole==="ADMIN"){await loadRoleList();await loadStaffMonitoring();}startActivityHeartbeat();
 }
 
 function applyPermissions(){
@@ -151,7 +206,7 @@ button.disabled=false;button.textContent="🔐 LOGIN";
 if(error){message.innerHTML='<span class="error">❌ Login failed.<br>'+escapeHTML(error.message)+'</span>';return;}
 if(data.session) await showApp(data.session);
 }
-async function logoutUser(){stopScanner();await supabaseClient.auth.signOut();showLogin();}
+async function logoutUser(){stopScanner();stopActivityHeartbeat();await setMyOffline();await supabaseClient.auth.signOut();showLogin();}
 function togglePassword(){const i=document.getElementById("loginPassword");i.type=i.type==="password"?"text":"password";}
 
 async function loadProducts(){
