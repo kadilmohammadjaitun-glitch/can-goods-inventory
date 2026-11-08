@@ -96,6 +96,49 @@ label{display:block;margin-top:13px;font-size:12px;font-weight:700;color:#506257
 @media(max-width:360px){.cards{grid-template-columns:1fr 1fr}.card h2{font-size:22px}}
 @media print{.main-nav,.header .logout,button{display:none!important}.container{margin:0;padding:0}.section,.card{box-shadow:none}}
 
+
+/* V2.1 dashboard enhancement */
+.stat-card{padding:17px 18px;min-height:135px;background:linear-gradient(145deg,#fff 0%,#fbfdfb 100%)}
+.stat-top{display:flex;justify-content:space-between;align-items:center}
+.stat-label{font-size:9px;letter-spacing:1px;color:#84958a;font-weight:800}
+.stat-icon{height:30px;width:30px;display:grid;place-items:center;border-radius:9px;background:#e9f4ec;color:#236d45;font-size:15px}
+.mint-icon{background:#e8f5f1;color:#348a76}.amber-icon{background:#fff4e2;color:#bd842d}.red-icon{background:#fff0ef;color:#c45e56}
+.stat-card h2{margin-top:12px;font-size:28px}
+.stat-card p{font-size:10px;font-weight:500}
+.dashboard-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:16px;margin-top:17px}
+.dashboard-panel{margin-top:0;padding:20px;min-width:0}
+.panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.panel-heading h3{margin:0 0 5px;font-size:14px}
+.panel-heading p{margin:0;color:#8b9990;font-size:10px}
+.panel-tag{background:#edf6ef;color:#34774c;border-radius:20px;padding:5px 8px;font-size:8px;font-weight:800;letter-spacing:.5px;white-space:nowrap}
+.warning-tag{background:#fff5e6;color:#b9812d}
+.category-breakdown{margin-top:20px;display:grid;gap:15px}
+.category-row{display:grid;grid-template-columns:minmax(75px,1fr) 2fr 28px;gap:10px;align-items:center;font-size:10px;color:#68796e}
+.category-track{height:8px;border-radius:20px;background:#eef3ef;overflow:hidden}
+.category-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,#1b6843,#78b78c)}
+.category-count{text-align:right;font-weight:800;color:#385343}
+.attention-list{margin-top:12px;display:grid;gap:0}
+.attention-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #edf2ee}
+.attention-mark{width:29px;height:29px;border-radius:9px;display:grid;place-items:center;background:#fff4e4;color:#bd842d;font-weight:900;flex:0 0 auto}
+.attention-mark.empty-stock{background:#fff0ef;color:#c45e56}
+.attention-copy{min-width:0;flex:1}
+.attention-copy strong{display:block;font-size:10px;color:#354b3c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.attention-copy small{display:block;margin-top:4px;color:#8b9990;font-size:9px}
+.attention-status{font-size:8px;font-weight:800;white-space:nowrap;color:#bd842d}
+.attention-status.out{color:#c45e56}
+.dashboard-link{margin-top:12px!important;background:transparent!important;color:#267348!important;padding:5px 0!important;min-height:25px!important}
+.dashboard-link:hover{background:transparent!important;transform:none!important}
+.dashboard-quick{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:16px;padding:18px 20px}
+.quick-kicker{font-size:8px;font-weight:900;letter-spacing:1.3px;color:#82a08b}
+.dashboard-quick h3{margin:5px 0;font-size:13px;color:#244331}
+.dashboard-quick p{margin:0;font-size:10px;color:#8b9990}
+.quick-actions{display:flex;flex-wrap:wrap;gap:7px;justify-content:flex-end}
+.quick-actions button{margin:0;min-height:34px;padding:8px 11px;background:#edf5ef;color:#276b45;border:1px solid #e0ece3;font-size:9px}
+.quick-actions button:hover{background:#deeee2}
+.dashboard-updated{text-align:right;color:#9aa69e;font-size:9px;margin:10px 3px 0}
+@media(max-width:900px){.dashboard-grid{grid-template-columns:1fr}.dashboard-quick{align-items:flex-start;flex-direction:column}.quick-actions{justify-content:flex-start}}
+@media(max-width:620px){.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat-card{padding:13px;min-height:120px}.stat-card h2{font-size:24px}.dashboard-panel{padding:15px}.category-row{grid-template-columns:75px 1fr 25px}.attention-status{font-size:7px}}
+
 </style>
 </head>
 <body>
@@ -128,11 +171,32 @@ label{display:block;margin-top:13px;font-size:12px;font-weight:700;color:#506257
 <div id="dashboardPage" class="page-section">
 <div class="page-title">🏠 Dashboard</div><p class="page-subtitle">Inventory overview and quick status.</p>
 <div class="cards">
-<div class="card"><h2 id="productsCount">0</h2><p>Products</p></div>
-<div class="card"><h2 id="stockCount">0</h2><p>Total Stock</p></div>
-<div class="card"><h2 id="lowStockCount">0</h2><p>Low Stock</p></div>
-<div class="card"><h2 id="outStockCount">0</h2><p>Out of Stock</p></div>
+<div class="card stat-card"><div class="stat-top"><span class="stat-label">TOTAL PRODUCTS</span><span class="stat-icon">▣</span></div><h2 id="productsCount">0</h2><p>Registered canned goods</p></div>
+<div class="card stat-card"><div class="stat-top"><span class="stat-label">TOTAL STOCK</span><span class="stat-icon mint-icon">▤</span></div><h2 id="stockCount">0</h2><p>Available units across products</p></div>
+<div class="card stat-card"><div class="stat-top"><span class="stat-label">LOW STOCK</span><span class="stat-icon amber-icon">⚑</span></div><h2 id="lowStockCount">0</h2><p>Items that need replenishment</p></div>
+<div class="card stat-card"><div class="stat-top"><span class="stat-label">OUT OF STOCK</span><span class="stat-icon red-icon">!</span></div><h2 id="outStockCount">0</h2><p>Items currently unavailable</p></div>
 </div>
+<div class="dashboard-grid">
+  <div class="section dashboard-panel">
+    <div class="panel-heading"><div><h3>📦 Inventory by category</h3><p>Product count grouped by category</p></div><span class="panel-tag">LIVE DATA</span></div>
+    <div id="categoryBreakdown" class="category-breakdown"><div class="empty">Loading inventory data...</div></div>
+  </div>
+  <div class="section dashboard-panel">
+    <div class="panel-heading"><div><h3>⚠️ Stock attention</h3><p>Low-stock and unavailable products</p></div><span id="attentionCount" class="panel-tag warning-tag">0 ITEMS</span></div>
+    <div id="stockAttention" class="attention-list"><div class="empty">Loading stock status...</div></div>
+    <button class="dashboard-link" onclick="showPage('products')">View product list →</button>
+  </div>
+</div>
+<div class="section dashboard-quick">
+  <div><span class="quick-kicker">QUICK ACTIONS</span><h3>Manage your inventory</h3><p>Jump directly to the tools you use most.</p></div>
+  <div class="quick-actions">
+    <button onclick="showPage('scanner')">▦ Open scanner</button>
+    <button onclick="showPage('products')">▣ View products</button>
+    <button onclick="showPage('history')">◷ Stock history</button>
+    <button onclick="showPage('reports')">▤ Generate report</button>
+  </div>
+</div>
+<div class="dashboard-updated" id="dashboardUpdated">Inventory data updates when products are refreshed.</div>
 </div>
 
 <div id="scannerSection" class="section page-section page-hidden">
@@ -338,7 +402,35 @@ const {data,error}=await supabaseClient.from("products").select("*").order("crea
 if(error){list.innerHTML='<div class="error">❌ '+escapeHTML(error.message)+'</div>';return;}
 productsData=data||[];updateDashboard();displayProducts(productsData);
 }
-function updateDashboard(){let total=0,low=0,out=0;productsData.forEach(p=>{let s=Number(p.stock||0),m=Number(p.minimum_stock||0);total+=s;if(s===0)out++;else if(s<=m)low++;});document.getElementById("productsCount").textContent=productsData.length;document.getElementById("stockCount").textContent=total;document.getElementById("lowStockCount").textContent=low;document.getElementById("outStockCount").textContent=out;}
+function updateDashboard(){
+let total=0,low=0,out=0;
+productsData.forEach(p=>{let s=Number(p.stock||0),m=Number(p.minimum_stock||0);total+=s;if(s===0)out++;else if(s<=m)low++;});
+document.getElementById("productsCount").textContent=productsData.length;
+document.getElementById("stockCount").textContent=total;
+document.getElementById("lowStockCount").textContent=low;
+document.getElementById("outStockCount").textContent=out;
+
+const categories={};
+productsData.forEach(p=>{const name=(p.category||"Uncategorized").trim()||"Uncategorized";categories[name]=(categories[name]||0)+1;});
+const categoryBox=document.getElementById("categoryBreakdown");
+if(categoryBox){
+ const sorted=Object.entries(categories).sort((a,b)=>b[1]-a[1]);
+ const max=Math.max(1,...sorted.map(x=>x[1]));
+ categoryBox.innerHTML=sorted.length?sorted.map(([name,count])=>'<div class="category-row"><span>'+escapeHTML(name)+'</span><div class="category-track"><div class="category-fill" style="width:'+Math.max(4,Math.round(count/max*100))+'%"></div></div><strong class="category-count">'+count+'</strong></div>').join(''):'<div class="empty">No products have been added yet.</div>';
+}
+const attention=productsData.filter(p=>Number(p.stock||0)===0||Number(p.stock||0)<=Number(p.minimum_stock||0)).sort((a,b)=>Number(a.stock||0)-Number(b.stock||0));
+const attentionBox=document.getElementById("stockAttention");
+const attentionCount=document.getElementById("attentionCount");
+if(attentionCount)attentionCount.textContent=attention.length+' ITEMS';
+if(attentionBox){
+ attentionBox.innerHTML=attention.length?attention.slice(0,5).map(p=>{
+  const isOut=Number(p.stock||0)===0;
+  return '<div class="attention-row"><span class="attention-mark '+(isOut?'empty-stock':'')+'">'+(isOut?'!':'↓')+'</span><div class="attention-copy"><strong>'+escapeHTML(p.product_name||'Unnamed product')+'</strong><small>Barcode: '+escapeHTML(p.barcode||'—')+' · Stock: '+Number(p.stock||0)+' '+escapeHTML(p.unit||'units')+'</small></div><span class="attention-status '+(isOut?'out':'')+'">'+(isOut?'OUT OF STOCK':'LOW STOCK')+'</span></div>';
+ }).join(''):'<div class="empty">✓ All products are above their minimum stock level.</div>';
+}
+const updated=document.getElementById("dashboardUpdated");
+if(updated)updated.textContent='Last refreshed: '+new Date().toLocaleString();
+}
 function getStatus(p){let s=Number(p.stock||0),m=Number(p.minimum_stock||0);if(s===0)return{text:"🔴 OUT OF STOCK",class:"status-out"};if(s<=m)return{text:"🟡 LOW STOCK",class:"status-low"};return{text:"🟢 IN STOCK",class:"status-in"};}
 
 function productButtons(p){
