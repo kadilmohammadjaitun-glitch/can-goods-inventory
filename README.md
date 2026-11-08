@@ -1,217 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+# Canned Goods Inventory Management System – UI Upgrade
 
-    <title>Can Goods Inventory</title>
+## Hosting and architecture
+- Frontend: single-page `index.html` (HTML, CSS and JavaScript)
+- Hosting: GitHub Pages
+- Backend services: Supabase Auth, Database, Storage and RPC functions
+- Barcode library: ZXing browser library
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+## Deploy the upgraded UI
+1. Keep a backup of the current GitHub repository before replacing files.
+2. Extract this ZIP.
+3. Open the repository folder and replace the existing `index.html` with the upgraded `index.html` from this package.
+4. Keep your existing Supabase project and database unchanged.
+5. Commit and push the updated file to the same GitHub repository/branch currently used by GitHub Pages.
+6. Wait for GitHub Pages deployment, then hard-refresh the website (Ctrl+F5).
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f1f5f1;
-            color: #222;
-        }
+## What changed
+- Updated the visual design to a modern green-and-white interface.
+- Added a desktop sidebar navigation layout and mobile horizontal navigation layout.
+- Restyled dashboard cards, forms, scanner, product records, stock history, reports, role management and modals.
+- Preserved the existing page IDs, inline event handlers, JavaScript logic, Supabase client setup, ZXing script reference, and current database/RPC calls to avoid breaking existing workflows.
 
-        .header {
-            background: #176b3a;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
+## Important safety notes
+- This package does not include database migrations and does not change Supabase tables, policies, users, storage buckets or records.
+- Before deploying, make a copy of the current repository and test with a non-critical account if possible.
+- The Supabase publishable/anon key is intended for browser use, but access must be protected by correct Row Level Security (RLS) policies and secure RPC function permissions. Never put a Supabase service-role key in browser code.
+- This is a UI-focused upgrade. It does not add expiration-date fields or new database functionality yet.
 
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
+## Existing backend dependencies referenced by the app
+- `products` table
+- `user_roles` table
+- `user_activity` view/table
+- `stock_history` view/table
+- RPC: `update_my_activity`
+- RPC: `set_my_offline`
+- RPC: `adjust_stock`
+- RPC: `admin_set_user_role`
+- Supabase Storage bucket: `product-images`
 
-        .header p {
-            margin: 5px 0 0;
-            font-size: 14px;
-        }
-
-        .container {
-            padding: 15px;
-            max-width: 600px;
-            margin: auto;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .card {
-            background: white;
-            padding: 18px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .card h2 {
-            margin: 0;
-            color: #176b3a;
-            font-size: 28px;
-        }
-
-        .card p {
-            margin: 5px 0 0;
-            color: #666;
-        }
-
-        .scanner {
-            background: white;
-            margin-top: 15px;
-            padding: 18px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .scanner h3 {
-            margin-top: 0;
-        }
-
-        input {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            margin-top: 10px;
-            border: none;
-            border-radius: 8px;
-            background: #176b3a;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        .scan-button {
-            background: #e6a900;
-        }
-
-        #result {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 8px;
-            background: #eef7ef;
-            display: none;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="header">
-        <h1>🥫 Can Goods Inventory</h1>
-        <p>Inventory Management System</p>
-    </div>
-
-    <div class="container">
-
-        <div class="cards">
-
-            <div class="card">
-                <h2 id="products">0</h2>
-                <p>Products</p>
-            </div>
-
-            <div class="card">
-                <h2 id="stock">0</h2>
-                <p>Total Stock</p>
-            </div>
-
-            <div class="card">
-                <h2 id="lowstock">0</h2>
-                <p>Low Stock</p>
-            </div>
-
-            <div class="card">
-                <h2 id="outstock">0</h2>
-                <p>Out of Stock</p>
-            </div>
-
-        </div>
-
-        <div class="scanner">
-
-            <h3>📷 Barcode Scanner</h3>
-
-            <button class="scan-button" onclick="scanBarcode()">
-                📷 SCAN BARCODE
-            </button>
-
-            <p>Or enter barcode manually:</p>
-
-            <input
-                type="text"
-                id="barcode"
-                placeholder="Enter barcode number"
-            >
-
-            <button onclick="searchBarcode()">
-                🔍 SEARCH BARCODE
-            </button>
-
-            <div id="result"></div>
-
-        </div>
-
-    </div>
-
-    <script>
-
-        function searchBarcode() {
-
-            let barcode =
-                document.getElementById("barcode").value;
-
-            let result =
-                document.getElementById("result");
-
-            if (barcode === "") {
-
-                result.style.display = "block";
-                result.innerHTML =
-                    "⚠️ Please enter a barcode.";
-
-                return;
-            }
-
-            result.style.display = "block";
-
-            result.innerHTML =
-                "<strong>Barcode:</strong> " +
-                barcode +
-                "<br><br>" +
-                "🔎 Searching product...";
-
-        }
-
-        function scanBarcode() {
-
-            alert(
-                "Barcode camera scanner will be added in the next step."
-            );
-
-        }
-
-    </script>
-
-</body>
-</html>
+If any of these names differ in your live Supabase project, do not change them blindly; review the current schema first.
