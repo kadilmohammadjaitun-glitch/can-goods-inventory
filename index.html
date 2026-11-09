@@ -139,6 +139,22 @@ label{display:block;margin-top:13px;font-size:12px;font-weight:700;color:#506257
 @media(max-width:900px){.dashboard-grid{grid-template-columns:1fr}.dashboard-quick{align-items:flex-start;flex-direction:column}.quick-actions{justify-content:flex-start}}
 @media(max-width:620px){.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat-card{padding:13px;min-height:120px}.stat-card h2{font-size:24px}.dashboard-panel{padding:15px}.category-row{grid-template-columns:75px 1fr 25px}.attention-status{font-size:7px}}
 
+
+/* V2.2 sales analytics */
+.sales-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-top:17px}
+.sales-kpi{background:linear-gradient(135deg,#edf8f0,#fff);border:1px solid #e2eee5;border-radius:14px;padding:18px;min-width:0}
+.sales-kpi-label{font-size:9px;letter-spacing:.7px;color:#648573;font-weight:800}
+.sales-kpi strong{display:block;font-size:24px;color:#1c6542;margin:10px 0 7px;overflow-wrap:anywhere}
+.sales-kpi small{font-size:10px;color:#7a9081;line-height:1.5}
+.sales-panel{margin-top:16px;padding:20px}
+.sales-chart{margin-top:22px;display:grid;gap:13px}
+.sales-chart-row{display:grid;grid-template-columns:76px minmax(0,1fr) 125px;align-items:center;gap:12px;font-size:11px;color:#5e7767}
+.sales-chart-track{height:14px;background:#edf4ee;border-radius:9px;overflow:hidden}
+.sales-chart-fill{height:100%;background:linear-gradient(90deg,#207b4e,#8ccda0);border-radius:9px}
+.sales-chart-amount{text-align:right;font-weight:700;color:#225e3f}
+.sales-disclaimer{font-size:10px;line-height:1.6;color:#8a968c;margin-top:17px}
+@media(max-width:900px){.sales-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.sales-kpi{padding:12px}.sales-kpi strong{font-size:19px}.sales-chart-row{grid-template-columns:55px minmax(0,1fr) 92px;gap:6px;font-size:9px}.sales-panel{padding:14px}}
 </style>
 </head>
 <body>
@@ -175,6 +191,17 @@ label{display:block;margin-top:13px;font-size:12px;font-weight:700;color:#506257
 <div class="card stat-card"><div class="stat-top"><span class="stat-label">TOTAL STOCK</span><span class="stat-icon mint-icon">▤</span></div><h2 id="stockCount">0</h2><p>Available units across products</p></div>
 <div class="card stat-card"><div class="stat-top"><span class="stat-label">LOW STOCK</span><span class="stat-icon amber-icon">⚑</span></div><h2 id="lowStockCount">0</h2><p>Items that need replenishment</p></div>
 <div class="card stat-card"><div class="stat-top"><span class="stat-label">OUT OF STOCK</span><span class="stat-icon red-icon">!</span></div><h2 id="outStockCount">0</h2><p>Items currently unavailable</p></div>
+</div>
+<div class="sales-kpi-grid">
+<div class="sales-kpi"><div class="sales-kpi-label">EST. INVENTORY VALUE</div><strong id="inventoryValue">₱0.00</strong><small>Current stock × current product price</small></div>
+<div class="sales-kpi"><div class="sales-kpi-label">EST. SALES (LOADED HISTORY)</div><strong id="estimatedSales">₱0.00</strong><small>Stock out × current product price</small></div>
+<div class="sales-kpi"><div class="sales-kpi-label">UNITS SOLD (LOADED HISTORY)</div><strong id="unitsSold">0</strong><small>Sum of STOCK OUT quantities</small></div>
+<div class="sales-kpi"><div class="sales-kpi-label">SALES TRANSACTIONS</div><strong id="salesTransactions">0</strong><small>STOCK OUT records loaded</small></div>
+</div>
+<div class="section sales-panel">
+<div class="panel-heading"><div><h3>📈 Sales monitoring</h3><p>Monthly STOCK OUT activity from loaded stock history</p></div><span class="panel-tag">ESTIMATED</span></div>
+<div id="salesChart" class="sales-chart"><div class="empty">Loading stock history...</div></div>
+<div class="sales-disclaimer">Historical sales values use current product prices, not prices recorded at the time of sale. Only the latest 100 stock history records are included. Unmatched products are excluded from estimated sales value.</div>
 </div>
 <div class="dashboard-grid">
   <div class="section dashboard-panel">
@@ -369,6 +396,7 @@ if(page==="scanner"){document.getElementById("barcode")?.focus();}
 if(page==="history")loadHistory();
 if(page==="reports")generateReport();
 if(page==="admin"&&currentRole==="ADMIN")loadStaffMonitoring();
+if(page==="dashboard")loadSalesHistory();
 window.scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -400,7 +428,7 @@ async function loadProducts(){
 const list=document.getElementById("productList");list.innerHTML='<div class="loading">Loading products...</div>';
 const {data,error}=await supabaseClient.from("products").select("*").order("created_at",{ascending:false});
 if(error){list.innerHTML='<div class="error">❌ '+escapeHTML(error.message)+'</div>';return;}
-productsData=data||[];updateDashboard();displayProducts(productsData);
+productsData=data||[];updateDashboard();updateSalesAnalytics();displayProducts(productsData);if(!salesHistoryLoaded)loadSalesHistory();
 }
 function updateDashboard(){
 let total=0,low=0,out=0;
@@ -629,7 +657,7 @@ closeStockModal();await loadProducts();await loadHistory();const barcode=documen
 }
 
 async function loadHistory(){
-const list=document.getElementById("historyList");list.innerHTML='<div class="loading">Loading stock history...</div>';const {data,error}=await supabaseClient.from("stock_history").select("*").order("created_at",{ascending:false}).limit(100);if(error){list.innerHTML='<div class="error">❌ History error<br><br>'+escapeHTML(error.message)+'</div>';return;}historyData=data||[];if(!historyData.length){list.innerHTML='<div class="empty">📋 No stock transactions yet.</div>';return;}list.innerHTML="";historyData.forEach(h=>{const div=document.createElement("div"),date=h.created_at?new Date(h.created_at).toLocaleString():"-",isIn=h.action==="STOCK IN";div.className="history-row";div.innerHTML='<strong>'+escapeHTML(h.product_name||"-")+'</strong><br><small>'+escapeHTML(date)+'</small><br><br><span class="'+(isIn?"history-in":"history-out")+'">'+(isIn?"📥 STOCK IN":"📤 STOCK OUT")+'</span><br><strong>Barcode:</strong> '+escapeHTML(h.barcode||"-")+'<br><strong>Quantity:</strong> '+Number(h.quantity||0)+'<br><strong>Stock Before:</strong> '+Number(h.stock_before||0)+'<br><strong>Stock After:</strong> '+Number(h.stock_after||0)+'<br><strong>User:</strong> '+escapeHTML(h.user_email||"-");list.appendChild(div);});}
+const list=document.getElementById("historyList");list.innerHTML='<div class="loading">Loading stock history...</div>';const {data,error}=await supabaseClient.from("stock_history").select("*").order("created_at",{ascending:false}).limit(100);if(error){list.innerHTML='<div class="error">❌ History error<br><br>'+escapeHTML(error.message)+'</div>';return;}historyData=data||[];updateSalesAnalytics();if(!historyData.length){list.innerHTML='<div class="empty">📋 No stock transactions yet.</div>';return;}list.innerHTML="";historyData.forEach(h=>{const div=document.createElement("div"),date=h.created_at?new Date(h.created_at).toLocaleString():"-",isIn=h.action==="STOCK IN";div.className="history-row";div.innerHTML='<strong>'+escapeHTML(h.product_name||"-")+'</strong><br><small>'+escapeHTML(date)+'</small><br><br><span class="'+(isIn?"history-in":"history-out")+'">'+(isIn?"📥 STOCK IN":"📤 STOCK OUT")+'</span><br><strong>Barcode:</strong> '+escapeHTML(h.barcode||"-")+'<br><strong>Quantity:</strong> '+Number(h.quantity||0)+'<br><strong>Stock Before:</strong> '+Number(h.stock_before||0)+'<br><strong>Stock After:</strong> '+Number(h.stock_after||0)+'<br><strong>User:</strong> '+escapeHTML(h.user_email||"-");list.appendChild(div);});}
 
 function getReportSearch(){return document.getElementById("reportSearch").value.toLowerCase().trim();}
 function isDateInRange(dateString,from,to){if(!dateString)return false;const day=new Date(dateString).toISOString().substring(0,10);return !((from&&day<from)||(to&&day>to));}
@@ -643,6 +671,38 @@ function exportReportCSV(){const type=document.getElementById("reportType").valu
 
 async function saveUserRole(){if(currentRole!=="ADMIN")return alert("ADMIN only.");const uid=document.getElementById("roleUserId").value.trim(),email=document.getElementById("roleUserEmail").value.trim(),role=document.getElementById("roleUserRole").value,msg=document.getElementById("roleMessage");if(!uid||!email)return msg.innerHTML='<span class="error">⚠️ Enter User UID and email.</span>';const {data,error}=await supabaseClient.rpc("admin_set_user_role",{p_user_id:uid,p_email:email,p_role:role});if(error){msg.innerHTML='<span class="error">❌ '+escapeHTML(error.message)+'</span>';return;}msg.innerHTML='<span class="success">✅ '+escapeHTML(data||"Role updated.")+'</span>';await loadRoleList();}
 async function loadRoleList(){if(currentRole!=="ADMIN")return;const list=document.getElementById("roleList");const {data,error}=await supabaseClient.from("user_roles").select("user_id,email,role,created_at").order("created_at",{ascending:true});if(error){list.innerHTML='<div class="error">❌ '+escapeHTML(error.message)+'</div>';return;}list.innerHTML="<strong>👥 Assigned Roles</strong>";(data||[]).forEach(r=>{const d=document.createElement("div");d.style.cssText="border:1px solid #ddd;border-radius:8px;padding:10px;margin-top:8px;font-size:13px";d.innerHTML='<strong>'+escapeHTML(r.email||"-")+'</strong><br>'+escapeHTML(r.role)+'<br><small>'+escapeHTML(r.user_id)+'</small>';list.appendChild(d);});}
+
+
+let salesHistoryLoaded=false;
+const moneyV22=n=>new Intl.NumberFormat("en-PH",{style:"currency",currency:"PHP"}).format(n);
+async function loadSalesHistory(){
+ const {data,error}=await supabaseClient.from("stock_history").select("*").order("created_at",{ascending:false}).limit(100);
+ if(error){const el=document.getElementById("salesChart");if(el)el.textContent="Sales history unavailable: "+error.message;return;}
+ historyData=data||[];salesHistoryLoaded=true;updateSalesAnalytics();
+}
+function updateSalesAnalytics(){
+ const productsById=new Map(productsData.map(p=>[String(p.id),p]));
+ const productsByBarcode=new Map(productsData.filter(p=>p.barcode).map(p=>[String(p.barcode),p]));
+ const inventory=productsData.reduce((sum,p)=>sum+Math.max(0,Number(p.stock)||0)*Math.max(0,Number(p.price)||0),0);
+ const outs=historyData.filter(h=>String(h.action||"").trim().toUpperCase()==="STOCK OUT");
+ const months=new Map();let estimated=0,units=0,unmatched=0;
+ for(const h of outs){
+  const qty=Math.max(0,Number(h.quantity)||0);units+=qty;
+  const p=productsById.get(String(h.product_id))||productsByBarcode.get(String(h.barcode));
+  const amount=p?qty*Math.max(0,Number(p.price)||0):0;
+  if(!p)unmatched++;else estimated+=amount;
+  const dt=new Date(h.created_at);
+  if(!Number.isNaN(dt.getTime())){const key=dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0");const v=months.get(key)||{amount:0,units:0};v.amount+=amount;v.units+=qty;months.set(key,v);}
+ }
+ const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+ set("inventoryValue",moneyV22(inventory));set("estimatedSales",moneyV22(estimated));set("unitsSold",units.toLocaleString());set("salesTransactions",outs.length.toLocaleString());
+ const chart=document.getElementById("salesChart");if(!chart)return;
+ if(!salesHistoryLoaded){chart.innerHTML='<div class="empty">Open or refresh the dashboard to load sales history.</div>';return;}
+ const rows=[...months.entries()].sort((a,b)=>a[0].localeCompare(b[0])).slice(-6);
+ if(!rows.length){chart.innerHTML='<div class="empty">No STOCK OUT sales in the loaded history.</div>';return;}
+ const max=Math.max(1,...rows.map(x=>x[1].amount));
+ chart.innerHTML=rows.map(([key,v])=>'<div class="sales-chart-row"><span>'+escapeHTML(key)+'</span><div class="sales-chart-track"><div class="sales-chart-fill" style="width:'+Math.max(v.amount>0?3:0,Math.round(v.amount/max*100))+'%"></div></div><span class="sales-chart-amount">'+moneyV22(v.amount)+' · '+v.units+' units</span></div>').join('')+(unmatched?'<div class="sales-disclaimer">'+unmatched+' STOCK OUT record(s) have no matching current product and are excluded from the value estimate.</div>':'');
+}
 
 function escapeHTML(value){if(value===null||value===undefined)return "";return String(value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
 </script>
